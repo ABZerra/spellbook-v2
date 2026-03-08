@@ -3,9 +3,11 @@ import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 
+const githubRepoName = process.env.GITHUB_REPOSITORY?.split('/')[1];
+const githubPagesBase = githubRepoName ? `/${githubRepoName}/` : '/';
 const base =
   process.env.SPELLBOOK_BASE_PATH ||
-  (process.env.GITHUB_ACTIONS ? '/Spellbook/' : '/');
+  (process.env.GITHUB_ACTIONS ? githubPagesBase : '/');
 const apiTarget = process.env.SPELLBOOK_API_TARGET || 'http://localhost:3001';
 
 export default defineConfig({
