@@ -1,0 +1,28 @@
+project_id: paal-subvisual
+
+display_name: PAAL Subvisual
+
+default_branch: main
+
+paths:
+  paal_core: paal-core
+  org_skills: org/skills
+  project_context: project-context
+  docs_output: docs
+
+docs:
+  pr_only: true
+
+ci:
+  baseline: universal
+  overlay: none
+
+review:
+  codex_review: required
+  recommended_human_approvals: 1
+  enforce_human_approvals: false
+  reviewer_handles: []
+  github_ai_review: recommended
+  # Use `auto` to pick up superpowers when it is available locally.
+  # Set `none` to disable it or `superpowers` to prefer it explicitly.
+  external_tool: auto

@@ -1,0 +1,43 @@
+name: CI Starter
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    name: Validate fast checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up runtime
+        run: __SETUP_RUNTIME_COMMAND__
+
+      - name: Install dependencies
+        run: __INSTALL_COMMAND__
+
+      - name: Lint
+        run: __LINT_COMMAND__
+
+      - name: Typecheck
+        run: __TYPECHECK_COMMAND__
+
+      - name: Test
+        run: __TEST_COMMAND__
+
+      - name: Validate generated or policy files
+        run: __VALIDATE_COMMAND__
+
+      - name: Write job summary
+        if: always()
+        run: |
+          {
+            echo "## CI Starter"
+            echo "- Replace placeholder commands before using this workflow."
+            echo "- Keep this workflow fast and deterministic for PR feedback."
+            echo "- Move heavier scans into separate manual or scheduled workflows."
+          } >> "$GITHUB_STEP_SUMMARY"

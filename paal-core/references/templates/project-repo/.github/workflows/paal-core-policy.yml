@@ -1,0 +1,126 @@
+name: PAAL Core Policy
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  SUBMODULE_PATH: paal-core
+
+jobs:
+  validate-core-submodule:
+    name: Validate PAAL core submodule shape
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce submodule mode and boundaries
+        run: |
+          set -euo pipefail
+
+          if [ ! -f .gitmodules ]; then
+            echo "Missing .gitmodules." >&2
+            exit 1
+          fi
+
+          if ! git config -f .gitmodules --get-regexp "^submodule\\..*\\.path$" | awk '{print $2}' | grep -Fxq "$SUBMODULE_PATH"; then
+            echo "Submodule '$SUBMODULE_PATH' is not declared in .gitmodules." >&2
+            exit 1
+          fi
+
+          MODE="$(git ls-files --stage "$SUBMODULE_PATH" | awk '{print $1}' | head -n 1)"
+          if [ "$MODE" != "160000" ]; then
+            echo "Path '$SUBMODULE_PATH' must be tracked as a submodule (mode 160000)." >&2
+            exit 1
+          fi
+
+          if git ls-files "$SUBMODULE_PATH/*" | grep -q .; then
+            echo "Tracked files found under '$SUBMODULE_PATH/'. This path must stay submodule-only." >&2
+            exit 1
+          fi
+
+          echo "Submodule policy checks passed."
+
+  validate-project-repo-contract:
+    name: Validate PAAL project repo contract
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Validate required PAAL project repo files
+        run: python3 paal-core/scripts/validate_project_repo_contract.py --repo-root . --paal-core-path paal-core
+
+  enforce-docs-pr-only:
+    name: Enforce PR-only docs-output on main
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check whether docs-output changed
+        id: changes
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          RANGE="$BEFORE_SHA..$AFTER_SHA"
+          if [ "$BEFORE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            RANGE="$AFTER_SHA^..$AFTER_SHA"
+          fi
+
+          CHANGED_FILES="$(git diff --name-only "$RANGE" || true)"
+          echo "changed_files<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$CHANGED_FILES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+          if printf '%s\n' "$CHANGED_FILES" | grep -q '^docs-output/'; then
+            echo "docs_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "docs_changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Verify docs-output changes are PR-associated
+        if: steps.changes.outputs.docs_changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          PR_COUNT="$(gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" --jq 'length')"
+
+          if [ "$PR_COUNT" -eq 0 ]; then
+            echo "docs-output changes reached main without PR association." >&2
+            exit 1
+          fi
+
+          echo "docs-output changes are associated with at least one pull request."
+
+      - name: No docs-output changes on main
+        if: steps.changes.outputs.docs_changed == 'false'
+        run: echo "No docs-output changes detected on main push."

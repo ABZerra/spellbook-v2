@@ -1,0 +1,99 @@
+name: PAAL PR Hygiene
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+jobs:
+  validate-pr-metadata:
+    name: Validate PR metadata
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate PR template headings
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          pr_body_file="$RUNNER_TEMP/pr-body.txt"
+          pr_files_file="$RUNNER_TEMP/pr-files.txt"
+          printf '%s' "${PR_BODY:-}" > "$pr_body_file"
+
+          gh api --paginate "repos/$REPOSITORY/pulls/$PR_NUMBER/files" --jq '.[].filename' > "$pr_files_file"
+
+          docs_changed=false
+          if grep -q '^docs-output/' "$pr_files_file"; then
+            docs_changed=true
+          fi
+
+          required_headings=(
+            "## Summary"
+            "## Tests"
+            "## Risks"
+            "## Reviewer Focus"
+          )
+
+          docs_headings=(
+            "### Skills used"
+            "### Source context files"
+            "### Output artifacts"
+            "### Acceptance checks"
+          )
+
+          missing=()
+
+          for heading in "${required_headings[@]}"; do
+            if ! grep -Fq "$heading" "$pr_body_file"; then
+              missing+=("$heading")
+            fi
+          done
+
+          if [ "$docs_changed" = "true" ]; then
+            for heading in "${docs_headings[@]}"; do
+              if ! grep -Fq "$heading" "$pr_body_file"; then
+                missing+=("$heading")
+              fi
+            done
+          fi
+
+          {
+            echo "## Validate PR metadata"
+            echo
+            echo "- Required headings: \`## Summary\`, \`## Tests\`, \`## Risks\`, \`## Reviewer Focus\`."
+            if [ "$docs_changed" = "true" ]; then
+              echo "- docs-output changes detected, so the docs checklist headings were also required."
+            else
+              echo "- No docs-output changes detected, so the docs checklist headings were not required."
+            fi
+            if [ "${#missing[@]}" -eq 0 ]; then
+              echo "- Result: PR metadata passed."
+            else
+              echo "- Missing headings:"
+              for heading in "${missing[@]}"; do
+                echo "  - \`$heading\`"
+              done
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "${#missing[@]}" -gt 0 ]; then
+            printf 'Missing required PR headings:\n' >&2
+            for heading in "${missing[@]}"; do
+              printf -- '- %s\n' "$heading" >&2
+            done
+            exit 1
+          fi

@@ -1,0 +1,154 @@
+name: Feature Ticket
+description: Create a feature ticket with embedded Gherkin checklist acceptance criteria.
+title: "[Feature] "
+labels:
+  - "type:feature"
+  - "triage"
+body:
+  - type: textarea
+    id: story_problem
+    attributes:
+      label: Story / Problem
+      description: Describe the user problem and expected outcome.
+      placeholder: |
+        As a ...
+        I want ...
+        so that ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: jtbd
+    attributes:
+      label: JTBD
+      description: State the primary job being solved. Use `When ..., I want to ..., so I can ...`.
+      placeholder: |
+        When ...
+        I want to ...
+        so I can ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: List what this ticket includes.
+      placeholder: |
+        - In-scope item 1
+        - In-scope item 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria (Gherkin Checklist)
+      description: Add testable checklist items using Given/When/Then.
+      placeholder: |
+        - [ ] Given ..., when ..., then ...
+        - [ ] Given ..., when ..., then ...
+        - [ ] Given ..., when ..., then ...
+    validations:
+      required: true
+
+  - type: input
+    id: assignee
+    attributes:
+      label: Assignee
+      placeholder: Username or team
+    validations:
+      required: true
+
+  - type: input
+    id: reporter
+    attributes:
+      label: Reporter
+      placeholder: Usually issue creator
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+
+  - type: input
+    id: labels
+    attributes:
+      label: Additional Labels
+      description: Add labels beyond defaults, comma-separated.
+      placeholder: "component:notifications, area:api"
+    validations:
+      required: true
+
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      placeholder: notifications
+    validations:
+      required: true
+
+  - type: input
+    id: epic_initiative
+    attributes:
+      label: Epic / Initiative
+      placeholder: Engagement Q2
+    validations:
+      required: true
+
+  - type: input
+    id: estimate
+    attributes:
+      label: Estimate
+      placeholder: 5 points
+    validations:
+      required: true
+
+  - type: input
+    id: due_date
+    attributes:
+      label: Due Date
+      description: Use YYYY-MM-DD.
+      placeholder: "2026-03-31"
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      placeholder: |
+        - [ ] Task 1
+        - [ ] Task 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: related_links
+    attributes:
+      label: Links / Dependencies
+      placeholder: |
+        - Related PRD:
+        - Related designs:
+        - Related tickets:
+        - Blocked by:
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of Scope
+      placeholder: |
+        - Exclusion 1
+    validations:
+      required: true

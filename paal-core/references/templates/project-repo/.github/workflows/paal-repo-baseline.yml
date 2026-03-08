@@ -1,0 +1,167 @@
+name: PAAL Repo Baseline
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  docs-and-config-hygiene:
+    name: Docs and config hygiene
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Detect tracked files for hygiene checks
+        id: detect
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          codespell_file="$RUNNER_TEMP/codespell-files.txt"
+          yamllint_file="$RUNNER_TEMP/yamllint-files.txt"
+          markdown_file="$RUNNER_TEMP/markdown-files.txt"
+          shell_file="$RUNNER_TEMP/shell-files.txt"
+
+          git ls-files '*.md' '*.txt' '*.yml' '*.yaml' '*.json' \
+            | grep -v '^paal-core/' \
+            | grep -v '^\.git/' > "$codespell_file" || true
+
+          {
+            git ls-files '.github/workflows/*.yml' '.github/workflows/*.yaml'
+            git ls-files '.paal/project.yaml'
+          } | awk 'NF && !seen[$0]++' > "$yamllint_file"
+
+          {
+            git ls-files '.paal/run-template.md'
+            git ls-files '.github/PULL_REQUEST_TEMPLATE/*.md'
+            git ls-files 'project-context/*.md' 'project-context/**/*.md'
+            git ls-files 'docs-output/*.md' 'docs-output/**/*.md'
+            git ls-files 'README.md'
+          } | awk 'NF && !seen[$0]++' > "$markdown_file"
+
+          git ls-files '*.sh' > "$shell_file" || true
+
+          codespell_count=$(wc -l < "$codespell_file" | tr -d ' ')
+          yamllint_count=$(wc -l < "$yamllint_file" | tr -d ' ')
+          markdown_count=$(wc -l < "$markdown_file" | tr -d ' ')
+          shell_count=$(wc -l < "$shell_file" | tr -d ' ')
+
+          if [ "$codespell_count" -gt 0 ]; then
+            echo "has_codespell=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_codespell=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ "$yamllint_count" -gt 0 ]; then
+            echo "has_yamllint=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_yamllint=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ "$markdown_count" -gt 0 ]; then
+            echo "has_markdownlint=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_markdownlint=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ "$shell_count" -gt 0 ]; then
+            echo "has_shellcheck=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_shellcheck=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install baseline tooling
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install codespell yamllint
+          npm install --global markdownlint-cli
+
+      - name: Install shellcheck when shell scripts are present
+        if: steps.detect.outputs.has_shellcheck == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes shellcheck
+
+      - name: Run codespell
+        if: steps.detect.outputs.has_codespell == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < "$RUNNER_TEMP/codespell-files.txt"
+          codespell "${files[@]}"
+
+      - name: Run yamllint
+        if: steps.detect.outputs.has_yamllint == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < "$RUNNER_TEMP/yamllint-files.txt"
+          yamllint "${files[@]}"
+
+      - name: Run markdownlint
+        if: steps.detect.outputs.has_markdownlint == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < "$RUNNER_TEMP/markdown-files.txt"
+          markdownlint "${files[@]}"
+
+      - name: Run shellcheck
+        if: steps.detect.outputs.has_shellcheck == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < "$RUNNER_TEMP/shell-files.txt"
+          shellcheck "${files[@]}"
+
+      - name: Summarize baseline checks
+        if: always()
+        env:
+          HAS_CODESPELL: ${{ steps.detect.outputs.has_codespell }}
+          HAS_YAMLLINT: ${{ steps.detect.outputs.has_yamllint }}
+          HAS_MARKDOWNLINT: ${{ steps.detect.outputs.has_markdownlint }}
+          HAS_SHELLCHECK: ${{ steps.detect.outputs.has_shellcheck }}
+        shell: bash
+        run: |
+          {
+            echo "## Docs and config hygiene"
+            echo
+            if [ "$HAS_CODESPELL" = "true" ]; then
+              echo "- Ran codespell on tracked markdown, text, YAML, and JSON files."
+            else
+              echo "- Skipped codespell because no matching tracked files were present."
+            fi
+            if [ "$HAS_YAMLLINT" = "true" ]; then
+              echo "- Ran yamllint on workflow YAML and .paal/project.yaml."
+            else
+              echo "- Skipped yamllint because no matching tracked YAML files were present."
+            fi
+            if [ "$HAS_MARKDOWNLINT" = "true" ]; then
+              echo "- Ran markdownlint on PAAL run templates, PR templates, project context, docs-output, and README.md when present."
+            else
+              echo "- Skipped markdownlint because no matching tracked markdown files were present."
+            fi
+            if [ "$HAS_SHELLCHECK" = "true" ]; then
+              echo "- Ran shellcheck on tracked shell scripts."
+            else
+              echo "- Skipped shellcheck because no tracked .sh files were present."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

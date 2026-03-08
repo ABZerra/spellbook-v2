@@ -1,0 +1,92 @@
+# Optional Python overlay for PAAL-enabled project repos.
+# Expected dev dependencies include ruff, mypy, and pytest.
+# If the repo does not use integration markers, change `pytest -q -m "not integration"` to `pytest -q`.
+name: PAAL Python Overlay
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 1-5"
+
+jobs:
+  fast-checks:
+    name: Python fast checks
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          if [ -f requirements-dev.txt ]; then
+            python -m pip install -r requirements-dev.txt
+          elif [ -f requirements.txt ]; then
+            python -m pip install -r requirements.txt
+          else
+            echo "Missing requirements-dev.txt or requirements.txt." >&2
+            exit 1
+          fi
+
+      - name: Run ruff
+        run: python -m ruff check .
+
+      - name: Run mypy
+        run: python -m mypy .
+
+      - name: Run fast tests
+        run: pytest -q -m "not integration"
+
+  full-checks:
+    name: Python full checks
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          if [ -f requirements-dev.txt ]; then
+            python -m pip install -r requirements-dev.txt
+          elif [ -f requirements.txt ]; then
+            python -m pip install -r requirements.txt
+          else
+            echo "Missing requirements-dev.txt or requirements.txt." >&2
+            exit 1
+          fi
+
+      - name: Run ruff
+        run: python -m ruff check .
+
+      - name: Run mypy
+        run: python -m mypy .
+
+      - name: Run full tests
+        run: pytest -q

@@ -1,0 +1,48 @@
+name: PR Hygiene
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+jobs:
+  pr-hygiene:
+    name: Validate PR metadata
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Require title and body
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          test -n "$PR_TITLE" || { echo "PR title is required."; exit 1; }
+          test -n "$PR_BODY" || { echo "PR body is required."; exit 1; }
+
+          echo "$PR_BODY" | grep -q "^## Summary" || {
+            echo "PR body must include a ## Summary section.";
+            exit 1;
+          }
+
+          echo "$PR_BODY" | grep -q "^## Tests" || {
+            echo "PR body must include a ## Tests section.";
+            exit 1;
+          }
+
+          echo "$PR_BODY" | grep -q "^## Risks" || {
+            echo "PR body must include a ## Risks section.";
+            exit 1;
+          }
+
+      - name: Write job summary
+        if: always()
+        run: |
+          {
+            echo "## PR Hygiene"
+            echo "- Require a non-empty title and body."
+            echo "- Require Summary, Tests, and Risks sections in the PR body."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,65 @@
+outputs:
+  - id: meeting_output
+    enabled: true
+    meeting_eligible: true
+    driver_type: skill
+    driver_name: meeting-output-writer
+    template_path: references/templates/meeting_output_template.md
+    output_folder: docs/meetings
+    multiplicity: one
+    clarification_policy: never
+    required_signals: []
+
+  - id: discovery_plan
+    enabled: true
+    meeting_eligible: true
+    driver_type: skill
+    driver_name: discovery-plan
+    template_path: references/templates/discovery_plan_template.md
+    output_folder: docs/discovery
+    multiplicity: one
+    clarification_policy: conditional
+    required_signals:
+      - unresolved_questions
+      - research_needed
+
+  - id: prd
+    enabled: true
+    meeting_eligible: true
+    driver_type: skill
+    driver_name: prd-writer
+    template_path: references/templates/prd_template.md
+    output_folder: docs/prd
+    multiplicity: one
+    clarification_policy: conditional
+    required_signals:
+      - feature_scope
+      - user_outcome
+      - business_goal
+
+  - id: acceptance_criteria
+    enabled: true
+    meeting_eligible: true
+    driver_type: skill
+    driver_name: acceptance-criteria-extractor
+    template_path: references/templates/acceptance_criteria_template.md
+    output_folder: docs/acceptance-criteria
+    multiplicity: many
+    clarification_policy: conditional
+    required_signals:
+      - concrete_requirement
+      - verifiable_behavior
+
+  - id: ticket
+    enabled: true
+    meeting_eligible: true
+    driver_type: skill
+    driver_name: ticket-writer
+    template_path: references/templates/ticket_template.md
+    output_folder: docs/tickets
+    multiplicity: many
+    clarification_policy: conditional
+    required_signals:
+      - scoped_work_item
+      - ticket_type
+      - implementation_intent

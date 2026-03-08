@@ -1,0 +1,153 @@
+name: Chore Ticket
+description: Create a maintenance or operational ticket with embedded Gherkin checklist acceptance criteria.
+title: "[Chore] "
+labels:
+  - "type:chore"
+  - "triage"
+body:
+  - type: textarea
+    id: story_problem
+    attributes:
+      label: Story / Problem
+      description: Describe the maintenance need and expected impact.
+      placeholder: |
+        Current technical issue:
+        Why this maintenance task is needed:
+    validations:
+      required: true
+
+  - type: textarea
+    id: jtbd
+    attributes:
+      label: JTBD
+      description: State the primary team or operator job this chore supports. Use `When the team is trying to ..., they need ..., so they can ...`.
+      placeholder: |
+        When the team is trying to ...
+        they need ...
+        so they can ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: List what this chore includes.
+      placeholder: |
+        - In-scope item 1
+        - In-scope item 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria (Gherkin Checklist)
+      description: Add testable checklist items using Given/When/Then.
+      placeholder: |
+        - [ ] Given ..., when ..., then ...
+        - [ ] Given ..., when ..., then ...
+        - [ ] Given ..., when ..., then ...
+    validations:
+      required: true
+
+  - type: input
+    id: assignee
+    attributes:
+      label: Assignee
+      placeholder: Username or team
+    validations:
+      required: true
+
+  - type: input
+    id: reporter
+    attributes:
+      label: Reporter
+      placeholder: Usually issue creator
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+
+  - type: input
+    id: labels
+    attributes:
+      label: Additional Labels
+      description: Add labels beyond defaults, comma-separated.
+      placeholder: "component:platform, area:ops"
+    validations:
+      required: true
+
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      placeholder: platform
+    validations:
+      required: true
+
+  - type: input
+    id: epic_initiative
+    attributes:
+      label: Epic / Initiative
+      placeholder: Platform Health Q2
+    validations:
+      required: true
+
+  - type: input
+    id: estimate
+    attributes:
+      label: Estimate
+      placeholder: 2 points
+    validations:
+      required: true
+
+  - type: input
+    id: due_date
+    attributes:
+      label: Due Date
+      description: Use YYYY-MM-DD.
+      placeholder: "2026-03-12"
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      placeholder: |
+        - [ ] Change implementation
+        - [ ] Validation checks
+        - [ ] Follow-up cleanup
+    validations:
+      required: true
+
+  - type: textarea
+    id: related_links
+    attributes:
+      label: Links / Dependencies
+      placeholder: |
+        - Related docs:
+        - Related tickets:
+        - Blocked by:
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of Scope
+      placeholder: |
+        - Exclusion 1
+    validations:
+      required: true

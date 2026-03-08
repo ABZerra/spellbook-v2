@@ -1,0 +1,20 @@
+name: Update PAAL Core Submodule
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1-5"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-paal-core:
+    uses: ABZerra/PAAL/.github/workflows/reusable-paal-submodule-bump.yml@main
+    with:
+      submodule_path: paal-core
+      base_branch: main
+      update_channel: latest-tag
+      paal_remote: https://github.com/ABZerra/PAAL.git
+    secrets: inherit
