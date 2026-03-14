@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { LocalSnapshotProvider } from '../providers/localSnapshotProvider';
+import { LocalSnapshotProvider, resolveSnapshotPath } from '../providers/localSnapshotProvider';
 import type { SpellCatalogProvider } from '../providers/provider';
 
 const snapshotPayload = {
@@ -145,7 +145,7 @@ describe('provider contract', () => {
 
   it('snapshot provider satisfies shared contract', async () => {
     const fetchMock = vi.fn(async (url: string) => {
-      if (url === '/spells.snapshot.json' || url === '/spells.json') {
+      if (url === '/spells.snapshot.json' || url === '/spellbook-v2/spells.snapshot.json') {
         return makeResponse(snapshotPayload);
       }
       throw new Error(`Unexpected URL: ${url}`);
@@ -155,16 +155,13 @@ describe('provider contract', () => {
     const provider = new LocalSnapshotProvider();
     await assertProviderContract(provider);
     await assertQueueOnlyRetention(provider);
-    expect(fetchMock).toHaveBeenCalledWith('/spells.snapshot.json', { cache: 'no-store' });
+    expect(fetchMock).toHaveBeenCalledWith(resolveSnapshotPath(import.meta.env.BASE_URL || '/'), { cache: 'no-store' });
   });
 
   it('fails when the canonical snapshot file is missing instead of falling back to legacy paths', async () => {
     vi.stubGlobal('fetch', vi.fn(async (url: string) => {
-      if (url === '/spells.snapshot.json') {
+      if (url === '/spells.snapshot.json' || url === '/spellbook-v2/spells.snapshot.json') {
         return makeResponse({}, false);
-      }
-      if (url === '/spells.json') {
-        return makeResponse(snapshotPayload);
       }
       throw new Error(`Unexpected URL: ${url}`);
     }));
@@ -172,5 +169,10 @@ describe('provider contract', () => {
     const provider = new LocalSnapshotProvider();
 
     await expect(provider.listSpells()).rejects.toThrow(/Failed to load local spell snapshot/i);
+  });
+
+  it('resolves the snapshot path relative to the configured app base path', () => {
+    expect(resolveSnapshotPath('/')).toBe('/spells.snapshot.json');
+    expect(resolveSnapshotPath('/spellbook-v2/')).toBe('/spellbook-v2/spells.snapshot.json');
   });
 });
