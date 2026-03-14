@@ -49,9 +49,9 @@ describe('computeApplyResult', () => {
     });
 
     expect(output.finalPreparedSpells).toEqual([
-      { spellId: 'counterspell', assignedList: 'WIZARD' },
-      { spellId: 'mage-armor', assignedList: 'WIZARD' },
-      { spellId: 'absorb-elements', assignedList: 'WIZARD' },
+      { spellId: 'counterspell', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'mage-armor', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'absorb-elements', assignedList: 'WIZARD', mode: 'normal' },
     ]);
     expect(output.remainingQueue).toEqual([
       { spellId: 'water-breathing', intent: 'queue_only' },
@@ -111,8 +111,8 @@ describe('computeApplyResult', () => {
     });
 
     expect(output.finalPreparedSpells).toEqual([
-      { spellId: 'shield', assignedList: 'WIZARD' },
-      { spellId: 'light', assignedList: 'WIZARD' },
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'light', assignedList: 'WIZARD', mode: 'normal' },
     ]);
   });
 
@@ -138,11 +138,50 @@ describe('computeApplyResult', () => {
     });
 
     expect(output.finalPreparedSpells).toEqual([
-      { spellId: 'light', assignedList: 'WIZARD' },
-      { spellId: 'light', assignedList: 'CLERIC' },
+      { spellId: 'light', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'light', assignedList: 'CLERIC', mode: 'normal' },
     ]);
     expect(output.warnings).toEqual([
       'Light is prepared more than once.',
+    ]);
+  });
+
+  it('blocks queueing a spell above the assigned list max spell level', () => {
+    const profile = makeProfile();
+    profile.preparationLimits = [{ list: 'WIZARD', limit: 6, maxSpellLevel: 2 } as any];
+    const spells = makeSpells();
+
+    expect(() => computeApplyResult({
+      profile,
+      spellsById: new Map(spells.map((spell) => [spell.id, spell])),
+      queue: [{ spellId: 'counterspell', intent: 'add', assignedList: 'WIZARD' } as any],
+    })).toThrow(/max spell level/i);
+  });
+
+  it('does not count always prepared spells against preparation limits', () => {
+    const spells = makeSpells();
+
+    const output = computeApplyResult({
+      profile: {
+        id: 'char-1',
+        name: 'Aelric',
+        class: '',
+        subclass: '',
+        castingAbility: 'INT',
+        availableLists: ['WIZARD'],
+        preparationLimits: [{ list: 'WIZARD', limit: 1, maxSpellLevel: 9 }],
+        preparedSpells: [{ spellId: 'mage-armor', assignedList: 'WIZARD', mode: 'always' }],
+        nextPreparationQueue: [],
+        savedIdeas: [],
+        updatedAt: new Date().toISOString(),
+      } as any,
+      spellsById: new Map(spells.map((spell) => [spell.id, spell])),
+      queue: [{ spellId: 'shield', intent: 'add', assignedList: 'WIZARD' } as any],
+    });
+
+    expect(output.finalPreparedSpells).toEqual([
+      { spellId: 'mage-armor', assignedList: 'WIZARD', mode: 'always' },
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
     ]);
   });
 });

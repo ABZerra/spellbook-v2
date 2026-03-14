@@ -32,11 +32,13 @@ export interface SavedIdea {
 export interface PreparationLimit {
   list: string;
   limit: number;
+  maxSpellLevel: number;
 }
 
 export interface PreparedSpellEntry {
   spellId: string;
   assignedList: string;
+  mode: 'normal' | 'always';
 }
 
 export type QueueIntent = 'add' | 'replace' | 'queue_only';

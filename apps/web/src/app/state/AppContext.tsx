@@ -1,12 +1,16 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
+  assertSpellCanBeAddedToList,
+  getAddableAssignmentLists,
   getValidAssignmentLists,
   isSpellEligibleForCharacter,
   normalizeCharacterProfile,
+  removePreparedSpellEntryAtOccurrence,
+  reassignPreparedSpellEntryAtOccurrence,
 } from '../domain/character';
 import { computeApplyResult } from '../domain/prepareQueue';
 import { buildSpellSyncPayloadV3, publishSpellSyncPayloadV3, waitForSpellSyncPayloadAck } from '../services/extensionSyncV3';
-import type { CharacterProfile, CharacterProfileInput, QueueIntent, SpellRecord, SpellSyncPayloadV3 } from '../types';
+import type { CharacterProfile, CharacterProfileInput, PreparedSpellEntry, QueueIntent, SpellRecord, SpellSyncPayloadV3 } from '../types';
 import { LocalSnapshotProvider } from '../providers/localSnapshotProvider';
 import type { SpellCatalogProvider } from '../providers/provider';
 
@@ -43,6 +47,9 @@ interface AppContextValue {
   queueSpellForNextPreparation: (spellId: string) => Promise<void>;
   unqueueSpellForNextPreparation: (spellId: string) => Promise<void>;
   isSpellQueuedForNextPreparation: (spellId: string) => boolean;
+  addPreparedSpell: (spellId: string, assignedList: string, mode: PreparedSpellEntry['mode']) => Promise<void>;
+  removePreparedSpell: (spellId: string, assignedList: string, mode: PreparedSpellEntry['mode'], occurrenceIndex: number) => Promise<void>;
+  reassignPreparedSpell: (spellId: string, currentAssignedList: string, mode: PreparedSpellEntry['mode'], occurrenceIndex: number, nextAssignedList: string) => Promise<void>;
   setQueuedSpellIntent: (spellId: string, intent: QueueIntent) => Promise<void>;
   setQueuedSpellAssignedList: (spellId: string, assignedList: string | null) => Promise<void>;
   setQueuedSpellReplaceTarget: (spellId: string, replaceTarget: string | null) => Promise<void>;
@@ -181,7 +188,10 @@ export function AppProvider({ children, provider }: AppProviderProps) {
         throw new Error(`${spell.name} is outside ${character.name}'s available spell lists.`);
       }
 
-      const validLists = getValidAssignmentLists(spell, character);
+      const validLists = getAddableAssignmentLists(spell, character);
+      if (validLists.length === 0) {
+        throw new Error(`${spell.name} exceeds this character's available max spell levels.`);
+      }
       const alreadyQueued = character.nextPreparationQueue.some((entry) => entry.spellId === spellId);
       const nextQueue = alreadyQueued
         ? character.nextPreparationQueue
@@ -209,12 +219,78 @@ export function AppProvider({ children, provider }: AppProviderProps) {
       nextPreparationQueue: character.nextPreparationQueue.filter((entry) => entry.spellId !== spellId),
       savedIdeas: character.savedIdeas.filter((entry) => entry.spellId !== spellId),
     }));
-  }, [mutateActiveCharacter]);
+  }, [mutateActiveCharacter, spellsById]);
 
   const isSpellQueuedForNextPreparation = useCallback((spellId: string) => {
     if (!activeCharacter) return false;
     return activeCharacter.nextPreparationQueue.some((entry) => entry.spellId === spellId);
   }, [activeCharacter]);
+
+  const addPreparedSpell = useCallback(async (
+    spellId: string,
+    assignedList: string,
+    mode: PreparedSpellEntry['mode'],
+  ) => {
+    await mutateActiveCharacter((character) => {
+      const spell = spellsById.get(spellId);
+      if (!spell) {
+        throw new Error(`Unknown spell: ${spellId}`);
+      }
+
+      assertSpellCanBeAddedToList(spell, character, assignedList);
+
+      return {
+        ...character,
+        preparedSpells: [...character.preparedSpells, { spellId, assignedList, mode }],
+      };
+    });
+  }, [mutateActiveCharacter, spellsById]);
+
+  const removePreparedSpell = useCallback(async (
+    spellId: string,
+    assignedList: string,
+    mode: PreparedSpellEntry['mode'],
+    occurrenceIndex: number,
+  ) => {
+    await mutateActiveCharacter((character) => ({
+      ...character,
+      preparedSpells: removePreparedSpellEntryAtOccurrence(
+        character.preparedSpells,
+        { spellId, assignedList, mode },
+        occurrenceIndex,
+      ),
+    }));
+  }, [mutateActiveCharacter]);
+
+  const reassignPreparedSpell = useCallback(async (
+    spellId: string,
+    currentAssignedList: string,
+    mode: PreparedSpellEntry['mode'],
+    occurrenceIndex: number,
+    nextAssignedList: string,
+  ) => {
+    await mutateActiveCharacter((character) => {
+      const spell = spellsById.get(spellId);
+      if (!spell) {
+        throw new Error(`Unknown spell: ${spellId}`);
+      }
+
+      const validLists = getValidAssignmentLists(spell, character);
+      if (!validLists.includes(nextAssignedList)) {
+        throw new Error(`${spell.name}: choose a valid spell list.`);
+      }
+
+      return {
+        ...character,
+        preparedSpells: reassignPreparedSpellEntryAtOccurrence(
+          character.preparedSpells,
+          { spellId, assignedList: currentAssignedList, mode },
+          occurrenceIndex,
+          nextAssignedList,
+        ),
+      };
+    });
+  }, [mutateActiveCharacter, spellsById]);
 
   const setQueuedSpellIntent = useCallback(async (spellId: string, intent: QueueIntent) => {
     await mutateActiveCharacter((character) => ({
@@ -228,14 +304,24 @@ export function AppProvider({ children, provider }: AppProviderProps) {
   }, [mutateActiveCharacter]);
 
   const setQueuedSpellAssignedList = useCallback(async (spellId: string, assignedList: string | null) => {
-    await mutateActiveCharacter((character) => ({
-      ...character,
-      nextPreparationQueue: character.nextPreparationQueue.map((entry) => (
-        entry.spellId === spellId
-          ? { ...entry, assignedList: assignedList || undefined, replaceTarget: undefined }
-          : entry
-      )),
-    }));
+    await mutateActiveCharacter((character) => {
+      const spell = spellsById.get(spellId);
+      if (!spell) {
+        throw new Error(`Unknown spell: ${spellId}`);
+      }
+      if (assignedList) {
+        assertSpellCanBeAddedToList(spell, character, assignedList);
+      }
+
+      return {
+        ...character,
+        nextPreparationQueue: character.nextPreparationQueue.map((entry) => (
+          entry.spellId === spellId
+            ? { ...entry, assignedList: assignedList || undefined, replaceTarget: undefined }
+            : entry
+        )),
+      };
+    });
   }, [mutateActiveCharacter]);
 
   const setQueuedSpellReplaceTarget = useCallback(async (spellId: string, replaceTarget: string | null) => {
@@ -252,7 +338,9 @@ export function AppProvider({ children, provider }: AppProviderProps) {
   const restoreQueueFromPrepared = useCallback(async () => {
     await mutateActiveCharacter((character) => ({
       ...character,
-      nextPreparationQueue: character.preparedSpells.map((entry) => ({
+      nextPreparationQueue: character.preparedSpells
+        .filter((entry) => entry.mode !== 'always')
+        .map((entry) => ({
         spellId: entry.spellId,
         intent: 'add' as const,
         assignedList: entry.assignedList,
@@ -312,6 +400,9 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     queueSpellForNextPreparation,
     unqueueSpellForNextPreparation,
     isSpellQueuedForNextPreparation,
+    addPreparedSpell,
+    removePreparedSpell,
+    reassignPreparedSpell,
     setQueuedSpellIntent,
     setQueuedSpellAssignedList,
     setQueuedSpellReplaceTarget,
@@ -331,6 +422,9 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     queueSpellForNextPreparation,
     unqueueSpellForNextPreparation,
     isSpellQueuedForNextPreparation,
+    addPreparedSpell,
+    removePreparedSpell,
+    reassignPreparedSpell,
     setQueuedSpellIntent,
     setQueuedSpellAssignedList,
     setQueuedSpellReplaceTarget,
