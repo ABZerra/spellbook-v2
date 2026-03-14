@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "sourceFile": "spells.dndbeyond.filtered.scraped.with-notes.csv",
-  "generatedAt": "2026-03-14T14:48:14.657Z",
+  "generatedAt": "2026-03-14T18:27:30.957Z",
   "spells": [
     {
       "id": "acid-splash",
@@ -31,6 +31,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1989-acid-splash"
     },
     {
@@ -63,6 +64,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2307-blade-ward"
     },
     {
@@ -100,6 +102,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2410-booming-blade"
     },
     {
@@ -131,6 +134,7 @@
         "Wizard (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2026-chill-touch"
     },
     {
@@ -164,6 +168,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2374-control-flames"
     },
     {
@@ -202,6 +207,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2373-create-bonfire"
     },
     {
@@ -234,6 +240,7 @@
         "Artificer (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2057-dancing-lights"
     },
     {
@@ -262,6 +269,7 @@
       "availableFor": [
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2080-druidcraft"
     },
     {
@@ -290,6 +298,7 @@
       "availableFor": [
         "Warlock (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2082-eldritch-blast"
     },
     {
@@ -320,6 +329,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/83532-encode-thoughts"
     },
     {
@@ -351,6 +361,7 @@
         "Artificer (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2103-fire-bolt"
     },
     {
@@ -384,6 +395,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2308-friends"
     },
     {
@@ -422,6 +434,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2382-frostbite"
     },
     {
@@ -458,6 +471,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2411-green-flame-blade"
     },
     {
@@ -488,6 +502,7 @@
         "Druid (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2132-guidance"
     },
     {
@@ -521,6 +536,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2383-gust"
     },
     {
@@ -558,6 +574,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14878-infestation"
     },
     {
@@ -591,6 +608,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2166-light"
     },
     {
@@ -628,6 +646,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2412-lightning-lure"
     },
     {
@@ -660,6 +679,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2173-mage-hand"
     },
     {
@@ -693,6 +713,7 @@
         "Warlock",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2391-magic-stone"
     },
     {
@@ -726,6 +747,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2187-mending"
     },
     {
@@ -759,6 +781,7 @@
         "Artificer (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2188-message"
     },
     {
@@ -792,6 +815,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/718568-mind-sliver"
     },
     {
@@ -824,6 +848,7 @@
         "Wizard (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2191-minor-illusion"
     },
     {
@@ -857,6 +882,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2394-mold-earth"
     },
     {
@@ -889,6 +915,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2208-poison-spray"
     },
     {
@@ -921,6 +948,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2213-prestidigitation"
     },
     {
@@ -950,6 +978,7 @@
         "Druid (Legacy)",
         "Druid"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14558-primal-savagery"
     },
     {
@@ -979,6 +1008,7 @@
       "availableFor": [
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2217-produce-flame"
     },
     {
@@ -1010,6 +1040,7 @@
         "Artificer (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2226-ray-of-frost"
     },
     {
@@ -1040,6 +1071,7 @@
         "Druid (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2231-resistance"
     },
     {
@@ -1068,6 +1100,7 @@
       "availableFor": [
         "Cleric (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2236-sacred-flame"
     },
     {
@@ -1101,6 +1134,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2397-shape-water"
     },
     {
@@ -1131,6 +1165,7 @@
         "Druid (Legacy)",
         "Druid (Legacy) - Circle of the Old Ways (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2249-shillelagh"
     },
     {
@@ -1162,6 +1197,7 @@
         "Artificer (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2250-shocking-grasp"
     },
     {
@@ -1191,6 +1227,7 @@
         "Cleric (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2257-spare-the-dying"
     },
     {
@@ -1228,6 +1265,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2413-sword-burst"
     },
     {
@@ -1257,6 +1295,7 @@
         "Cleric (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2277-thaumaturgy"
     },
     {
@@ -1287,6 +1326,7 @@
         "Druid (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2309-thorn-whip"
     },
     {
@@ -1323,6 +1363,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2401-thunderclap"
     },
     {
@@ -1354,6 +1395,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14615-toll-the-dead"
     },
     {
@@ -1386,6 +1428,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2286-true-seeing"
     },
     {
@@ -1417,6 +1460,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2287-true-strike"
     },
     {
@@ -1448,6 +1492,7 @@
         "Illrigger - Architect of Ruin",
         "Warlock (Legacy) - The Great Fool (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2290-vicious-mockery"
     },
     {
@@ -1476,6 +1521,7 @@
       "availableFor": [
         "Cleric (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14618-word-of-radiance"
     },
     {
@@ -1514,6 +1560,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2368-absorb-elements"
     },
     {
@@ -1545,6 +1592,7 @@
         "Artificer (Legacy)",
         "Paladin (Legacy) - Oath of the Watchers"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1991-alarm"
     },
     {
@@ -1578,6 +1626,7 @@
         "Cleric (Legacy) - Nature Domain (Legacy)",
         "Warlock (Legacy) - The Horned King (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1993-animal-friendship"
     },
     {
@@ -1609,6 +1658,7 @@
         "Warlock (Legacy)",
         "Paladin (Legacy) - Oath of Conquest"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2310-armor-of-agathys"
     },
     {
@@ -1638,6 +1688,7 @@
       "availableFor": [
         "Warlock (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2311-arms-of-hadar"
     },
     {
@@ -1677,6 +1728,7 @@
         "Ranger (Legacy) - Grim Harbinger (2014)",
         "Warlock (Legacy) - The Horned King (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2009-bane"
     },
     {
@@ -1709,6 +1761,7 @@
         "Druid",
         "Ranger"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2370-beast-bond"
     },
     {
@@ -1742,6 +1795,7 @@
         "Paladin (Legacy) - Oath of the River",
         "Druid (Legacy) - Circle of Wicker (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2016-bless"
     },
     {
@@ -1776,6 +1830,7 @@
         "Warlock (Legacy) - The Genie",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2021-burning-hands"
     },
     {
@@ -1810,6 +1865,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2372-catapult"
     },
     {
@@ -1841,6 +1897,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14758-cause-fear"
     },
     {
@@ -1873,6 +1930,7 @@
         "Cleric",
         "Paladin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14760-ceremony"
     },
     {
@@ -1902,6 +1960,7 @@
         "Sorcerer (Legacy)",
         "Sorcerer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14761-chaos-bolt"
     },
     {
@@ -1937,6 +1996,7 @@
         "Cleric (Legacy) - Trickery Domain (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2025-charm-person"
     },
     {
@@ -1966,6 +2026,7 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2312-chromatic-orb"
     },
     {
@@ -1995,6 +2056,9 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)",
         "Illrigger - Architect of Ruin"
+      ],
+      "additionalSpellLists": [
+        "BARD"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2031-color-spray"
     },
@@ -2032,6 +2096,9 @@
         "Warlock (Legacy) - The Fiend (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [
+        "BARD"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2032-command"
     },
     {
@@ -2063,6 +2130,7 @@
         "Paladin (Legacy)",
         "Paladin (Legacy) - Oath of the Crown"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2313-compelled-duel"
     },
     {
@@ -2094,6 +2162,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2035-comprehend-languages"
     },
     {
@@ -2125,6 +2194,7 @@
         "Paladin (Legacy) - Oath of the Open Sea",
         "Warlock (Legacy) - The Fathomless"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2053-create-or-destroy-water"
     },
     {
@@ -2162,6 +2232,7 @@
         "Warlock (Legacy) - The Celestial (Legacy)",
         "Sorcerer (Legacy) - Crimson Dynasty (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2056-cure-wounds"
     },
     {
@@ -2193,6 +2264,7 @@
         "Paladin (Legacy) - Oath of Zeal (Legacy)",
         "Warlock (Legacy) - The Genie"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2064-detect-evil-and-good"
     },
     {
@@ -2232,6 +2304,7 @@
         "Paladin (Legacy) - Oath of the Watchers",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2065-detect-magic"
     },
     {
@@ -2264,6 +2337,7 @@
         "Ranger (Legacy)",
         "Warlock (Legacy) - Mother of Sorrows"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2066-detect-poison-and-disease"
     },
     {
@@ -2298,6 +2372,7 @@
         "Illrigger - Architect of Ruin",
         "Warlock (Legacy) - The Great Fool (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2069-disguise-self"
     },
     {
@@ -2328,6 +2403,7 @@
         "Bard (Legacy)",
         "Warlock (Legacy) - The Great Old One (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2314-dissonant-whispers"
     },
     {
@@ -2361,6 +2437,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/188092-distort-value"
     },
     {
@@ -2391,6 +2468,7 @@
         "Cleric (Legacy) - War Domain (Legacy)",
         "Paladin (Legacy) - Oath of Castigation (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2074-divine-favor"
     },
     {
@@ -2427,6 +2505,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2378-earth-tremor"
     },
     {
@@ -2457,6 +2536,7 @@
         "Ranger (Legacy)",
         "Paladin (Legacy) - Oath of the Ancients (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2315-ensnaring-strike"
     },
     {
@@ -2485,6 +2565,9 @@
       "availableFor": [
         "Druid (Legacy)",
         "Warlock (Legacy) - The Many"
+      ],
+      "additionalSpellLists": [
+        "RANGER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2085-entangle"
     },
@@ -2518,6 +2601,7 @@
         "Artificer (Legacy)",
         "Paladin (Legacy) - Oath of the Open Sea"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2088-expeditious-retreat"
     },
     {
@@ -2553,6 +2637,7 @@
         "Warlock (Legacy) - The Archfey (Legacy)",
         "Warlock (Legacy) - The Lantern"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2091-faerie-fire"
     },
     {
@@ -2590,6 +2675,7 @@
         "Warlock (Legacy) - The Undying",
         "Warlock (Legacy) - The Undead"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2093-false-life"
     },
     {
@@ -2622,6 +2708,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2095-feather-fall"
     },
     {
@@ -2650,6 +2737,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2097-find-familiar"
     },
     {
@@ -2679,6 +2767,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2110-floating-disk"
     },
     {
@@ -2713,6 +2802,7 @@
         "Cleric (Legacy) - Tempest Domain (Legacy)",
         "Warlock (Legacy) - The Genie"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2112-fog-cloud"
     },
     {
@@ -2742,6 +2832,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/654074-frost-fingers"
     },
     {
@@ -2773,6 +2864,7 @@
         "Cleric (Legacy) - Community Domain",
         "Cleric (Legacy) - Festus Domain"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2126-goodberry"
     },
     {
@@ -2801,6 +2893,9 @@
       "availableFor": [
         "Wizard (Legacy)",
         "Artificer (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "SORCERER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2127-grease"
     },
@@ -2833,6 +2928,7 @@
         "Paladin (Legacy) - Oath of Glory (Legacy)",
         "Warlock (Legacy) - The Celestial (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2133-guiding-bolt"
     },
     {
@@ -2861,6 +2957,7 @@
       "availableFor": [
         "Ranger (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2316-hail-of-thorns"
     },
     {
@@ -2892,6 +2989,7 @@
         "Druid (Legacy)",
         "Artificer (Legacy) - Alchemist (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2140-healing-word"
     },
     {
@@ -2922,6 +3020,7 @@
         "Paladin (Legacy) - Oathbreaker",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2142-hellish-rebuke"
     },
     {
@@ -2956,6 +3055,7 @@
         "Paladin (Legacy) - Oath of the Harvest",
         "Artificer (Legacy) - Battle Smith (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2144-heroism"
     },
     {
@@ -2985,6 +3085,7 @@
       "availableFor": [
         "Warlock (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2317-hex"
     },
     {
@@ -3017,6 +3118,7 @@
         "Warlock (Legacy) - The Great Old One (Legacy)",
         "Warlock (Legacy) - The Great Fool (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2145-hideous-laughter"
     },
     {
@@ -3050,6 +3152,7 @@
         "Paladin (Legacy) - Oath of Zeal (Legacy)",
         "Warlock (Legacy) - The Predator"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2149-hunters-mark"
     },
     {
@@ -3083,6 +3186,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2384-ice-knife"
     },
     {
@@ -3117,6 +3221,7 @@
         "Cleric (Legacy) - Inquisition Domain (Legacy)",
         "Warlock (Legacy) - The Lantern"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2152-identify"
     },
     {
@@ -3147,6 +3252,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2153-illusory-script"
     },
     {
@@ -3179,6 +3285,7 @@
         "Paladin (Legacy) - Oath of Castigation (2014)",
         "Sorcerer (Legacy) - Crimson Dynasty (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2156-inflict-wounds"
     },
     {
@@ -3208,6 +3315,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/188129-jims-magic-missile"
     },
     {
@@ -3241,6 +3349,7 @@
         "Artificer (Legacy)",
         "Warlock (Legacy) - The Predator"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2161-jump"
     },
     {
@@ -3274,6 +3383,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2171-longstrider"
     },
     {
@@ -3304,6 +3414,7 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2172-mage-armor"
     },
     {
@@ -3336,6 +3447,7 @@
         "Warlock (Legacy) - The Many",
         "Artificer (Legacy) - Armorer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2176-magic-missile"
     },
     {
@@ -3370,6 +3482,9 @@
         "Wizard (Legacy)",
         "Paladin (Legacy) - Oath of Devotion (Legacy)"
       ],
+      "additionalSpellLists": [
+        "DRUID"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2221-protection-from-evil-and-good"
     },
     {
@@ -3403,6 +3518,7 @@
         "Cleric (Legacy) - Festus Domain",
         "Paladin (Legacy) - Oath of the Harvest"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2223-purify-food-and-drink"
     },
     {
@@ -3436,6 +3552,7 @@
         "Warlock (Legacy) - The Undying",
         "Artificer (Legacy) - Alchemist (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2318-ray-of-sickness"
     },
     {
@@ -3470,6 +3587,7 @@
         "Paladin (Legacy) - Oath of Redemption",
         "Warlock (Legacy) - The Genie"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2237-sanctuary"
     },
     {
@@ -3498,6 +3616,9 @@
       "availableFor": [
         "Paladin (Legacy)",
         "Cleric (Legacy) - Forge Domain"
+      ],
+      "additionalSpellLists": [
+        "RANGER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2319-searing-smite"
     },
@@ -3532,6 +3653,7 @@
         "Artificer (Legacy) - Battle Smith (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2247-shield"
     },
     {
@@ -3565,6 +3687,7 @@
         "Illrigger - Architect of Ruin",
         "Druid (Legacy) - Circle of the Old Ways (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2248-shield-of-faith"
     },
     {
@@ -3597,6 +3720,7 @@
         "Cleric (Legacy) - Moon Domain",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2252-silent-image"
     },
     {
@@ -3631,6 +3755,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1239804-silvery-barbs"
     },
     {
@@ -3666,6 +3791,7 @@
         "Paladin (Legacy) - Oath of Redemption",
         "Warlock (Legacy) - The Archfey (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2254-sleep"
     },
     {
@@ -3701,6 +3827,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14600-snare"
     },
     {
@@ -3734,6 +3861,7 @@
         "Cleric (Legacy) - Nature Domain (Legacy)",
         "Paladin (Legacy) - Oath of the Ancients (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2258-speak-with-animals"
     },
     {
@@ -3765,6 +3893,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/719953-tashas-caustic-brew"
     },
     {
@@ -3796,6 +3925,7 @@
         "Wizard (Legacy)",
         "Warlock (Legacy) - The Great Old One (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2320-tashas-hideous-laughter"
     },
     {
@@ -3825,6 +3955,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2321-tensers-floating-disk"
     },
     {
@@ -3854,6 +3985,7 @@
       "availableFor": [
         "Paladin (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2322-thunderous-smite"
     },
     {
@@ -3891,6 +4023,7 @@
         "Artificer (Legacy) - Artillerist (Legacy)",
         "Artificer (Legacy) - Armorer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2278-thunderwave"
     },
     {
@@ -3921,6 +4054,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2288-unseen-servant"
     },
     {
@@ -3951,6 +4085,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2323-witch-bolt"
     },
     {
@@ -3981,6 +4116,7 @@
         "Paladin (Legacy)",
         "Warlock (Legacy) - The Hexblade"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2324-wrathful-smite"
     },
     {
@@ -4012,6 +4148,7 @@
         "Ranger (Legacy)",
         "Ranger"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14622-zephyr-strike"
     },
     {
@@ -4041,6 +4178,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy) - Alchemist (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1988-acid-arrow"
     },
     {
@@ -4072,6 +4210,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2369-aganazzars-scorcher"
     },
     {
@@ -4104,6 +4243,10 @@
         "Cleric (Legacy) - Peace Domain",
         "Cleric (Legacy) - Community Domain",
         "Sorcerer (Legacy) - Crimson Dynasty (2014)"
+      ],
+      "additionalSpellLists": [
+        "BARD",
+        "RANGER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/1990-aid"
     },
@@ -4142,6 +4285,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1585025-air-bubble"
     },
     {
@@ -4173,6 +4317,7 @@
         "Artificer (Legacy)",
         "Warlock (Legacy) - The Predator"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1992-alter-self"
     },
     {
@@ -4204,6 +4349,7 @@
         "Druid (Legacy)",
         "Ranger (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1994-animal-messenger"
     },
     {
@@ -4234,6 +4380,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2003-arcane-lock"
     },
     {
@@ -4266,6 +4413,7 @@
         "Illrigger - Architect of Ruin",
         "Paladin - Oath of the Spelldrinker"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2005-arcanists-magic-aura"
     },
     {
@@ -4296,6 +4444,10 @@
         "Cleric (Legacy) - Knowledge Domain (Legacy)",
         "Paladin (Legacy) - Oath of the Open Sea",
         "Illrigger - Architect of Ruin"
+      ],
+      "additionalSpellLists": [
+        "DRUID",
+        "WIZARD"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2007-augury"
     },
@@ -4329,6 +4481,7 @@
         "Cleric (Legacy) - Nature Domain (Legacy)",
         "Druid (Legacy) - Circle of the Old Ways (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2011-barkskin"
     },
     {
@@ -4358,6 +4511,7 @@
         "Druid (Legacy)",
         "Ranger (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2325-beast-sense"
     },
     {
@@ -4396,6 +4550,7 @@
         "Warlock (Legacy) - The Undead",
         "Warlock (Legacy) - The Horned King (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2018-blindness-deafness"
     },
     {
@@ -4431,6 +4586,7 @@
         "Warlock (Legacy) - The Genie",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2020-blur"
     },
     {
@@ -4466,6 +4622,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1239802-borrowed-knowledge"
     },
     {
@@ -4498,6 +4655,7 @@
         "Artificer (Legacy) - Battle Smith (Legacy)",
         "Warlock - The Hexblade (XGtE)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2326-branding-smite"
     },
     {
@@ -4530,6 +4688,7 @@
         "Paladin (Legacy) - Oath of Redemption",
         "Warlock (Legacy) - The Archfey (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2023-calm-emotions"
     },
     {
@@ -4561,6 +4720,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2327-cloud-of-daggers"
     },
     {
@@ -4591,6 +4751,9 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [
+        "DRUID"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2048-continual-flame"
     },
     {
@@ -4620,6 +4783,7 @@
       "availableFor": [
         "Ranger (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2328-cordon-of-arrows"
     },
     {
@@ -4653,6 +4817,7 @@
         "Wizard (Legacy)",
         "Paladin (Legacy) - Oathbreaker"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2329-crown-of-madness"
     },
     {
@@ -4688,6 +4853,7 @@
         "Paladin (Legacy) - Oathbreaker",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2058-darkness"
     },
     {
@@ -4721,6 +4887,7 @@
         "Artificer (Legacy)",
         "Druid (Legacy) - Circle of Shadows"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2059-darkvision"
     },
     {
@@ -4755,6 +4922,7 @@
         "Warlock (Legacy) - The Great Old One (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2067-detect-thoughts"
     },
     {
@@ -4787,6 +4955,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14832-dragons-breath"
     },
     {
@@ -4821,6 +4990,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2376-dust-devil"
     },
     {
@@ -4857,6 +5027,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2377-earthbind"
     },
     {
@@ -4890,6 +5061,10 @@
         "Artificer (Legacy)",
         "Paladin (Legacy) - Oath of Glory (Legacy)"
       ],
+      "additionalSpellLists": [
+        "RANGER",
+        "WIZARD"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2083-enhance-ability"
     },
     {
@@ -4919,6 +5094,10 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)",
         "Artificer (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "BARD",
+        "DRUID"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2084-enlarge-reduce"
     },
@@ -4950,6 +5129,7 @@
         "Warlock (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2086-enthrall"
     },
     {
@@ -4980,6 +5160,7 @@
         "Paladin (Legacy) - Oath of the River",
         "Rogue - Highway Rider"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2098-find-steed"
     },
     {
@@ -5010,6 +5191,7 @@
         "Druid (Legacy)",
         "Ranger (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2100-find-traps"
     },
     {
@@ -5037,6 +5219,9 @@
       ],
       "availableFor": [
         "Druid (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "SORCERER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2106-flame-blade"
     },
@@ -5071,6 +5256,9 @@
         "Warlock (Legacy) - The Celestial (Legacy)",
         "Artificer (Legacy) - Alchemist (Legacy)"
       ],
+      "additionalSpellLists": [
+        "SORCERER"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2108-flaming-sphere"
     },
     {
@@ -5102,6 +5290,9 @@
         "Cleric (Legacy) - Grave Domain",
         "Druid (Legacy) - Circle of Spores"
       ],
+      "additionalSpellLists": [
+        "PALADIN"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2121-gentle-repose"
     },
     {
@@ -5131,6 +5322,7 @@
         "Bard",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/188118-gift-of-gab"
     },
     {
@@ -5164,6 +5356,9 @@
         "Warlock (Legacy) - The Genie",
         "Warlock (Legacy) - The Fathomless"
       ],
+      "additionalSpellLists": [
+        "RANGER"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2134-gust-of-wind"
     },
     {
@@ -5196,6 +5391,7 @@
         "Druid",
         "Ranger"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14873-healing-spirit"
     },
     {
@@ -5231,6 +5427,7 @@
         "Paladin (Legacy) - Oath of the Spelldrinker",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2141-heat-metal"
     },
     {
@@ -5272,6 +5469,7 @@
         "Paladin (Legacy) - Oath of Castigation (2014)",
         "Ranger (Legacy) - Grim Harbinger (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2147-hold-person"
     },
     {
@@ -5306,6 +5504,7 @@
         "Cleric (Legacy) - Moon Domain",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2159-invisibility"
     },
     {
@@ -5333,6 +5532,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/188126-jims-glowing-coin"
     },
     {
@@ -5368,6 +5568,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1239803-kinetic-jaunt"
     },
     {
@@ -5399,6 +5600,7 @@
         "Wizard (Legacy)",
         "Paladin (Legacy) - Oath of Zeal (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2162-knock"
     },
     {
@@ -5437,6 +5639,7 @@
         "Warlock (Legacy) - The Celestial (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2164-lesser-restoration"
     },
     {
@@ -5467,6 +5670,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2165-levitate"
     },
     {
@@ -5497,6 +5701,7 @@
         "Druid (Legacy)",
         "Ranger (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2168-locate-animals-or-plants"
     },
     {
@@ -5531,6 +5736,7 @@
         "Wizard (Legacy)",
         "Warlock (Legacy) - The Lantern"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2170-locate-object"
     },
     {
@@ -5561,6 +5767,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2177-magic-mouth"
     },
     {
@@ -5595,6 +5802,10 @@
         "Cleric (Legacy) - Forge Domain",
         "Paladin (Legacy) - Oath of Glory (Legacy)"
       ],
+      "additionalSpellLists": [
+        "RANGER",
+        "SORCERER"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2178-magic-weapon"
     },
     {
@@ -5627,6 +5838,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2392-maximilians-earthen-grasp"
     },
     {
@@ -5656,6 +5868,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy) - Alchemist (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2330-melfs-acid-arrow"
     },
     {
@@ -5689,6 +5902,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14482-mind-spike"
     },
     {
@@ -5723,6 +5937,9 @@
         "Artificer (Legacy) - Armorer (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [
+        "BARD"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2193-mirror-image"
     },
     {
@@ -5756,6 +5973,7 @@
         "Paladin (Legacy) - Oath of Vengeance (Legacy)",
         "Paladin (Legacy) - Oath of the Open Sea"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2195-misty-step"
     },
     {
@@ -5790,6 +6008,7 @@
         "Paladin (Legacy) - Oath of the Ancients (Legacy)",
         "Paladin (Legacy) - Oath of the Watchers"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2197-moonbeam"
     },
     {
@@ -5821,6 +6040,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1183865-nathairs-mischief"
     },
     {
@@ -5850,6 +6070,7 @@
         "Wizard (Legacy)",
         "Cleric (Legacy) - Arcana Domain"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2331-nystuls-magic-aura"
     },
     {
@@ -5881,6 +6102,7 @@
         "Ranger (Legacy)",
         "Cleric (Legacy) - Trickery Domain (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2201-pass-without-trace"
     },
     {
@@ -5917,6 +6139,7 @@
         "Warlock (Legacy) - The Genie",
         "Warlock (Legacy) - The Undead"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2332-phantasmal-force"
     },
     {
@@ -5945,6 +6168,9 @@
       "availableFor": [
         "Cleric (Legacy)",
         "Paladin (Legacy) - Oath of the Harvest"
+      ],
+      "additionalSpellLists": [
+        "PALADIN"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2212-prayer-of-healing"
     },
@@ -5980,6 +6206,7 @@
         "Artificer (Legacy)",
         "Cleric (Legacy) - Festus Domain"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2222-protection-from-poison"
     },
     {
@@ -6016,6 +6243,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2396-pyrotechnics"
     },
     {
@@ -6049,6 +6277,7 @@
         "Cleric (Legacy) - Blood Domain",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2225-ray-of-enfeeblement"
     },
     {
@@ -6078,6 +6307,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1183867-rimes-binding-ice"
     },
     {
@@ -6108,6 +6338,7 @@
         "Artificer (Legacy)",
         "Warlock (Legacy) - The Great Fool (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2235-rope-trick"
     },
     {
@@ -6144,6 +6375,7 @@
         "Artificer (Legacy) - Artillerist (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2238-scorching-ray"
     },
     {
@@ -6179,6 +6411,7 @@
         "Paladin (Legacy) - Oath of the Watchers",
         "Warlock (Legacy) - The Many"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2242-see-invisibility"
     },
     {
@@ -6214,6 +6447,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14595-shadow-blade"
     },
     {
@@ -6248,6 +6482,7 @@
         "Artificer (Legacy) - Artillerist (Legacy)",
         "Artificer (Legacy) - Armorer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2246-shatter"
     },
     {
@@ -6283,6 +6518,7 @@
         "Warlock (Legacy) - Mother of Sorrows",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2251-silence"
     },
     {
@@ -6319,6 +6555,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2398-skywrite"
     },
     {
@@ -6350,6 +6587,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2399-snillocs-snowball-swarm"
     },
     {
@@ -6382,6 +6620,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2261-spider-climb"
     },
     {
@@ -6416,6 +6655,7 @@
         "Druid (Legacy) - Circle of the Old Ways (2014)",
         "Warlock (Legacy) - The Horned King (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2262-spike-growth"
     },
     {
@@ -6448,6 +6688,7 @@
         "Paladin (Legacy) - Oath of Conquest",
         "Warlock (Legacy) - The Great Fool (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2263-spiritual-weapon"
     },
     {
@@ -6484,6 +6725,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2158658-spray-of-cards"
     },
     {
@@ -6518,6 +6760,7 @@
         "Cleric (Legacy) - Knowledge Domain (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2269-suggestion"
     },
     {
@@ -6549,6 +6792,7 @@
         "Druid",
         "Ranger"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/721187-summon-beast"
     },
     {
@@ -6578,6 +6822,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/719959-tashas-mind-whip"
     },
     {
@@ -6611,6 +6856,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1239805-vortex-warp"
     },
     {
@@ -6644,6 +6890,9 @@
         "Paladin (Legacy) - Oath of the Crown",
         "Paladin (Legacy) - Oath of the Harvest",
         "Artificer (Legacy) - Battle Smith (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "PALADIN"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2296-warding-bond"
     },
@@ -6682,6 +6931,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2407-warding-wind"
     },
     {
@@ -6716,6 +6966,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2119579-warp-sense"
     },
     {
@@ -6747,6 +6998,7 @@
         "Artificer (Legacy)",
         "Druid (Legacy) - Circle of the Hive"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2299-web"
     },
     {
@@ -6778,6 +7030,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1239806-wither-and-bloom"
     },
     {
@@ -6812,6 +7065,7 @@
         "Paladin (Legacy) - Oath of the Crown",
         "Druid (Legacy) - Circle of Wicker (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2305-zone-of-truth"
     },
     {
@@ -6844,6 +7098,7 @@
         "Druid (Legacy) - Circle of Spores",
         "Paladin (Legacy) - Oathbreaker"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1996-animate-dead"
     },
     {
@@ -6880,6 +7135,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2158656-antagonize"
     },
     {
@@ -6913,6 +7169,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1183862-ashardalons-stride"
     },
     {
@@ -6943,6 +7200,10 @@
         "Cleric (Legacy) - Twilight Domain",
         "Paladin (Legacy) - Oath of the Crown",
         "Artificer (Legacy) - Battle Smith (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "CLERIC",
+        "DRUID"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2333-aura-of-vitality"
     },
@@ -6978,6 +7239,7 @@
         "Paladin (Legacy) - Oath of Devotion (Legacy)",
         "Paladin (Legacy) - Oath of the Harvest"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2012-beacon-of-hope"
     },
     {
@@ -7013,6 +7275,7 @@
         "Druid (Legacy) - Circle of Wicker (2014)",
         "Warlock (Legacy) - The Horned King (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2013-bestow-curse"
     },
     {
@@ -7042,6 +7305,7 @@
       "availableFor": [
         "Paladin (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2334-blinding-smite"
     },
     {
@@ -7080,6 +7344,7 @@
         "Warlock (Legacy) - The Predator",
         "Warlock (Legacy) - The Great Fool (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2019-blink"
     },
     {
@@ -7110,6 +7375,7 @@
         "Cleric (Legacy) - Tempest Domain (Legacy)",
         "Paladin (Legacy) - Oath of the Open Sea"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2022-call-lightning"
     },
     {
@@ -7146,6 +7412,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14754-catnap"
     },
     {
@@ -7180,6 +7447,7 @@
         "Wizard (Legacy)",
         "Warlock (Legacy) - The Great Old One (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2028-clairvoyance"
     },
     {
@@ -7209,6 +7477,7 @@
         "Druid (Legacy)",
         "Ranger (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2039-conjure-animals"
     },
     {
@@ -7238,6 +7507,7 @@
         "Ranger (Legacy)",
         "Artificer (Legacy) - Battle Smith (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2335-conjure-barrage"
     },
     {
@@ -7271,6 +7541,7 @@
         "Paladin (Legacy) - Oath of the Watchers",
         "Paladin (Legacy) - Oath of Castigation (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2051-counterspell"
     },
     {
@@ -7304,6 +7575,7 @@
         "Paladin (Legacy) - Oath of the Harvest",
         "Warlock (Legacy) - The Genie"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2052-create-food-and-water"
     },
     {
@@ -7334,6 +7606,7 @@
         "Paladin (Legacy)",
         "Cleric (Legacy) - War Domain (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2336-crusaders-mantle"
     },
     {
@@ -7369,6 +7642,7 @@
         "Warlock (Legacy) - The Celestial (Legacy)",
         "Warlock (Legacy) - The Lantern"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2060-daylight"
     },
     {
@@ -7410,6 +7684,7 @@
         "Paladin (Legacy) - Oath of the Spelldrinker",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2072-dispel-magic"
     },
     {
@@ -7441,6 +7716,10 @@
         "Artificer (Legacy)",
         "Cleric (Legacy) - Forge Domain",
         "Warlock (Legacy) - The Hexblade"
+      ],
+      "additionalSpellLists": [
+        "DRUID",
+        "RANGER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2337-elemental-weapon"
     },
@@ -7478,6 +7757,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14836-enemies-abound"
     },
     {
@@ -7512,6 +7792,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2380-erupting-earth"
     },
     {
@@ -7545,6 +7826,7 @@
         "Cleric",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/188104-fast-friends"
     },
     {
@@ -7583,6 +7865,7 @@
         "Illrigger - Architect of Ruin",
         "Ranger (Legacy) - Grim Harbinger (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2094-fear"
     },
     {
@@ -7617,6 +7900,7 @@
         "Wizard (Legacy)",
         "Warlock (Legacy) - The Undying"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2338-feign-death"
     },
     {
@@ -7650,6 +7934,7 @@
         "Warlock (Legacy) - The Genie",
         "Artificer (Legacy) - Artillerist (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2102-fireball"
     },
     {
@@ -7688,6 +7973,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2381-flame-arrows"
     },
     {
@@ -7721,6 +8007,7 @@
         "Druid (Legacy) - Circle of the Hive",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2111-fly"
     },
     {
@@ -7754,6 +8041,7 @@
         "Druid (Legacy) - Circle of Spores",
         "Artificer (Legacy) - Alchemist (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2118-gaseous-form"
     },
     {
@@ -7787,6 +8075,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2125-glyph-of-warding"
     },
     {
@@ -7821,6 +8110,7 @@
         "Paladin (Legacy) - Oath of Glory (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2138-haste"
     },
     {
@@ -7850,6 +8140,7 @@
       "availableFor": [
         "Warlock (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2339-hunger-of-hadar"
     },
     {
@@ -7885,6 +8176,7 @@
         "Paladin (Legacy) - Oath of Redemption",
         "Artificer (Legacy) - Armorer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2150-hypnotic-pattern"
     },
     {
@@ -7920,6 +8212,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/188121-incite-greed"
     },
     {
@@ -7957,6 +8250,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/718549-intellect-fortress"
     },
     {
@@ -7987,6 +8281,7 @@
         "Wizard (Legacy)",
         "Cleric (Legacy) - Twilight Domain"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2340-leomunds-tiny-hut"
     },
     {
@@ -8018,6 +8313,7 @@
         "Cleric",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14880-life-transference"
     },
     {
@@ -8046,6 +8342,7 @@
       "availableFor": [
         "Ranger (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2341-lightning-arrow"
     },
     {
@@ -8077,6 +8374,7 @@
         "Warlock (Legacy) - The Fathomless",
         "Artificer (Legacy) - Armorer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2167-lightning-bolt"
     },
     {
@@ -8111,6 +8409,7 @@
         "Cleric (Legacy) - Arcana Domain",
         "Druid (Legacy) - Circle of the Old Ways (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2174-magic-circle"
     },
     {
@@ -8144,6 +8443,7 @@
         "Cleric (Legacy) - Moon Domain",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2180-major-image"
     },
     {
@@ -8174,6 +8474,9 @@
         "Cleric (Legacy) - Order Domain",
         "Artificer (Legacy) - Alchemist (Legacy)"
       ],
+      "additionalSpellLists": [
+        "BARD"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2183-mass-healing-word"
     },
     {
@@ -8203,6 +8506,9 @@
         "Cleric (Legacy)",
         "Druid (Legacy)",
         "Warlock (Legacy) - The Genie"
+      ],
+      "additionalSpellLists": [
+        "RANGER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2186-meld-into-stone"
     },
@@ -8235,6 +8541,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2393-melfs-minute-meteors"
     },
     {
@@ -8266,6 +8573,7 @@
         "Bard",
         "Cleric"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/188142-motivational-speech"
     },
     {
@@ -8302,6 +8610,7 @@
         "Warlock (Legacy) - The Lantern",
         "Warlock (Legacy) - The Horned King (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2199-nondetection"
     },
     {
@@ -8332,6 +8641,7 @@
         "Warlock (Legacy) - The Undead",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2203-phantom-steed"
     },
     {
@@ -8367,6 +8677,7 @@
         "Warlock (Legacy) - The Archfey (Legacy)",
         "Druid (Legacy) - Circle of the Old Ways (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2207-plant-growth"
     },
     {
@@ -8405,6 +8716,7 @@
         "Paladin (Legacy) - Oath of Vengeance (Legacy)",
         "Paladin (Legacy) - Oath of Glory (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2220-protection-from-energy"
     },
     {
@@ -8438,6 +8750,7 @@
         "Cleric (Legacy) - Inquisition Domain (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2229-remove-curse"
     },
     {
@@ -8473,6 +8786,10 @@
         "Warlock (Legacy) - The Celestial (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [
+        "DRUID",
+        "RANGER"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2234-revivify"
     },
     {
@@ -8505,6 +8822,7 @@
         "Cleric (Legacy) - Peace Domain",
         "Warlock (Legacy) - The Great Old One (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2243-sending"
     },
     {
@@ -8538,6 +8856,7 @@
         "Warlock (Legacy) - The Genie",
         "Warlock (Legacy) - The Fathomless"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2255-sleet-storm"
     },
     {
@@ -8573,6 +8892,9 @@
         "Warlock (Legacy) - The Predator",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [
+        "BARD"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2256-slow"
     },
     {
@@ -8607,6 +8929,9 @@
         "Warlock (Legacy) - The Undead",
         "Paladin (Legacy) - Oath of Castigation (2014)"
       ],
+      "additionalSpellLists": [
+        "WIZARD"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2259-speak-with-dead"
     },
     {
@@ -8638,6 +8963,7 @@
         "Druid (Legacy)",
         "Ranger (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2260-speak-with-plants"
     },
     {
@@ -8671,6 +8997,7 @@
         "Cleric (Legacy) - Keeper Domain",
         "Paladin (Legacy) - Oath of the Crown"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2264-spirit-guardians"
     },
     {
@@ -8707,6 +9034,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/718581-spirit-shroud"
     },
     {
@@ -8741,6 +9069,7 @@
         "Warlock (Legacy) - Mother of Sorrows",
         "Warlock (Legacy) - The Great Fool (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2265-stinking-cloud"
     },
     {
@@ -8775,6 +9104,7 @@
         "Ranger",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/721204-summon-fey"
     },
     {
@@ -8806,6 +9136,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14604-summon-lesser-demons"
     },
     {
@@ -8837,6 +9168,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/719948-summon-shadowspawn"
     },
     {
@@ -8867,6 +9199,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/719951-summon-undead"
     },
     {
@@ -8901,6 +9234,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14613-thunder-step"
     },
     {
@@ -8935,6 +9269,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2402-tidal-wave"
     },
     {
@@ -8965,6 +9300,7 @@
         "Wizard (Legacy)",
         "Druid (Legacy) - Circle of Wicker (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2280-tiny-hut"
     },
     {
@@ -8996,6 +9332,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14614-tiny-servant"
     },
     {
@@ -9030,6 +9367,7 @@
         "Wizard (Legacy)",
         "Paladin (Legacy) - Oath of Zeal (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2281-tongues"
     },
     {
@@ -9063,6 +9401,9 @@
         "Cleric (Legacy) - Grave Domain",
         "Sorcerer (Legacy) - Crimson Dynasty (2014)"
       ],
+      "additionalSpellLists": [
+        "SORCERER"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2289-vampiric-touch"
     },
     {
@@ -9093,6 +9434,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2405-wall-of-sand"
     },
     {
@@ -9127,6 +9469,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2406-wall-of-water"
     },
     {
@@ -9160,6 +9503,7 @@
         "Artificer (Legacy)",
         "Paladin (Legacy) - Oath of the River"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2297-water-breathing"
     },
     {
@@ -9193,6 +9537,7 @@
         "Artificer (Legacy)",
         "Paladin (Legacy) - Oath of the River"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2298-water-walk"
     },
     {
@@ -9226,6 +9571,7 @@
         "Warlock (Legacy) - The Genie",
         "Artificer (Legacy) - Artillerist (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2302-wind-wall"
     },
     {
@@ -9260,6 +9606,7 @@
         "Druid (Legacy) - Circle of the Hive",
         "Warlock (Legacy) - The Many"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2001-arcane-eye"
     },
     {
@@ -9292,6 +9639,9 @@
         "Druid (Legacy) - Circle of Wildfire",
         "Warlock (Legacy) - The Undying"
       ],
+      "additionalSpellLists": [
+        "CLERIC"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2342-aura-of-life"
     },
     {
@@ -9323,6 +9673,9 @@
         "Cleric (Legacy) - Peace Domain",
         "Paladin (Legacy) - Oath of the Watchers",
         "Artificer (Legacy) - Battle Smith (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "CLERIC"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2343-aura-of-purity"
     },
@@ -9362,6 +9715,7 @@
         "Paladin (Legacy) - Oath of the Watchers",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2010-banishment"
     },
     {
@@ -9396,6 +9750,7 @@
         "Warlock (Legacy) - The Many",
         "Warlock - The Many"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2014-black-tentacles"
     },
     {
@@ -9435,6 +9790,7 @@
         "Artificer (Legacy) - Alchemist (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2017-blight"
     },
     {
@@ -9470,6 +9826,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14763-charm-monster"
     },
     {
@@ -9501,6 +9858,7 @@
         "Paladin (Legacy) - Oath of Glory (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2036-compulsion"
     },
     {
@@ -9535,6 +9893,7 @@
         "Druid (Legacy) - Circle of Spores",
         "Paladin (Legacy) - Oathbreaker"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2038-confusion"
     },
     {
@@ -9564,6 +9923,7 @@
         "Druid (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2043-conjure-minor-elementals"
     },
     {
@@ -9593,6 +9953,7 @@
         "Druid (Legacy)",
         "Ranger (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2044-conjure-woodland-beings"
     },
     {
@@ -9629,6 +9990,7 @@
         "Warlock (Legacy) - The Genie",
         "Warlock (Legacy) - The Fathomless"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2049-control-water"
     },
     {
@@ -9670,6 +10032,7 @@
         "Druid (Legacy) - Circle of Wicker (2014)",
         "Sorcerer (Legacy) - Crimson Dynasty (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2061-death-ward"
     },
     {
@@ -9705,6 +10068,7 @@
         "Paladin (Legacy) - Oath of the Spelldrinker",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2068-dimension-door"
     },
     {
@@ -9734,6 +10098,10 @@
         "Cleric (Legacy)",
         "Cleric (Legacy) - Night Domain",
         "Paladin (Legacy) - Oath of Zeal (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "DRUID",
+        "WIZARD"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2073-divination"
     },
@@ -9769,6 +10137,9 @@
         "Warlock (Legacy) - The Great Old One (Legacy)",
         "Warlock (Legacy) - The Predator",
         "Illrigger - Architect of Ruin"
+      ],
+      "additionalSpellLists": [
+        "RANGER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2076-dominate-beast"
     },
@@ -9806,6 +10177,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2379-elemental-bane"
     },
     {
@@ -9837,6 +10209,7 @@
         "Warlock (Legacy) - The Great Old One (Legacy)",
         "Warlock (Legacy) - The Many"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2344-evards-black-tentacles"
     },
     {
@@ -9867,6 +10240,7 @@
         "Artificer (Legacy)",
         "Cleric (Legacy) - Forge Domain"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2090-fabricate"
     },
     {
@@ -9897,6 +10271,7 @@
         "Wizard (Legacy)",
         "Cleric (Legacy) - Community Domain"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2092-faithful-hound"
     },
     {
@@ -9926,6 +10301,7 @@
         "Paladin (Legacy)",
         "Paladin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14871-find-greater-steed"
     },
     {
@@ -9959,6 +10335,10 @@
         "Warlock (Legacy) - The Genie",
         "Artificer (Legacy) - Battle Smith (Legacy)",
         "Artificer (Legacy) - Armorer (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "DRUID",
+        "SORCERER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2104-fire-shield"
     },
@@ -10000,6 +10380,7 @@
         "Warlock (Legacy) - The Predator",
         "Druid (Legacy) - Circle of the Old Ways (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2116-freedom-of-movement"
     },
     {
@@ -10034,6 +10415,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2119578-gate-seal"
     },
     {
@@ -10063,6 +10445,7 @@
         "Druid (Legacy)",
         "Druid (Legacy) - Circle of the Hive"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2122-giant-insect"
     },
     {
@@ -10093,6 +10476,7 @@
         "Ranger (Legacy)",
         "Cleric (Legacy) - Nature Domain (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2345-grasping-vine"
     },
     {
@@ -10133,6 +10517,7 @@
         "Artificer (Legacy) - Armorer (Legacy)",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2128-greater-invisibility"
     },
     {
@@ -10169,6 +10554,7 @@
         "Warlock (Legacy) - The Celestial (Legacy)",
         "Warlock (Legacy) - The Lantern"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2130-guardian-of-faith"
     },
     {
@@ -10201,6 +10587,7 @@
         "Druid",
         "Ranger"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14872-guardian-of-nature"
     },
     {
@@ -10234,6 +10621,7 @@
         "Cleric (Legacy) - Moon Domain",
         "Illrigger - Architect of Ruin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2136-hallucinatory-terrain"
     },
     {
@@ -10268,6 +10656,7 @@
         "Paladin (Legacy) - Oath of the Ancients (Legacy)",
         "Artificer (Legacy) - Artillerist (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2151-ice-storm"
     },
     {
@@ -10298,6 +10687,7 @@
         "Artificer (Legacy)",
         "Cleric (Legacy) - Arcana Domain"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2346-leomunds-secret-chest"
     },
     {
@@ -10337,6 +10727,7 @@
         "Illrigger - Architect of Ruin",
         "Paladin (Legacy) - Oath of Castigation (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2169-locate-creature"
     },
     {
@@ -10367,6 +10758,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2347-mordenkainens-faithful-hound"
     },
     {
@@ -10397,6 +10789,7 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2348-mordenkainens-private-sanctum"
     },
     {
@@ -10430,6 +10823,7 @@
         "Paladin (Legacy) - Oath of Redemption",
         "Paladin - Oath of Redemption (XGtE)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2349-otilukes-resilient-sphere"
     },
     {
@@ -10465,6 +10859,9 @@
         "Warlock (Legacy) - The Great Fool (2014)",
         "Warlock (Legacy) - The Horned King (2014)"
       ],
+      "additionalSpellLists": [
+        "BARD"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2202-phantasmal-killer"
     },
     {
@@ -10499,6 +10896,7 @@
         "Cleric (Legacy) - Trickery Domain (Legacy)",
         "Warlock (Legacy) - The Horned King (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2209-polymorph"
     },
     {
@@ -10528,6 +10926,7 @@
         "Wizard (Legacy)",
         "Druid (Legacy) - Circle of the Old Ways (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2216-private-sanctum"
     },
     {
@@ -10561,6 +10960,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1183866-raulothims-psychic-lance"
     },
     {
@@ -10595,6 +10995,7 @@
         "Paladin - Oath of the Harvest (HGtMH1)",
         "Paladin - Oath of the Spelldrinker"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2230-resilient-sphere"
     },
     {
@@ -10624,6 +11025,7 @@
         "Wizard (Legacy)",
         "Cleric (Legacy) - Arcana Domain"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2240-secret-chest"
     },
     {
@@ -10654,6 +11056,7 @@
         "Warlock (Legacy)",
         "Warlock"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14596-shadow-of-moil"
     },
     {
@@ -10688,6 +11091,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14597-sickening-radiance"
     },
     {
@@ -10721,6 +11125,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2158657-spirit-of-death"
     },
     {
@@ -10751,6 +11156,7 @@
         "Paladin (Legacy)",
         "Warlock (Legacy) - The Hexblade"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2350-staggering-smite"
     },
     {
@@ -10783,6 +11189,7 @@
         "Artificer (Legacy)",
         "Warlock (Legacy) - The Genie"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2267-stone-shape"
     },
     {
@@ -10820,6 +11227,7 @@
         "Paladin (Legacy) - Oath of Conquest",
         "Paladin (Legacy) - Oath of Redemption"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2266-stoneskin"
     },
     {
@@ -10853,6 +11261,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2400-storm-sphere"
     },
     {
@@ -10883,6 +11292,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/718613-summon-aberration"
     },
     {
@@ -10914,6 +11324,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/721195-summon-construct"
     },
     {
@@ -10948,6 +11359,7 @@
         "Wizard",
         "Warlock (Legacy) - The Fathomless"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/721199-summon-elemental"
     },
     {
@@ -10979,6 +11391,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14603-summon-greater-demon"
     },
     {
@@ -11010,6 +11423,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2404-vitriolic-sphere"
     },
     {
@@ -11046,6 +11460,7 @@
         "Warlock (Legacy) - The Celestial (Legacy)",
         "Artificer (Legacy) - Artillerist (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2291-wall-of-fire"
     },
     {
@@ -11079,6 +11494,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2408-watery-sphere"
     },
     {
@@ -11112,6 +11528,7 @@
         "Artificer (Legacy)",
         "Cleric (Legacy) - Forge Domain"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1997-animate-objects"
     },
     {
@@ -11144,6 +11561,7 @@
         "Cleric (Legacy) - Grave Domain",
         "Warlock (Legacy) - The Undead"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1998-antilife-shell"
     },
     {
@@ -11174,6 +11592,7 @@
         "Wizard (Legacy)",
         "Warlock (Legacy) - The Great Fool (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2002-arcane-hand"
     },
     {
@@ -11204,6 +11623,7 @@
         "Druid (Legacy)",
         "Druid (Legacy) - Circle of the Old Ways (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2008-awaken"
     },
     {
@@ -11236,6 +11656,7 @@
         "Warlock (Legacy) - The Hexblade",
         "Artificer (Legacy) - Battle Smith (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2351-banishing-smite"
     },
     {
@@ -11266,6 +11687,9 @@
         "Wizard (Legacy)",
         "Artificer (Legacy)",
         "Warlock (Legacy) - The Fathomless"
+      ],
+      "additionalSpellLists": [
+        "SORCERER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2352-bigbys-hand"
     },
@@ -11298,6 +11722,7 @@
         "Cleric (Legacy) - Twilight Domain",
         "Paladin (Legacy) - Oath of the Crown"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2353-circle-of-power"
     },
     {
@@ -11334,6 +11759,7 @@
         "Warlock (Legacy) - Mother of Sorrows",
         "Artificer (Legacy) - Alchemist (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2030-cloudkill"
     },
     {
@@ -11365,6 +11791,7 @@
         "Paladin (Legacy) - Oath of Devotion (Legacy)",
         "Paladin (Legacy) - Oath of Glory (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2033-commune"
     },
     {
@@ -11399,6 +11826,7 @@
         "Paladin (Legacy) - Oath of the Ancients (Legacy)",
         "Paladin (Legacy) - Oath of the Open Sea"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2034-commune-with-nature"
     },
     {
@@ -11434,6 +11862,9 @@
         "Warlock (Legacy) - The Fathomless",
         "Artificer (Legacy) - Artillerist (Legacy)"
       ],
+      "additionalSpellLists": [
+        "DRUID"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2037-cone-of-cold"
     },
     {
@@ -11463,6 +11894,7 @@
         "Druid (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2041-conjure-elemental"
     },
     {
@@ -11491,6 +11923,7 @@
       "availableFor": [
         "Ranger (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2354-conjure-volley"
     },
     {
@@ -11521,6 +11954,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2045-contact-other-plane"
     },
     {
@@ -11556,6 +11990,7 @@
         "Warlock (Legacy) - Mother of Sorrows",
         "Warlock (Legacy) - The Predator"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2046-contagion"
     },
     {
@@ -11589,6 +12024,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2375-control-winds"
     },
     {
@@ -11620,6 +12056,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1585026-create-spelljamming-helm"
     },
     {
@@ -11653,6 +12090,7 @@
         "Cleric (Legacy) - Inquisition Domain (Legacy)",
         "Warlock (Legacy) - The Genie"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2055-creation"
     },
     {
@@ -11685,6 +12123,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14830-danse-macabre"
     },
     {
@@ -11717,6 +12156,7 @@
         "Cleric",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14831-dawn"
     },
     {
@@ -11747,6 +12187,7 @@
         "Paladin (Legacy)",
         "Cleric (Legacy) - Tempest Domain (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2355-destructive-wave"
     },
     {
@@ -11777,6 +12218,7 @@
         "Cleric (Legacy)",
         "Paladin (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2071-dispel-evil-and-good"
     },
     {
@@ -11816,6 +12258,7 @@
         "Warlock (Legacy) - The Great Old One (Legacy)",
         "Warlock (Legacy) - The Horned King (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2078-dominate-person"
     },
     {
@@ -11852,6 +12295,7 @@
         "Druid (Legacy) - Circle of Shadows",
         "Ranger (Legacy) - Grim Harbinger (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2079-dream"
     },
     {
@@ -11886,6 +12330,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14869-enervation"
     },
     {
@@ -11919,6 +12364,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14870-far-step"
     },
     {
@@ -11956,6 +12402,7 @@
         "Warlock (Legacy) - The Genie",
         "Paladin (Legacy) - Oath of Castigation (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2107-flame-strike"
     },
     {
@@ -11989,6 +12436,7 @@
         "Wizard (Legacy)",
         "Paladin (Legacy) - Oath of the Crown"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2120-geas"
     },
     {
@@ -12022,6 +12470,9 @@
         "Cleric (Legacy) - Peace Domain",
         "Paladin (Legacy) - Oath of the Harvest",
         "Warlock (Legacy) - The Celestial (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "RANGER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2129-greater-restoration"
     },
@@ -12057,6 +12508,7 @@
         "Cleric (Legacy) - Keeper Domain",
         "Warlock (Legacy) - The Fiend (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2135-hallow"
     },
     {
@@ -12095,6 +12547,7 @@
         "Druid (Legacy) - Circle of Wicker (2014)",
         "Paladin (Legacy) - Oath of Castigation (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2146-hold-monster"
     },
     {
@@ -12127,6 +12580,7 @@
         "Cleric",
         "Paladin"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14874-holy-weapon"
     },
     {
@@ -12158,6 +12612,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2385-immolation"
     },
     {
@@ -12190,6 +12645,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14877-infernal-calling"
     },
     {
@@ -12225,6 +12681,7 @@
         "Druid (Legacy) - Circle of the Hive",
         "Paladin (Legacy) - Oath of Zeal (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2157-insect-plague"
     },
     {
@@ -12257,6 +12714,7 @@
         "Cleric (Legacy) - Knowledge Domain (Legacy)",
         "Warlock (Legacy) - The Undying"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2163-legend-lore"
     },
     {
@@ -12287,6 +12745,7 @@
         "Druid (Legacy)",
         "Druid"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2390-maelstrom"
     },
     {
@@ -12324,6 +12783,7 @@
         "Artificer (Legacy) - Battle Smith (Legacy)",
         "Sorcerer (Legacy) - Crimson Dynasty (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2181-mass-cure-wounds"
     },
     {
@@ -12358,6 +12818,9 @@
         "Warlock (Legacy) - The Predator",
         "Warlock (Legacy) - The Great Fool (2014)"
       ],
+      "additionalSpellLists": [
+        "WARLOCK"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2194-mislead"
     },
     {
@@ -12388,6 +12851,7 @@
         "Wizard (Legacy)",
         "Cleric (Legacy) - Trickery Domain (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2196-modify-memory"
     },
     {
@@ -12420,6 +12884,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14519-negative-energy-flood"
     },
     {
@@ -12450,6 +12915,7 @@
         "Cleric (Legacy) - Moon Domain",
         "Artificer (Legacy) - Armorer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2200-passwall"
     },
     {
@@ -12482,6 +12948,9 @@
         "Wizard (Legacy)",
         "Cleric (Legacy) - Arcana Domain",
         "Warlock (Legacy) - The Horned King (2014)"
+      ],
+      "additionalSpellLists": [
+        "WARLOCK"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2205-planar-binding"
     },
@@ -12516,6 +12985,7 @@
         "Cleric (Legacy) - Grave Domain",
         "Artificer (Legacy) - Alchemist (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2224-raise-dead"
     },
     {
@@ -12546,6 +13016,9 @@
         "Cleric (Legacy) - Peace Domain",
         "Warlock (Legacy) - The Many"
       ],
+      "additionalSpellLists": [
+        "BARD"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2356-rarys-telepathic-bond"
     },
     {
@@ -12574,6 +13047,7 @@
       "availableFor": [
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2228-reincarnate"
     },
     {
@@ -12612,6 +13086,7 @@
         "Paladin (Legacy) - Oath of Zeal (Legacy)",
         "Paladin (Legacy) - Oath of the Spelldrinker"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2239-scrying"
     },
     {
@@ -12645,6 +13120,7 @@
         "Warlock (Legacy) - The Archfey (Legacy)",
         "Warlock (Legacy) - The Genie"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2241-seeming"
     },
     {
@@ -12681,6 +13157,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14599-skill-empowerment"
     },
     {
@@ -12714,6 +13191,7 @@
         "Ranger",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14602-steel-wind-strike"
     },
     {
@@ -12743,6 +13221,7 @@
         "Cleric (Legacy)",
         "Paladin (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/721194-summon-celestial"
     },
     {
@@ -12776,6 +13255,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1183868-summon-draconic-spirit"
     },
     {
@@ -12804,6 +13284,7 @@
       "availableFor": [
         "Ranger (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2357-swift-quiver"
     },
     {
@@ -12840,6 +13321,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14605-synaptic-static"
     },
     {
@@ -12871,6 +13353,7 @@
         "Wizard (Legacy)",
         "Warlock (Legacy) - The Great Old One (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2273-telekinesis"
     },
     {
@@ -12903,6 +13386,7 @@
         "Warlock (Legacy) - The Many",
         "Warlock - The Many"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2274-telepathic-bond"
     },
     {
@@ -12933,6 +13417,9 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)",
         "Cleric (Legacy) - Arcana Domain"
+      ],
+      "additionalSpellLists": [
+        "WARLOCK"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2276-teleportation-circle"
     },
@@ -12968,6 +13455,7 @@
         "Wizard",
         "Artificer"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2403-transmute-rock"
     },
     {
@@ -13001,6 +13489,7 @@
         "Paladin (Legacy) - Oath of the Ancients (Legacy)",
         "Druid (Legacy) - Circle of the Old Ways (2014)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2283-tree-stride"
     },
     {
@@ -13033,6 +13522,7 @@
         "Artificer (Legacy) - Artillerist (Legacy)",
         "Artificer (Legacy) - Armorer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2292-wall-of-force"
     },
     {
@@ -13067,6 +13557,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14616-wall-of-light"
     },
     {
@@ -13099,6 +13590,7 @@
         "Artificer (Legacy)",
         "Warlock (Legacy) - The Genie"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2294-wall-of-stone"
     },
     {
@@ -13131,6 +13623,7 @@
         "Druid",
         "Ranger"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14619-wrath-of-nature"
     },
     {
@@ -13161,6 +13654,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2358-arcane-gate"
     },
     {
@@ -13190,6 +13684,7 @@
       "availableFor": [
         "Cleric (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2015-blade-barrier"
     },
     {
@@ -13219,6 +13714,7 @@
         "Druid (Legacy)",
         "Druid"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2371-bones-of-the-earth"
     },
     {
@@ -13248,6 +13744,7 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2024-chain-lightning"
     },
     {
@@ -13278,6 +13775,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2027-circle-of-death"
     },
     {
@@ -13307,6 +13805,7 @@
         "Druid (Legacy)",
         "Warlock (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2042-conjure-fey"
     },
     {
@@ -13335,6 +13834,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2047-contingency"
     },
     {
@@ -13365,6 +13865,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14765-create-homunculus"
     },
     {
@@ -13396,6 +13897,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2054-create-undead"
     },
     {
@@ -13426,6 +13928,7 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2070-disintegrate"
     },
     {
@@ -13455,6 +13958,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2359-drawmijs-instant-summons"
     },
     {
@@ -13486,6 +13990,7 @@
         "Druid (Legacy)",
         "Druid"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14834-druid-grove"
     },
     {
@@ -13517,6 +14022,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2089-eyebite"
     },
     {
@@ -13547,6 +14053,7 @@
         "Cleric (Legacy)",
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2099-find-the-path"
     },
     {
@@ -13578,6 +14085,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1183864-fizbans-platinum-shield"
     },
     {
@@ -13608,6 +14116,10 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [
+        "DRUID",
+        "SORCERER"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2109-flesh-to-stone"
     },
     {
@@ -13636,6 +14148,7 @@
       "availableFor": [
         "Cleric (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2113-forbiddance"
     },
     {
@@ -13665,6 +14178,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2117-freezing-sphere"
     },
     {
@@ -13695,6 +14209,7 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2124-globe-of-invulnerability"
     },
     {
@@ -13725,6 +14240,7 @@
         "Bard (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2131-guards-and-wards"
     },
     {
@@ -13754,6 +14270,7 @@
       "availableFor": [
         "Cleric (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2137-harm"
     },
     {
@@ -13783,6 +14300,7 @@
         "Cleric (Legacy)",
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2139-heal"
     },
     {
@@ -13813,6 +14331,9 @@
         "Cleric (Legacy)",
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [
+        "BARD"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2143-heroes-feast"
     },
     {
@@ -13842,6 +14363,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2158-instant-summons"
     },
     {
@@ -13878,6 +14400,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2386-investiture-of-flame"
     },
     {
@@ -13915,6 +14438,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2387-investiture-of-ice"
     },
     {
@@ -13952,6 +14476,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2388-investiture-of-stone"
     },
     {
@@ -13990,6 +14515,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2389-investiture-of-wind"
     },
     {
@@ -14018,6 +14544,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2175-magic-jar"
     },
     {
@@ -14050,6 +14577,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2184-mass-suggestion"
     },
     {
@@ -14084,6 +14612,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14883-mental-prison"
     },
     {
@@ -14114,6 +14643,7 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2198-move-earth"
     },
     {
@@ -14142,6 +14672,9 @@
       ],
       "availableFor": [
         "Wizard (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "SORCERER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2360-otilukes-freezing-sphere"
     },
@@ -14173,6 +14706,7 @@
         "Bard (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2160-ottos-irresistible-dance"
     },
     {
@@ -14201,6 +14735,7 @@
       "availableFor": [
         "Cleric (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2204-planar-ally"
     },
     {
@@ -14230,6 +14765,7 @@
         "Druid (Legacy)",
         "Druid"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2395-primordial-ward"
     },
     {
@@ -14259,6 +14795,7 @@
         "Bard (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2218-programmed-illusion"
     },
     {
@@ -14293,6 +14830,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14593-scatter"
     },
     {
@@ -14326,6 +14864,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14601-soul-cage"
     },
     {
@@ -14356,6 +14895,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/719934-summon-fiend"
     },
     {
@@ -14386,6 +14926,9 @@
         "Druid (Legacy)",
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "CLERIC"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2270-sunbeam"
     },
@@ -14420,6 +14963,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/719961-tashas-otherworldly-guise"
     },
     {
@@ -14450,6 +14994,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14612-tensers-transformation"
     },
     {
@@ -14478,6 +15023,7 @@
       "availableFor": [
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2282-transport-via-plants"
     },
     {
@@ -14507,6 +15053,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2293-wall-of-ice"
     },
     {
@@ -14536,6 +15083,7 @@
       "availableFor": [
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2295-wall-of-thorns"
     },
     {
@@ -14565,6 +15113,7 @@
       "availableFor": [
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2301-wind-walk"
     },
     {
@@ -14593,6 +15142,7 @@
       "availableFor": [
         "Cleric (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2304-word-of-recall"
     },
     {
@@ -14621,6 +15171,7 @@
       "availableFor": [
         "Cleric (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2040-conjure-celestial"
     },
     {
@@ -14648,6 +15199,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/654073-create-magen"
     },
     {
@@ -14681,6 +15233,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14827-crown-of-stars"
     },
     {
@@ -14710,6 +15263,7 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2062-delayed-blast-fireball"
     },
     {
@@ -14740,6 +15294,7 @@
       "availableFor": [
         "Cleric (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2075-divine-word"
     },
     {
@@ -14771,6 +15326,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1183863-draconic-transformation"
     },
     {
@@ -14806,6 +15362,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/717915-dream-of-the-blue-veil"
     },
     {
@@ -14839,6 +15396,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2087-etherealness"
     },
     {
@@ -14871,6 +15429,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2101-finger-of-death"
     },
     {
@@ -14901,6 +15460,7 @@
         "Druid (Legacy)",
         "Sorcerer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2105-fire-storm"
     },
     {
@@ -14932,6 +15492,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2114-forcecage"
     },
     {
@@ -14962,6 +15523,7 @@
         "Bard (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2179-magnificent-mansion"
     },
     {
@@ -14992,6 +15554,7 @@
         "Druid (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2192-mirage-arcane"
     },
     {
@@ -15022,6 +15585,7 @@
         "Bard (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2362-mordenkainens-magnificent-mansion"
     },
     {
@@ -15051,6 +15615,7 @@
         "Bard (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2004-mordenkainens-sword"
     },
     {
@@ -15084,6 +15649,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2206-plane-shift"
     },
     {
@@ -15117,6 +15683,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14520-power-word-pain"
     },
     {
@@ -15147,6 +15714,9 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [
+        "BARD"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2214-prismatic-spray"
     },
     {
@@ -15176,6 +15746,7 @@
         "Bard (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2219-project-image"
     },
     {
@@ -15206,6 +15777,7 @@
         "Cleric (Legacy)",
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2227-regenerate"
     },
     {
@@ -15235,6 +15807,7 @@
         "Bard (Legacy)",
         "Cleric (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2232-resurrection"
     },
     {
@@ -15265,6 +15838,7 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2233-reverse-gravity"
     },
     {
@@ -15293,6 +15867,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2244-sequester"
     },
     {
@@ -15322,6 +15897,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2253-simulacrum"
     },
     {
@@ -15353,6 +15929,9 @@
         "Cleric (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [
+        "DRUID"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2272-symbol"
     },
     {
@@ -15383,6 +15962,7 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2275-teleport"
     },
     {
@@ -15413,6 +15993,7 @@
         "Cleric (Legacy)",
         "Cleric"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14606-temple-of-the-gods"
     },
     {
@@ -15447,6 +16028,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2409-whirlwind"
     },
     {
@@ -15478,6 +16060,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2367-abi-dalzims-horrid-wilting"
     },
     {
@@ -15506,6 +16089,7 @@
       "availableFor": [
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1995-animal-shapes"
     },
     {
@@ -15537,6 +16121,7 @@
         "Cleric (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/1999-antimagic-field"
     },
     {
@@ -15567,6 +16152,9 @@
         "Druid (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [
+        "BARD"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2000-antipathy-sympathy"
     },
     {
@@ -15595,6 +16183,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2029-clone"
     },
     {
@@ -15626,6 +16215,7 @@
         "Druid (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2050-control-weather"
     },
     {
@@ -15654,6 +16244,9 @@
       "availableFor": [
         "Warlock (Legacy)",
         "Wizard (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "SORCERER"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2063-demiplane"
     },
@@ -15686,6 +16279,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2077-dominate-monster"
     },
     {
@@ -15717,6 +16311,7 @@
         "Druid (Legacy)",
         "Sorcerer (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2081-earthquake"
     },
     {
@@ -15748,6 +16343,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2096-feeblemind"
     },
     {
@@ -15777,6 +16373,7 @@
         "Bard (Legacy)",
         "Warlock (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2123-glibness"
     },
     {
@@ -15806,6 +16403,7 @@
       "availableFor": [
         "Cleric (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2148-holy-aura"
     },
     {
@@ -15836,6 +16434,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14876-illusory-dragon"
     },
     {
@@ -15865,6 +16464,9 @@
       "availableFor": [
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "DRUID"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2155-incendiary-cloud"
     },
@@ -15898,6 +16500,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14881-maddening-darkness"
     },
     {
@@ -15927,6 +16530,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2185-maze"
     },
     {
@@ -15956,6 +16560,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14474-mighty-fortress"
     },
     {
@@ -15985,6 +16590,7 @@
         "Bard (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2190-mind-blank"
     },
     {
@@ -16016,6 +16622,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2211-power-word-stun"
     },
     {
@@ -16047,6 +16654,9 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [
+        "CLERIC"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2271-sunburst"
     },
     {
@@ -16075,6 +16685,7 @@
       "availableFor": [
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2364-telepathy"
     },
     {
@@ -16104,6 +16715,7 @@
       "availableFor": [
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2365-tsunami"
     },
     {
@@ -16134,6 +16746,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2006-astral-projection"
     },
     {
@@ -16167,6 +16780,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/654072-blade-of-disaster"
     },
     {
@@ -16200,6 +16814,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2115-foresight"
     },
     {
@@ -16231,6 +16846,9 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [
+        "WARLOCK"
+      ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2119-gate"
     },
     {
@@ -16261,6 +16879,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2154-imprisonment"
     },
     {
@@ -16290,6 +16909,7 @@
         "Wizard (Legacy)",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14879-invulnerability"
     },
     {
@@ -16318,6 +16938,7 @@
       "availableFor": [
         "Cleric (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2182-mass-heal"
     },
     {
@@ -16352,6 +16973,7 @@
         "Sorcerer",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14882-mass-polymorph"
     },
     {
@@ -16381,6 +17003,7 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2189-meteor-swarm"
     },
     {
@@ -16409,6 +17032,9 @@
       ],
       "availableFor": [
         "Bard (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "CLERIC"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2366-power-word-heal"
     },
@@ -16442,6 +17068,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2210-power-word-kill"
     },
     {
@@ -16470,6 +17097,9 @@
       ],
       "availableFor": [
         "Wizard (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "BARD"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2215-prismatic-wall"
     },
@@ -16507,6 +17137,7 @@
         "Warlock",
         "Wizard"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/14592-psychic-scream"
     },
     {
@@ -16536,6 +17167,7 @@
         "Druid (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2245-shapechange"
     },
     {
@@ -16566,6 +17198,7 @@
       "availableFor": [
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2268-storm-of-vengeance"
     },
     {
@@ -16595,6 +17228,7 @@
         "Sorcerer (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2279-time-stop"
     },
     {
@@ -16627,6 +17261,7 @@
         "Warlock (Legacy)",
         "Wizard (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2284-true-polymorph"
     },
     {
@@ -16656,6 +17291,7 @@
         "Cleric (Legacy)",
         "Druid (Legacy)"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2285-true-resurrection"
     },
     {
@@ -16684,6 +17320,9 @@
       ],
       "availableFor": [
         "Wizard (Legacy)"
+      ],
+      "additionalSpellLists": [
+        "WARLOCK"
       ],
       "ddbUrl": "https://www.dndbeyond.com/spells/2300-weird"
     },
@@ -16717,6 +17356,7 @@
         "Wizard (Legacy)",
         "Warlock (Legacy) - The Genie"
       ],
+      "additionalSpellLists": [],
       "ddbUrl": "https://www.dndbeyond.com/spells/2303-wish"
     }
   ]

@@ -45,4 +45,47 @@ describe('extension sync v3', () => {
     expect(payload.operations).toEqual([]);
     expect(payload.issues).toEqual([]);
   });
+
+  it('uses additional spell list membership when syncing granted spells', () => {
+    const payload = buildSpellSyncPayloadV3(
+      {
+        id: 'char-2',
+        name: 'Lyra',
+        availableLists: ['BARD'],
+        preparedSpellIds: [],
+      },
+      ['aid'],
+      [
+        {
+          id: 'aid',
+          ddbSpellId: '2001',
+          name: 'Aid',
+          level: 2,
+          source: 'Basic Rules (2014)',
+          page: '211',
+          sourceCitation: 'Basic Rules (2014), pg. 211',
+          save: '',
+          castingTime: '1 Action',
+          notes: '',
+          description: '',
+          school: '',
+          duration: '8 Hours',
+          rangeArea: '30 ft.',
+          components: 'V, S, M',
+          componentsExpanded: 'V, S, M',
+          attackSave: 'None',
+          damageEffect: 'Buff',
+          spellTags: [],
+          availableFor: ['Cleric (Legacy)', 'Paladin (Legacy)'],
+          additionalSpellLists: ['BARD'],
+          ddbUrl: '',
+        },
+      ],
+    );
+
+    expect(payload.operations).toEqual([
+      { type: 'prepare', list: 'BARD', spell: 'Aid' },
+    ]);
+    expect(payload.issues).toEqual([]);
+  });
 });

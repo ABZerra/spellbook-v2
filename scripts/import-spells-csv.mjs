@@ -4,6 +4,31 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const ADDITIONAL_SPELL_LISTS_PATH = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'data', 'ddb-additional-spell-lists.json');
+
+function normalizeSpellName(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function loadAdditionalSpellListMap() {
+  const raw = JSON.parse(fs.readFileSync(ADDITIONAL_SPELL_LISTS_PATH, 'utf8'));
+  const bySpellName = new Map();
+
+  for (const [list, names] of Object.entries(raw)) {
+    for (const name of names || []) {
+      const key = normalizeSpellName(name);
+      if (!key) continue;
+      const current = bySpellName.get(key) || [];
+      current.push(String(list || '').trim().toUpperCase());
+      bySpellName.set(key, current);
+    }
+  }
+
+  return bySpellName;
+}
+
+const additionalSpellListsByName = loadAdditionalSpellListMap();
+
 export function parseCsv(content) {
   const rows = [];
   let row = [];
@@ -79,6 +104,7 @@ export function mapRow(row, index) {
   const level = Number(row.Level || row['Spell Level'] || 0);
   const id = String(row['Spell ID'] || '').trim() || slugify([name, level || 0, row.Source || 'source'].join('-')) || `spell-${index + 1}`;
   const ddbSpellId = String(row['DDB Spell ID'] || '').trim();
+  const additionalSpellLists = [...new Set(additionalSpellListsByName.get(normalizeSpellName(name)) || [])];
 
   return {
     id,
@@ -102,6 +128,7 @@ export function mapRow(row, index) {
     componentsExpanded: String(row['Components [expanded]'] || row.Components || row.Component || '').trim(),
     spellTags: toList(row['Spell Tags'] || row.Tags),
     availableFor: toList(row['Available For']),
+    additionalSpellLists,
     ddbUrl: String(row['DDB URL'] || '').trim(),
   };
 }

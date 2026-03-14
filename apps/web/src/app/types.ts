@@ -20,6 +20,7 @@ export interface SpellRecord {
   componentsExpanded: string;
   spellTags: string[];
   availableFor: string[];
+  additionalSpellLists: string[];
   ddbUrl: string;
 }
 

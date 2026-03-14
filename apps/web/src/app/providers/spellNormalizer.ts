@@ -40,6 +40,7 @@ export function normalizeSpell(input: SnapshotSpell): SpellRecord {
     componentsExpanded: asString(input.componentsExpanded || input.components),
     spellTags: asStringList(input.spellTags),
     availableFor: asStringList(input.availableFor),
+    additionalSpellLists: asStringList(input.additionalSpellLists),
     ddbUrl: asString(input.ddbUrl),
   };
 }

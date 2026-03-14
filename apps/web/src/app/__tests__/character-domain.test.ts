@@ -13,6 +13,13 @@ describe('character domain', () => {
     expect(isSpellEligibleForCharacter(spell, { availableLists: ['CLERIC'] })).toBe(false);
   });
 
+  it('treats additional spell lists as native class list membership', () => {
+    const spell = { availableFor: ['Cleric (Legacy)'], additionalSpellLists: ['BARD', 'RANGER'] } as any;
+    expect(getSpellLists(spell)).toEqual(['CLERIC', 'BARD', 'RANGER']);
+    expect(isSpellEligibleForCharacter(spell, { availableLists: ['BARD'] })).toBe(true);
+    expect(isSpellEligibleForCharacter(spell, { availableLists: ['WIZARD'] })).toBe(false);
+  });
+
   it('dedupes spell ids in queue normalization', () => {
     const queue = normalizeSpellIdList(['a', '', 'a', 'b']);
     expect(queue).toEqual(['a', 'b']);

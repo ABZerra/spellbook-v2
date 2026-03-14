@@ -23,15 +23,22 @@ function parseAvailableForEntry(value: string): string {
   return normalizeListName(next);
 }
 
-export function getSpellLists(spell: Pick<SpellRecord, 'availableFor'>): string[] {
+export function getSpellLists(spell: Pick<SpellRecord, 'availableFor' | 'additionalSpellLists'>): string[] {
   const normalized = (spell.availableFor || [])
     .map((entry) => parseAvailableForEntry(entry))
     .filter(Boolean);
 
-  return [...new Set(normalized)];
+  const additional = (spell.additionalSpellLists || [])
+    .map((entry) => normalizeListName(entry))
+    .filter(Boolean);
+
+  return [...new Set([...normalized, ...additional])];
 }
 
-export function isSpellEligibleForCharacter(spell: Pick<SpellRecord, 'availableFor'>, profile: Pick<CharacterProfile, 'availableLists'>): boolean {
+export function isSpellEligibleForCharacter(
+  spell: Pick<SpellRecord, 'availableFor' | 'additionalSpellLists'>,
+  profile: Pick<CharacterProfile, 'availableLists'>,
+): boolean {
   const allowedLists = (profile.availableLists || [])
     .map((entry) => normalizeListName(entry))
     .filter(Boolean);
@@ -66,7 +73,10 @@ export function getPreparationLimits(input: CharacterProfileInput | CharacterPro
   return [...byList.entries()].map(([list, limit]) => ({ list, limit }));
 }
 
-export function getSpellAssignmentList(spell: Pick<SpellRecord, 'availableFor'>, profile: Pick<CharacterProfile, 'availableLists'>): string | null {
+export function getSpellAssignmentList(
+  spell: Pick<SpellRecord, 'availableFor' | 'additionalSpellLists'>,
+  profile: Pick<CharacterProfile, 'availableLists'>,
+): string | null {
   const spellLists = getSpellLists(spell);
   if (spellLists.length === 0) return null;
 
