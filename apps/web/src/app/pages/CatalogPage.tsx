@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { getSpellAssignmentList, getSpellLists, isSpellEligibleForCharacter } from '../domain/character';
+import { getAddableAssignmentLists, getSpellAssignmentList, getSpellLists, isSpellEligibleForCharacter } from '../domain/character';
 import { useApp } from '../state/AppContext';
 import type { SpellRecord } from '../types';
 
@@ -31,17 +31,24 @@ export function CatalogPage() {
     [spells, selectedSpellId],
   );
   const selectedSpellQueued = selectedSpell ? isSpellQueuedForNextPreparation(selectedSpell.id) : false;
+  const selectedSpellAddableLists = selectedSpell && activeCharacter
+    ? getAddableAssignmentLists(selectedSpell, activeCharacter)
+    : [];
   const selectedSpellEligible = selectedSpell && activeCharacter
     ? isSpellEligibleForCharacter(selectedSpell, activeCharacter)
     : false;
-  const selectedSpellCannotQueue = selectedSpell ? (!selectedSpellQueued && !selectedSpellEligible) : false;
+  const selectedSpellCannotQueue = selectedSpell
+    ? (!selectedSpellQueued && (!selectedSpellEligible || selectedSpellAddableLists.length === 0))
+    : false;
   const selectedSpellDisabledReason = selectedSpell && !selectedSpellEligible
     ? 'This spell is outside the active character spell lists.'
-    : '';
+    : selectedSpell && selectedSpellAddableLists.length === 0
+      ? 'This spell is above every owned list max spell level.'
+      : '';
 
   const preparedSet = useMemo(
-    () => new Set(activeCharacter?.preparedSpellIds || []),
-    [activeCharacter?.preparedSpellIds],
+    () => new Set((activeCharacter?.preparedSpells || []).map((entry) => entry.spellId)),
+    [activeCharacter?.preparedSpells],
   );
 
   const rows = useMemo(
@@ -74,7 +81,7 @@ export function CatalogPage() {
 
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-text-muted">
           <span>Queued: {activeCharacter?.nextPreparationQueue.length || 0}</span>
-          <span>Prepared: {activeCharacter?.preparedSpellIds.length || 0}</span>
+          <span>Prepared: {activeCharacter?.preparedSpells.length || 0}</span>
         </div>
 
         <div className="mt-4">
@@ -109,9 +116,12 @@ export function CatalogPage() {
             const displayList = showListColumn ? (lists[0] || '-') : '-';
             const queued = isSpellQueuedForNextPreparation(spell.id);
             const eligible = activeCharacter ? isSpellEligibleForCharacter(spell, activeCharacter) : false;
-            const cannotQueue = !queued && !eligible;
+            const addableLists = activeCharacter ? getAddableAssignmentLists(spell, activeCharacter) : [];
+            const cannotQueue = !queued && (!eligible || addableLists.length === 0);
             const disabledReason = !eligible
               ? 'This spell is outside the active character spell lists.'
+              : addableLists.length === 0
+                ? 'This spell is above every owned list max spell level.'
               : '';
 
             return (

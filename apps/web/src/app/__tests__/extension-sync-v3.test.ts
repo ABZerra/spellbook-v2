@@ -7,10 +7,15 @@ describe('extension sync v3', () => {
       {
         id: 'char-1',
         name: 'Aelric',
-        availableLists: ['WIZARD'],
-        preparedSpellIds: ['magic-missile', 'shield'],
+        preparedSpells: [
+          { spellId: 'magic-missile', assignedList: 'WIZARD' },
+          { spellId: 'shield', assignedList: 'WIZARD' },
+        ],
       },
-      ['shield', 'counterspell'],
+      [
+        { spellId: 'shield', assignedList: 'WIZARD' },
+        { spellId: 'counterspell', assignedList: 'WIZARD' },
+      ],
       [
         { id: 'magic-missile', ddbSpellId: '2191', name: 'Magic Missile', level: 1, source: 'Basic Rules (2014)', page: '257', sourceCitation: 'Basic Rules (2014), pg. 257', save: '', castingTime: '1 Action', notes: '', description: '', school: '', duration: '', rangeArea: '120 ft.', components: 'V, S', componentsExpanded: 'V, S', attackSave: 'None', damageEffect: 'Force', spellTags: [], availableFor: ['Wizard (Legacy)'], ddbUrl: '' },
         { id: 'shield', ddbSpellId: '2253', name: 'Shield', level: 1, source: 'Basic Rules (2014)', page: '275', sourceCitation: 'Basic Rules (2014), pg. 275', save: '', castingTime: '1 Reaction', notes: '', description: '', school: '', duration: '', rangeArea: 'Self', components: 'V, S', componentsExpanded: 'V, S', attackSave: 'None', damageEffect: 'Warding', spellTags: [], availableFor: ['Wizard (Legacy)'], ddbUrl: '' },
@@ -32,10 +37,15 @@ describe('extension sync v3', () => {
       {
         id: 'char-1',
         name: 'Aelric',
-        availableLists: ['WIZARD'],
-        preparedSpellIds: ['magic-missile', 'shield'],
+        preparedSpells: [
+          { spellId: 'magic-missile', assignedList: 'WIZARD' },
+          { spellId: 'shield', assignedList: 'WIZARD' },
+        ],
       },
-      ['magic-missile', 'shield'],
+      [
+        { spellId: 'magic-missile', assignedList: 'WIZARD' },
+        { spellId: 'shield', assignedList: 'WIZARD' },
+      ],
       [
         { id: 'magic-missile', ddbSpellId: '2191', name: 'Magic Missile', level: 1, source: 'Basic Rules (2014)', page: '257', sourceCitation: 'Basic Rules (2014), pg. 257', save: '', castingTime: '1 Action', notes: '', description: '', school: '', duration: '', rangeArea: '120 ft.', components: 'V, S', componentsExpanded: 'V, S', attackSave: 'None', damageEffect: 'Force', spellTags: [], availableFor: ['Wizard (Legacy)'], ddbUrl: '' },
         { id: 'shield', ddbSpellId: '2253', name: 'Shield', level: 1, source: 'Basic Rules (2014)', page: '275', sourceCitation: 'Basic Rules (2014), pg. 275', save: '', castingTime: '1 Reaction', notes: '', description: '', school: '', duration: '', rangeArea: 'Self', components: 'V, S', componentsExpanded: 'V, S', attackSave: 'None', damageEffect: 'Warding', spellTags: [], availableFor: ['Wizard (Legacy)'], ddbUrl: '' },
@@ -51,10 +61,9 @@ describe('extension sync v3', () => {
       {
         id: 'char-2',
         name: 'Lyra',
-        availableLists: ['BARD'],
-        preparedSpellIds: [],
+        preparedSpells: [],
       },
-      ['aid'],
+      [{ spellId: 'aid', assignedList: 'BARD' }],
       [
         {
           id: 'aid',
@@ -85,6 +94,27 @@ describe('extension sync v3', () => {
 
     expect(payload.operations).toEqual([
       { type: 'prepare', list: 'BARD', spell: 'Aid' },
+    ]);
+    expect(payload.issues).toEqual([]);
+  });
+
+  it('uses explicit assigned lists for multi-list replacements', () => {
+    const payload = buildSpellSyncPayloadV3(
+      {
+        id: 'char-1',
+        name: 'Aelric',
+        availableLists: ['WIZARD', 'CLERIC'],
+        preparedSpells: [{ spellId: 'light', assignedList: 'CLERIC' }],
+      } as any,
+      [{ spellId: 'guidance', assignedList: 'CLERIC' }] as any,
+      [
+        { id: 'light', ddbSpellId: '2175', name: 'Light', level: 0, source: 'Basic Rules (2014)', page: '255', sourceCitation: 'Basic Rules (2014), pg. 255', save: '', castingTime: '1 Action', notes: '', description: '', school: '', duration: '', rangeArea: 'Touch', components: 'V, M', componentsExpanded: 'V, M', attackSave: 'None', damageEffect: 'Utility', spellTags: [], availableFor: ['Wizard (Legacy)', 'Cleric (Legacy)'], ddbUrl: '' },
+        { id: 'guidance', ddbSpellId: '2139', name: 'Guidance', level: 0, source: 'Basic Rules (2014)', page: '248', sourceCitation: 'Basic Rules (2014), pg. 248', save: '', castingTime: '1 Action', notes: '', description: '', school: '', duration: '', rangeArea: 'Touch', components: 'V, S', componentsExpanded: 'V, S', attackSave: 'None', damageEffect: 'Buff', spellTags: [], availableFor: ['Wizard (Legacy)', 'Cleric (Legacy)'], ddbUrl: '' },
+      ],
+    );
+
+    expect(payload.operations).toEqual([
+      { type: 'replace', list: 'CLERIC', remove: 'Light', add: 'Guidance' },
     ]);
     expect(payload.issues).toEqual([]);
   });

@@ -33,6 +33,13 @@ export interface SavedIdea {
 export interface PreparationLimit {
   list: string;
   limit: number;
+  maxSpellLevel: number;
+}
+
+export interface PreparedSpellEntry {
+  spellId: string;
+  assignedList: string;
+  mode: 'normal' | 'always';
 }
 
 export type QueueIntent = 'add' | 'replace' | 'queue_only';
@@ -40,6 +47,7 @@ export type QueueIntent = 'add' | 'replace' | 'queue_only';
 export interface NextPreparationQueueEntry {
   spellId: string;
   intent: QueueIntent;
+  assignedList?: string;
   replaceTarget?: string;
   createdAt?: string;
 }
@@ -52,7 +60,7 @@ export interface CharacterProfile {
   castingAbility: string;
   availableLists: string[];
   preparationLimits: PreparationLimit[];
-  preparedSpellIds: string[];
+  preparedSpells: PreparedSpellEntry[];
   nextPreparationQueue: NextPreparationQueueEntry[];
   savedIdeas: SavedIdea[];
   updatedAt: string;

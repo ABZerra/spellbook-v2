@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getSpellAssignmentList } from '../domain/character';
+import { buildPreparationUsage, getAddableAssignmentLists, getSpellAssignmentList, getValidAssignmentLists } from '../domain/character';
 import { buildPlanDiff } from '../domain/plan';
 import { computeApplyResult } from '../domain/prepareQueue';
 import { PreparedDrawer } from '../components/PreparedDrawer';
@@ -12,6 +12,7 @@ export function PreparePage() {
     queueSpellForNextPreparation,
     unqueueSpellForNextPreparation,
     setQueuedSpellIntent,
+    setQueuedSpellAssignedList,
     setQueuedSpellReplaceTarget,
     restoreQueueFromPrepared,
     applyPlan,
@@ -68,16 +69,8 @@ export function PreparePage() {
 
   const limitsSummary = useMemo(() => {
     if (!activeCharacter) return [];
-    const projected = preview.result?.finalPreparedSpellIds || activeCharacter.preparedSpellIds;
-    const counts = new Map<string, number>();
-
-    for (const spellId of projected) {
-      const spell = spellsById.get(spellId);
-      if (!spell) continue;
-      const list = getSpellAssignmentList(spell, activeCharacter);
-      if (!list) continue;
-      counts.set(list, (counts.get(list) || 0) + 1);
-    }
+    const projected = preview.result?.finalPreparedSpells || activeCharacter.preparedSpells;
+    const counts = buildPreparationUsage(projected, spellsById);
 
     return activeCharacter.preparationLimits.map((entry) => ({
       list: entry.list,
@@ -88,20 +81,20 @@ export function PreparePage() {
 
   const diff = useMemo(() => {
     if (!activeCharacter || !preview.result) return [];
-    return buildPlanDiff(activeCharacter.preparedSpellIds, preview.result.finalPreparedSpellIds);
+    return buildPlanDiff(activeCharacter.preparedSpells, preview.result.finalPreparedSpells);
   }, [activeCharacter, preview.result]);
 
   const highlightedReplaceTargets = useMemo(() => new Set(queueEntries
     .filter((entry) => entry.intent === 'replace' && entry.replaceTarget)
     .map((entry) => String(entry.replaceTarget))), [queueEntries]);
 
-  if (!activeCharacter) {
-    return <p className="text-sm text-text-muted">Create or choose a character first.</p>;
-  }
-
   useEffect(() => {
     setShowValidationErrors(false);
   }, [queueEntries]);
+
+  if (!activeCharacter) {
+    return <p className="text-sm text-text-muted">Create or choose a character first.</p>;
+  }
 
   async function onApply() {
     if (preview.error) {
@@ -155,21 +148,40 @@ export function PreparePage() {
           ) : (
             <>
               {filtered.map((spell) => (
-                <div key={spell.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border-dark bg-bg px-3 py-2 text-sm">
-                  <div>
-                    <p className="font-medium text-text">{spell.name}</p>
-                    <p className="text-xs text-text-dim">{getSpellAssignmentList(spell, activeCharacter) || '-'} · {spell.castingTime || '-'} · Save: {spell.save || '-'}</p>
-                  </div>
-                  <button
-                    type="button"
-                    className="rounded-xl border border-gold-soft bg-gold-soft/20 px-3 py-1 text-xs"
-                    onClick={() => void queueSpellForNextPreparation(spell.id).catch((nextError) => {
-                      setError(nextError instanceof Error ? nextError.message : 'Unable to queue spell.');
-                    })}
-                  >
-                    Queue
-                  </button>
-                </div>
+                (() => {
+                  const validLists = getValidAssignmentLists(spell, activeCharacter);
+                  const addableLists = getAddableAssignmentLists(spell, activeCharacter);
+                  const listLabel = addableLists.length === 1
+                    ? addableLists[0]
+                    : addableLists.length > 1
+                      ? 'Choose in queue'
+                      : validLists.length > 0
+                        ? 'Blocked by max level'
+                        : '-';
+                  const blocked = validLists.length > 0 && addableLists.length === 0;
+
+                  return (
+                    <div key={spell.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border-dark bg-bg px-3 py-2 text-sm">
+                      <div>
+                        <p className="font-medium text-text">{spell.name}</p>
+                        <p className="text-xs text-text-dim">{`${listLabel} · ${spell.castingTime || '-'} · Save: ${spell.save || '-'}`}</p>
+                        {blocked ? (
+                          <p className="mt-1 text-xs text-text-dim">This spell is above every owned list&apos;s max spell level.</p>
+                        ) : null}
+                      </div>
+                      <button
+                        type="button"
+                        className={`rounded-xl border px-3 py-1 text-xs ${blocked ? 'border-border-dark bg-bg opacity-55' : 'border-gold-soft bg-gold-soft/20'}`}
+                        disabled={blocked}
+                        onClick={() => void queueSpellForNextPreparation(spell.id).catch((nextError) => {
+                          setError(nextError instanceof Error ? nextError.message : 'Unable to queue spell.');
+                        })}
+                      >
+                        {blocked ? 'Blocked' : 'Queue'}
+                      </button>
+                    </div>
+                  );
+                })()
               ))}
               {!filtered.length ? <p className="text-sm text-text-muted">No spells available to add.</p> : null}
             </>
@@ -191,13 +203,23 @@ export function PreparePage() {
 
         <div className="mt-3 space-y-2">
           {queuedRows.map(({ entry, spell }) => {
-            const queuedList = getSpellAssignmentList(spell, activeCharacter);
-            const replaceOptions = activeCharacter.preparedSpellIds
-              .map((spellId) => spellsById.get(spellId))
-              .filter((candidate): candidate is NonNullable<typeof candidate> => Boolean(candidate))
-              .filter((candidate) => getSpellAssignmentList(candidate, activeCharacter) === queuedList);
+            const validLists = getValidAssignmentLists(spell, activeCharacter);
+            const addableLists = getAddableAssignmentLists(spell, activeCharacter);
+            const queuedList = entry.assignedList || (addableLists.length === 1 ? addableLists[0] : null);
+            const selectableLists = entry.assignedList && !addableLists.includes(entry.assignedList)
+              ? [entry.assignedList, ...addableLists.filter((list) => list !== entry.assignedList)]
+              : addableLists;
+            const replaceOptions = activeCharacter.preparedSpells
+              .filter((preparedEntry) => preparedEntry.assignedList === queuedList)
+              .map((preparedEntry) => ({
+                ...preparedEntry,
+                spell: spellsById.get(preparedEntry.spellId),
+              }))
+              .filter((candidate): candidate is typeof candidate & { spell: NonNullable<typeof candidate.spell> } => Boolean(candidate.spell));
 
             const replaceMissing = entry.intent === 'replace' && !entry.replaceTarget;
+            const listMissing = !queuedList && addableLists.length > 1;
+            const listBlocked = Boolean(entry.assignedList) && !addableLists.includes(entry.assignedList);
 
             return (
               <div key={spell.id} className="space-y-2 rounded-xl border border-border-dark bg-bg px-3 py-2 text-sm">
@@ -249,6 +271,29 @@ export function PreparePage() {
                   </div>
                 </div>
 
+                {validLists.length > 1 ? (
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <label className="text-text-muted" htmlFor={`assigned-list-${spell.id}`}>Spell List</label>
+                    <select
+                      id={`assigned-list-${spell.id}`}
+                      className={`rounded-lg border bg-bg px-2 py-1 ${(listMissing || listBlocked) ? 'border-gold-soft text-text' : 'border-border-dark text-text'}`}
+                      value={entry.assignedList || ''}
+                      onChange={(event) => {
+                        void setQueuedSpellAssignedList(spell.id, event.target.value || null).catch((nextError) => {
+                          setError(nextError instanceof Error ? nextError.message : 'Unable to update spell list.');
+                        });
+                      }}
+                    >
+                      <option value="">Choose spell list</option>
+                      {selectableLists.map((list) => (
+                        <option key={list} value={list}>{list}</option>
+                      ))}
+                    </select>
+                    {listMissing ? <span className="text-text-dim">Choose where this spell belongs before applying.</span> : null}
+                    {listBlocked ? <span className="text-text-dim">This list now exceeds the allowed max spell level. Choose another list or remove it.</span> : null}
+                  </div>
+                ) : null}
+
                 {entry.intent === 'replace' ? (
                   <div className="flex flex-wrap items-center gap-2 text-xs">
                     <label className="text-text-muted" htmlFor={`replace-target-${spell.id}`}>Replace Target</label>
@@ -264,7 +309,7 @@ export function PreparePage() {
                     >
                       <option value="">Select prepared spell</option>
                       {replaceOptions.map((option) => (
-                        <option key={option.id} value={option.id}>{option.name}</option>
+                        <option key={`${option.assignedList}:${option.spellId}`} value={option.spellId}>{option.spell.name}</option>
                       ))}
                     </select>
                     {replaceMissing ? (
@@ -306,6 +351,13 @@ export function PreparePage() {
           {!limitsSummary.length ? <p className="text-sm text-text-muted">No limits configured.</p> : null}
         </div>
 
+        {preview.result?.warnings?.length ? (
+          <div className="mt-3 space-y-2">
+            {preview.result.warnings.map((warning) => (
+              <p key={warning} className="rounded-xl border border-gold-soft bg-gold-soft/10 px-3 py-2 text-sm text-text-muted">{warning}</p>
+            ))}
+          </div>
+        ) : null}
         {preview.error ? <p className="mt-3 rounded-xl border border-blood-soft bg-blood-soft px-3 py-2 text-sm text-blood">{preview.error}</p> : null}
         {error ? <p className="mt-3 rounded-xl border border-blood-soft bg-blood-soft px-3 py-2 text-sm text-blood">{error}</p> : null}
         {lastResult ? <p className="mt-3 rounded-xl border border-border-dark bg-bg px-3 py-2 text-sm text-text-muted">{lastResult}</p> : null}
@@ -313,14 +365,14 @@ export function PreparePage() {
         <h3 className="mt-4 font-display text-lg">Queued Changes</h3>
         <div className="mt-2 space-y-2 text-sm">
           {diff.map((item) => {
-            const fromName = spellsById.get(item.fromSpellId || '')?.name || 'Unknown';
-            const toName = spellsById.get(item.toSpellId || '')?.name || 'Unknown';
+            const fromName = item.from ? (spellsById.get(item.from.spellId)?.name || 'Unknown') : 'Unknown';
+            const toName = item.to ? (spellsById.get(item.to.spellId)?.name || 'Unknown') : 'Unknown';
 
             const label = item.type === 'replace'
-              ? `Replace ${fromName} -> ${toName}`
+              ? `Replace ${fromName} [${item.from?.assignedList || '-'}] -> ${toName} [${item.to?.assignedList || '-'}]`
               : item.type === 'add'
-                ? `Prepare ${toName}`
-                : `Unprepare ${fromName}`;
+                ? `Prepare ${toName} [${item.to?.assignedList || '-'}]`
+                : `Unprepare ${fromName} [${item.from?.assignedList || '-'}]`;
 
             return (
               <div key={`diff-${item.index}-${item.type}`} className="rounded-xl border border-border-dark bg-bg px-3 py-2">

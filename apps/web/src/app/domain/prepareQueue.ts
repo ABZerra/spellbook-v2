@@ -1,14 +1,18 @@
 import {
+  assertSpellCanBeAddedToList,
+  findDuplicatePreparedSpellWarnings,
   enforcePreparationLimits,
-  getSpellAssignmentList,
+  getValidAssignmentLists,
   isSpellEligibleForCharacter,
+  normalizeListName,
+  normalizePreparedSpells,
   normalizeQueueEntries,
   normalizeSpellIdList,
 } from './character';
-import type { CharacterProfile, NextPreparationQueueEntry, SpellRecord } from '../types';
+import type { CharacterProfile, NextPreparationQueueEntry, PreparedSpellEntry, SpellRecord } from '../types';
 
 interface ComputeApplyInput {
-  profile: Pick<CharacterProfile, 'name' | 'availableLists' | 'preparationLimits' | 'preparedSpellIds'>;
+  profile: Pick<CharacterProfile, 'name' | 'availableLists' | 'preparationLimits' | 'preparedSpells'>;
   spellsById: Map<string, SpellRecord>;
   queue: NextPreparationQueueEntry[];
 }
@@ -20,15 +24,39 @@ interface ApplySummary {
 }
 
 interface ComputeApplyOutput {
-  finalPreparedSpellIds: string[];
+  finalPreparedSpells: PreparedSpellEntry[];
   appliedSpellIds: string[];
   remainingQueue: NextPreparationQueueEntry[];
   summary: ApplySummary;
+  warnings: string[];
+}
+
+function resolveAssignedList(
+  entry: NextPreparationQueueEntry,
+  spell: SpellRecord,
+  profile: ComputeApplyInput['profile'],
+): string | null {
+  const validLists = getValidAssignmentLists(spell, profile as CharacterProfile);
+  if (validLists.length === 0) return null;
+
+  const explicit = normalizeListName(entry.assignedList || '');
+  if (explicit) {
+    if (!validLists.includes(explicit)) {
+      throw new Error(`${spell.name}: choose a valid spell list.`);
+    }
+    return explicit;
+  }
+
+  if (validLists.length === 1) {
+    return validLists[0];
+  }
+
+  throw new Error(`${spell.name}: choose a spell list before applying.`);
 }
 
 export function computeApplyResult(input: ComputeApplyInput): ComputeApplyOutput {
   const queue = normalizeQueueEntries(input.queue || []);
-  const nextPrepared = [...normalizeSpellIdList(input.profile.preparedSpellIds || [])];
+  const nextPrepared = [...normalizePreparedSpells(input.profile.preparedSpells || [], input.profile as CharacterProfile)];
   const appliedSpellIds: string[] = [];
 
   const summary: ApplySummary = {
@@ -45,6 +73,11 @@ export function computeApplyResult(input: ComputeApplyInput): ComputeApplyOutput
 
     if (!isSpellEligibleForCharacter(spell, input.profile)) {
       throw new Error(`${spell.name} is outside ${input.profile.name}'s available spell lists.`);
+    }
+
+    const assignedList = resolveAssignedList(entry, spell, input.profile);
+    if (!assignedList) {
+      throw new Error(`${spell.name}: choose a valid spell list.`);
     }
 
     if (entry.intent === 'queue_only') {
@@ -64,36 +97,37 @@ export function computeApplyResult(input: ComputeApplyInput): ComputeApplyOutput
         throw new Error(`Unknown spell: ${entry.replaceTarget}`);
       }
 
-      const replaceIndex = nextPrepared.indexOf(entry.replaceTarget);
+      const replaceIndex = nextPrepared.findIndex((preparedEntry) => (
+        preparedEntry.spellId === entry.replaceTarget
+        && preparedEntry.assignedList === assignedList
+      ));
       if (replaceIndex === -1) {
-        throw new Error(`${spell.name}: replace target must be currently prepared.`);
+      throw new Error(`${spell.name}: must replace a spell from the same list.`);
       }
 
-      const queuedList = getSpellAssignmentList(spell, input.profile);
-      const targetList = getSpellAssignmentList(replaceTarget, input.profile);
-      if (queuedList && targetList && queuedList !== targetList) {
-        throw new Error(`${spell.name}: must replace a spell from the same list.`);
-      }
-
-      nextPrepared[replaceIndex] = entry.spellId;
+      assertSpellCanBeAddedToList(spell, input.profile, assignedList);
+      nextPrepared[replaceIndex] = { spellId: entry.spellId, assignedList, mode: 'normal' };
       appliedSpellIds.push(entry.spellId);
       continue;
     }
 
     summary.adds += 1;
-    nextPrepared.push(entry.spellId);
+    assertSpellCanBeAddedToList(spell, input.profile, assignedList);
+    nextPrepared.push({ spellId: entry.spellId, assignedList, mode: 'normal' });
     appliedSpellIds.push(entry.spellId);
   }
 
-  const finalPreparedSpellIds = normalizeSpellIdList(nextPrepared);
-  enforcePreparationLimits(finalPreparedSpellIds, input.profile, input.spellsById);
+  const finalPreparedSpells = normalizePreparedSpells(nextPrepared, input.profile as CharacterProfile);
+  enforcePreparationLimits(finalPreparedSpells, input.profile, input.spellsById);
+  const warnings = findDuplicatePreparedSpellWarnings(finalPreparedSpells, input.spellsById);
 
   const remainingQueue = queue.filter((entry) => entry.intent === 'queue_only');
 
   return {
-    finalPreparedSpellIds,
+    finalPreparedSpells,
     appliedSpellIds: normalizeSpellIdList(appliedSpellIds),
     remainingQueue,
     summary,
+    warnings,
   };
 }
