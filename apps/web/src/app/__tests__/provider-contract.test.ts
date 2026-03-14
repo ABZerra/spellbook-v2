@@ -145,7 +145,7 @@ describe('provider contract', () => {
 
   it('snapshot provider satisfies shared contract', async () => {
     const fetchMock = vi.fn(async (url: string) => {
-      if (url === '/spells.snapshot.json' || url === '/spells.json') {
+      if (url === '/spells.snapshot.json' || url === '/spellbook-v2/spells.snapshot.json') {
         return makeResponse(snapshotPayload);
       }
       throw new Error(`Unexpected URL: ${url}`);
@@ -160,11 +160,8 @@ describe('provider contract', () => {
 
   it('fails when the canonical snapshot file is missing instead of falling back to legacy paths', async () => {
     vi.stubGlobal('fetch', vi.fn(async (url: string) => {
-      if (url === '/spells.snapshot.json') {
+      if (url === '/spells.snapshot.json' || url === '/spellbook-v2/spells.snapshot.json') {
         return makeResponse({}, false);
-      }
-      if (url === '/spells.json') {
-        return makeResponse(snapshotPayload);
       }
       throw new Error(`Unexpected URL: ${url}`);
     }));
