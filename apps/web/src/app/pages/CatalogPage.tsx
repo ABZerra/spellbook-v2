@@ -1,16 +1,43 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getAddableAssignmentLists, getSpellAssignmentList, getSpellLists, isSpellEligibleForCharacter } from '../domain/character';
+import {
+  buildCatalogRows,
+  getDefaultCatalogPreferences,
+  readCatalogPreferences,
+  resetCatalogSort,
+  sanitizeCatalogPreferences,
+  type CatalogPreferences,
+  type CatalogSortKey,
+} from './catalogViewModel';
 import { useApp } from '../state/AppContext';
-import type { SpellRecord } from '../types';
 
-function matchesSearch(spell: SpellRecord, query: string): boolean {
-  const q = query.toLowerCase();
-  if (!q) return true;
-  return (
-    spell.name.toLowerCase().includes(q)
-    || spell.notes.toLowerCase().includes(q)
-    || spell.description.toLowerCase().includes(q)
+const CATALOG_PREFERENCES_KEY = 'spellbook.catalogPreferences';
+
+const SORTABLE_COLUMNS: Array<{ key: CatalogSortKey; label: string }> = [
+  { key: 'prepared', label: 'Prepared' },
+  { key: 'level', label: 'Level' },
+  { key: 'name', label: 'Name' },
+  { key: 'list', label: 'List' },
+  { key: 'save', label: 'Save' },
+  { key: 'action', label: 'Action' },
+  { key: 'notes', label: 'Notes' },
+  { key: 'queued', label: 'Next Preparation' },
+];
+
+function readInitialPreferences(): CatalogPreferences {
+  if (typeof window === 'undefined') {
+    return getDefaultCatalogPreferences();
+  }
+
+  return sanitizeCatalogPreferences(
+    readCatalogPreferences(window.localStorage.getItem(CATALOG_PREFERENCES_KEY)),
+    { allowListSort: true },
   );
+}
+
+function getSortIndicator(sortKey: CatalogSortKey, preferences: CatalogPreferences): string | null {
+  if (preferences.sortKey !== sortKey) return null;
+  return preferences.sortDirection === 'asc' ? 'Asc' : 'Desc';
 }
 
 export function CatalogPage() {
@@ -23,8 +50,30 @@ export function CatalogPage() {
   } = useApp();
 
   const [search, setSearch] = useState('');
+  const [preferences, setPreferences] = useState<CatalogPreferences>(readInitialPreferences);
   const [selectedSpellId, setSelectedSpellId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const showListColumn = (activeCharacter?.availableLists || []).length > 1;
+  const effectivePreferences = useMemo(
+    () => sanitizeCatalogPreferences(preferences, { allowListSort: showListColumn }),
+    [preferences, showListColumn],
+  );
+
+  useEffect(() => {
+    if (
+      preferences.viewMode !== effectivePreferences.viewMode
+      || preferences.sortKey !== effectivePreferences.sortKey
+      || preferences.sortDirection !== effectivePreferences.sortDirection
+    ) {
+      setPreferences(effectivePreferences);
+    }
+  }, [effectivePreferences, preferences]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(CATALOG_PREFERENCES_KEY, JSON.stringify(effectivePreferences));
+  }, [effectivePreferences]);
 
   const selectedSpell = useMemo(
     () => spells.find((entry) => entry.id === selectedSpellId) || null,
@@ -34,29 +83,70 @@ export function CatalogPage() {
   const selectedSpellAddableLists = selectedSpell && activeCharacter
     ? getAddableAssignmentLists(selectedSpell, activeCharacter)
     : [];
-  const selectedSpellEligible = selectedSpell && activeCharacter
-    ? isSpellEligibleForCharacter(selectedSpell, activeCharacter)
+  const selectedSpellEligible = selectedSpell
+    ? (activeCharacter ? isSpellEligibleForCharacter(selectedSpell, activeCharacter) : true)
     : false;
   const selectedSpellCannotQueue = selectedSpell
     ? (!selectedSpellQueued && (!selectedSpellEligible || selectedSpellAddableLists.length === 0))
     : false;
-  const selectedSpellDisabledReason = selectedSpell && !selectedSpellEligible
+  const selectedSpellDisabledReason = selectedSpell && activeCharacter && !selectedSpellEligible
     ? 'This spell is outside the active character spell lists.'
     : selectedSpell && selectedSpellAddableLists.length === 0
       ? 'This spell is above every owned list max spell level.'
       : '';
 
-  const preparedSet = useMemo(
-    () => new Set((activeCharacter?.preparedSpells || []).map((entry) => entry.spellId)),
-    [activeCharacter?.preparedSpells],
-  );
-
   const rows = useMemo(
-    () => spells.filter((spell) => matchesSearch(spell, search)),
-    [spells, search],
+    () => buildCatalogRows({
+      spells,
+      activeCharacter,
+      search,
+      preferences: effectivePreferences,
+    }),
+    [activeCharacter, effectivePreferences, search, spells],
   );
 
-  const showListColumn = (activeCharacter?.availableLists || []).length > 1;
+  const searchMatchedRows = useMemo(
+    () => buildCatalogRows({
+      spells,
+      activeCharacter,
+      search,
+      preferences: {
+        ...effectivePreferences,
+        viewMode: 'all',
+      },
+    }),
+    [activeCharacter, effectivePreferences, search, spells],
+  );
+
+  const emptyStateMessage = effectivePreferences.viewMode === 'eligible_only' && searchMatchedRows.length > 0
+    ? 'No spells match this character filter.'
+    : 'No spells match your search.';
+
+  function onSortToggle(sortKey: CatalogSortKey) {
+    if (sortKey === 'list' && !showListColumn) {
+      setPreferences((current) => resetCatalogSort(current));
+      return;
+    }
+
+    setPreferences((current) => {
+      if (current.sortKey !== sortKey) {
+        return {
+          ...current,
+          sortKey,
+          sortDirection: 'asc',
+        };
+      }
+
+      if (current.sortDirection === 'asc') {
+        return {
+          ...current,
+          sortDirection: 'desc',
+        };
+      }
+
+      return resetCatalogSort(current);
+    });
+  }
 
   async function onQueueToggle(spellId: string) {
     setError(null);
@@ -84,15 +174,40 @@ export function CatalogPage() {
           <span>Prepared: {activeCharacter?.preparedSpells.length || 0}</span>
         </div>
 
-        <div className="mt-4">
-          <label className="text-sm text-text-muted" htmlFor="catalog-search">Search</label>
-          <input
-            id="catalog-search"
-            className="mt-1 w-full rounded-xl border border-border-dark bg-bg px-3 py-2 text-text"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search spells"
-          />
+        <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-end">
+          <div className="flex-1">
+            <label className="text-sm text-text-muted" htmlFor="catalog-search">Search</label>
+            <input
+              id="catalog-search"
+              className="mt-1 w-full rounded-xl border border-border-dark bg-bg px-3 py-2 text-text"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search spells"
+            />
+          </div>
+
+          <div className="min-w-[240px]">
+            <p className="text-sm text-text-muted">View</p>
+            <div className="mt-1 flex flex-wrap gap-2">
+              {[
+                { value: 'all', label: 'All' },
+                { value: 'eligible_first', label: 'Eligible First' },
+                { value: 'eligible_only', label: 'Eligible Only' },
+              ].map((option) => {
+                const active = effectivePreferences.viewMode === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`rounded-xl border px-3 py-2 text-sm ${active ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted'}`}
+                    onClick={() => setPreferences((current) => ({ ...current, viewMode: option.value as CatalogPreferences['viewMode'] }))}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
         {error ? <p className="mt-3 rounded-xl border border-blood-soft bg-blood-soft px-3 py-2 text-sm text-blood">{error}</p> : null}
@@ -100,25 +215,34 @@ export function CatalogPage() {
 
       <section className="overflow-hidden rounded-2xl border border-border-dark bg-bg-1/90">
         <div className="grid grid-cols-[90px_80px_minmax(200px,1fr)_120px_110px_140px_minmax(160px,1fr)_150px] gap-2 border-b border-border-dark px-3 py-2 text-xs uppercase tracking-wide text-text-dim">
-          <span>Prepared</span>
-          <span>Level</span>
-          <span>Name</span>
-          <span>{showListColumn ? 'List' : 'List*'}</span>
-          <span>Save</span>
-          <span>Action</span>
-          <span>Notes</span>
-          <span>Next Preparation</span>
+          {SORTABLE_COLUMNS.map((column) => {
+            if (column.key === 'list' && !showListColumn) {
+              return <span key={column.key}>List*</span>;
+            }
+
+            const indicator = getSortIndicator(column.key, effectivePreferences);
+
+            return (
+              <button
+                key={column.key}
+                type="button"
+                className="flex items-center gap-1 text-left"
+                onClick={() => onSortToggle(column.key)}
+              >
+                <span>{column.label}</span>
+                {indicator ? <span className="text-[10px] normal-case tracking-normal text-text-muted">{indicator}</span> : null}
+              </button>
+            );
+          })}
         </div>
 
         <div className="max-h-[65vh] overflow-y-auto">
-          {rows.map((spell) => {
-            const lists = getSpellLists(spell);
-            const displayList = showListColumn ? (lists[0] || '-') : '-';
-            const queued = isSpellQueuedForNextPreparation(spell.id);
-            const eligible = activeCharacter ? isSpellEligibleForCharacter(spell, activeCharacter) : false;
+          {rows.map((row) => {
+            const spell = row.spell;
+            const displayList = showListColumn ? row.displayList : '-';
             const addableLists = activeCharacter ? getAddableAssignmentLists(spell, activeCharacter) : [];
-            const cannotQueue = !queued && (!eligible || addableLists.length === 0);
-            const disabledReason = !eligible
+            const cannotQueue = !row.queued && (!row.eligible || addableLists.length === 0);
+            const disabledReason = !row.eligible && activeCharacter
               ? 'This spell is outside the active character spell lists.'
               : addableLists.length === 0
                 ? 'This spell is above every owned list max spell level.'
@@ -129,7 +253,7 @@ export function CatalogPage() {
                 key={spell.id}
                 className="grid grid-cols-[90px_80px_minmax(200px,1fr)_120px_110px_140px_minmax(160px,1fr)_150px] gap-2 border-b border-border-dark/60 px-3 py-2 text-sm hover:bg-bg-2"
               >
-                <span>{preparedSet.has(spell.id) ? 'Yes' : 'No'}</span>
+                <span>{row.prepared ? 'Yes' : 'No'}</span>
                 <span>{spell.level === 0 ? 'Cantrip' : spell.level}</span>
                 <button
                   type="button"
@@ -146,23 +270,23 @@ export function CatalogPage() {
                 <span className="truncate" title={spell.notes || '-'}>{spell.notes || '-'}</span>
                 <button
                   type="button"
-                  className={`rounded-lg border px-2 py-1 text-xs ${queued ? 'border-gold-soft bg-gold-soft/20' : 'border-border-dark bg-bg'} ${cannotQueue ? 'cursor-not-allowed opacity-55' : ''}`}
+                  className={`rounded-lg border px-2 py-1 text-xs ${row.queued ? 'border-gold-soft bg-gold-soft/20' : 'border-border-dark bg-bg'} ${cannotQueue ? 'cursor-not-allowed opacity-55' : ''}`}
                   disabled={cannotQueue}
                   title={disabledReason}
-                  aria-label={cannotQueue ? disabledReason : (queued ? 'Unqueue spell from next preparation' : 'Queue spell for next preparation')}
+                  aria-label={cannotQueue ? disabledReason : (row.queued ? 'Unqueue spell from next preparation' : 'Queue spell for next preparation')}
                   onClick={(event) => {
                     event.preventDefault();
                     void onQueueToggle(spell.id);
                   }}
                 >
-                  {queued ? 'Queued' : cannotQueue ? 'Unavailable' : 'Queue'}
+                  {row.queued ? 'Queued' : cannotQueue ? 'Unavailable' : 'Queue'}
                 </button>
               </div>
             );
           })}
 
           {!rows.length ? (
-            <p className="p-4 text-sm text-text-muted">No spells match your search.</p>
+            <p className="p-4 text-sm text-text-muted">{emptyStateMessage}</p>
           ) : null}
         </div>
 
