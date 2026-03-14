@@ -40,8 +40,8 @@ export function CatalogPage() {
     : '';
 
   const preparedSet = useMemo(
-    () => new Set(activeCharacter?.preparedSpellIds || []),
-    [activeCharacter?.preparedSpellIds],
+    () => new Set((activeCharacter?.preparedSpells || []).map((entry) => entry.spellId)),
+    [activeCharacter?.preparedSpells],
   );
 
   const rows = useMemo(
@@ -74,7 +74,7 @@ export function CatalogPage() {
 
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-text-muted">
           <span>Queued: {activeCharacter?.nextPreparationQueue.length || 0}</span>
-          <span>Prepared: {activeCharacter?.preparedSpellIds.length || 0}</span>
+          <span>Prepared: {activeCharacter?.preparedSpells.length || 0}</span>
         </div>
 
         <div className="mt-4">

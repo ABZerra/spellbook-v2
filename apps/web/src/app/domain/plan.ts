@@ -1,32 +1,43 @@
+import type { PreparedSpellEntry } from '../types';
+
 export interface PlanDiffItem {
   index: number;
   type: 'replace' | 'add' | 'remove';
-  fromSpellId?: string;
-  toSpellId?: string;
+  from?: PreparedSpellEntry;
+  to?: PreparedSpellEntry;
 }
 
-export function buildPlanDiff(currentSpellIds: string[], nextSpellIds: string[]): PlanDiffItem[] {
-  const maxLen = Math.max(currentSpellIds.length, nextSpellIds.length);
+function matchesEntry(left: PreparedSpellEntry | null, right: PreparedSpellEntry | null): boolean {
+  return Boolean(
+    left
+    && right
+    && left.spellId === right.spellId
+    && left.assignedList === right.assignedList
+  );
+}
+
+export function buildPlanDiff(currentPreparedSpells: PreparedSpellEntry[], nextPreparedSpells: PreparedSpellEntry[]): PlanDiffItem[] {
+  const maxLen = Math.max(currentPreparedSpells.length, nextPreparedSpells.length);
   const output: PlanDiffItem[] = [];
 
   for (let index = 0; index < maxLen; index += 1) {
-    const fromSpellId = currentSpellIds[index] || null;
-    const toSpellId = nextSpellIds[index] || null;
+    const from = currentPreparedSpells[index] || null;
+    const to = nextPreparedSpells[index] || null;
 
-    if (fromSpellId === toSpellId) continue;
+    if (matchesEntry(from, to)) continue;
 
-    if (fromSpellId && toSpellId) {
-      output.push({ index, type: 'replace', fromSpellId, toSpellId });
+    if (from && to) {
+      output.push({ index, type: 'replace', from, to });
       continue;
     }
 
-    if (fromSpellId && !toSpellId) {
-      output.push({ index, type: 'remove', fromSpellId });
+    if (from && !to) {
+      output.push({ index, type: 'remove', from });
       continue;
     }
 
-    if (!fromSpellId && toSpellId) {
-      output.push({ index, type: 'add', toSpellId });
+    if (!from && to) {
+      output.push({ index, type: 'add', to });
     }
   }
 

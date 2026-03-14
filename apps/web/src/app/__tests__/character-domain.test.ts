@@ -48,4 +48,24 @@ describe('character domain', () => {
       { spellId: 'counterspell', intent: 'add' },
     ]);
   });
+
+  it('migrates legacy prepared spell ids into explicit assigned-list entries', () => {
+    const profile = normalizeCharacterProfile({
+      id: 'aelric',
+      name: 'Aelric',
+      class: '',
+      subclass: '',
+      castingAbility: '',
+      availableLists: ['Wizard'],
+      preparationLimits: [{ list: 'Wizard', limit: 8 }],
+      preparedSpellIds: ['shield'],
+      nextPreparationQueue: [],
+      savedIdeas: [],
+      updatedAt: new Date().toISOString(),
+    } as any) as any;
+
+    expect(profile.preparedSpells).toEqual([
+      { spellId: 'shield', assignedList: 'WIZARD' },
+    ]);
+  });
 });

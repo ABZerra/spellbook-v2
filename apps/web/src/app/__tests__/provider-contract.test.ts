@@ -106,7 +106,7 @@ async function assertProviderContract(provider: SpellCatalogProvider) {
   const saved = await provider.saveCharacterProfile(profile);
   expect(saved.nextPreparationQueue).toEqual([{ spellId: 'magic-missile', intent: 'add' }]);
 
-  const applied = await provider.applyPlan('tester', ['magic-missile']);
+  const applied = await provider.applyPlan('tester', [{ spellId: 'magic-missile', assignedList: 'WIZARD' }]);
   expect(applied.appliedSpellIds).toEqual(['magic-missile']);
 
   await provider.deleteCharacterProfile('tester');
@@ -121,16 +121,16 @@ async function assertQueueOnlyRetention(provider: SpellCatalogProvider) {
     availableLists: ['Wizard'],
   });
 
-  profile.preparedSpellIds = ['magic-missile'];
+  profile.preparedSpells = [{ spellId: 'magic-missile', assignedList: 'WIZARD' }];
   profile.nextPreparationQueue = [
-    { spellId: 'shield', intent: 'replace', replaceTarget: 'magic-missile' },
+    { spellId: 'shield', intent: 'replace', assignedList: 'WIZARD', replaceTarget: 'magic-missile' },
     { spellId: 'bless', intent: 'queue_only' },
   ];
 
   await provider.saveCharacterProfile(profile);
-  const applied = await provider.applyPlan('queue-check', ['shield'], [{ spellId: 'bless', intent: 'queue_only' }]);
+  const applied = await provider.applyPlan('queue-check', [{ spellId: 'shield', assignedList: 'WIZARD' }], [{ spellId: 'bless', intent: 'queue_only' }]);
 
-  expect(applied.profile.preparedSpellIds).toEqual(['shield']);
+  expect(applied.profile.preparedSpells).toEqual([{ spellId: 'shield', assignedList: 'WIZARD' }]);
   expect(applied.profile.nextPreparationQueue).toEqual([
     { spellId: 'bless', intent: 'queue_only' },
   ]);

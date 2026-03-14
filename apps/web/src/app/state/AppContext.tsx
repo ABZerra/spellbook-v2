@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
+  getValidAssignmentLists,
   isSpellEligibleForCharacter,
   normalizeCharacterProfile,
 } from '../domain/character';
@@ -43,6 +44,7 @@ interface AppContextValue {
   unqueueSpellForNextPreparation: (spellId: string) => Promise<void>;
   isSpellQueuedForNextPreparation: (spellId: string) => boolean;
   setQueuedSpellIntent: (spellId: string, intent: QueueIntent) => Promise<void>;
+  setQueuedSpellAssignedList: (spellId: string, assignedList: string | null) => Promise<void>;
   setQueuedSpellReplaceTarget: (spellId: string, replaceTarget: string | null) => Promise<void>;
   restoreQueueFromPrepared: () => Promise<void>;
 
@@ -179,10 +181,15 @@ export function AppProvider({ children, provider }: AppProviderProps) {
         throw new Error(`${spell.name} is outside ${character.name}'s available spell lists.`);
       }
 
+      const validLists = getValidAssignmentLists(spell, character);
       const alreadyQueued = character.nextPreparationQueue.some((entry) => entry.spellId === spellId);
       const nextQueue = alreadyQueued
         ? character.nextPreparationQueue
-        : [...character.nextPreparationQueue, { spellId, intent: 'add' as const }];
+        : [...character.nextPreparationQueue, {
+          spellId,
+          intent: 'add' as const,
+          assignedList: validLists.length === 1 ? validLists[0] : undefined,
+        }];
       const existingIdea = character.savedIdeas.find((entry) => entry.spellId === spellId);
       const nextIdeas = existingIdea
         ? character.savedIdeas
@@ -220,6 +227,17 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     }));
   }, [mutateActiveCharacter]);
 
+  const setQueuedSpellAssignedList = useCallback(async (spellId: string, assignedList: string | null) => {
+    await mutateActiveCharacter((character) => ({
+      ...character,
+      nextPreparationQueue: character.nextPreparationQueue.map((entry) => (
+        entry.spellId === spellId
+          ? { ...entry, assignedList: assignedList || undefined, replaceTarget: undefined }
+          : entry
+      )),
+    }));
+  }, [mutateActiveCharacter]);
+
   const setQueuedSpellReplaceTarget = useCallback(async (spellId: string, replaceTarget: string | null) => {
     await mutateActiveCharacter((character) => ({
       ...character,
@@ -234,8 +252,12 @@ export function AppProvider({ children, provider }: AppProviderProps) {
   const restoreQueueFromPrepared = useCallback(async () => {
     await mutateActiveCharacter((character) => ({
       ...character,
-      nextPreparationQueue: character.preparedSpellIds.map((spellId) => ({ spellId, intent: 'add' as const })),
-      savedIdeas: character.savedIdeas.filter((entry) => character.preparedSpellIds.includes(entry.spellId)),
+      nextPreparationQueue: character.preparedSpells.map((entry) => ({
+        spellId: entry.spellId,
+        intent: 'add' as const,
+        assignedList: entry.assignedList,
+      })),
+      savedIdeas: character.savedIdeas.filter((entry) => character.preparedSpells.some((prepared) => prepared.spellId === entry.spellId)),
     }));
   }, [mutateActiveCharacter]);
 
@@ -250,12 +272,12 @@ export function AppProvider({ children, provider }: AppProviderProps) {
       queue: activeCharacter.nextPreparationQueue,
     });
 
-    const payload = buildSpellSyncPayloadV3(activeCharacter, computed.finalPreparedSpellIds, spells);
+    const payload = buildSpellSyncPayloadV3(activeCharacter, computed.finalPreparedSpells, spells);
     const ackPromise = waitForSpellSyncPayloadAck();
 
     const applyResult = await resolvedProvider.applyPlan(
       activeCharacter.id,
-      computed.finalPreparedSpellIds,
+      computed.finalPreparedSpells,
       computed.remainingQueue,
     );
     setCharacters((current) => current.map((entry) => (
@@ -291,6 +313,7 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     unqueueSpellForNextPreparation,
     isSpellQueuedForNextPreparation,
     setQueuedSpellIntent,
+    setQueuedSpellAssignedList,
     setQueuedSpellReplaceTarget,
     restoreQueueFromPrepared,
     applyPlan,
@@ -309,6 +332,7 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     unqueueSpellForNextPreparation,
     isSpellQueuedForNextPreparation,
     setQueuedSpellIntent,
+    setQueuedSpellAssignedList,
     setQueuedSpellReplaceTarget,
     restoreQueueFromPrepared,
     applyPlan,
