@@ -24,21 +24,24 @@ function parseAvailableForEntry(value: string): string {
   return normalizeListName(next);
 }
 
-export function getSpellLists(spell: Pick<SpellRecord, 'availableFor'>): string[] {
+export function getSpellLists(spell: Pick<SpellRecord, 'availableFor' | 'additionalSpellLists'>): string[] {
   const normalized = (spell.availableFor || [])
     .map((entry) => parseAvailableForEntry(entry))
     .filter(Boolean);
 
-  return [...new Set(normalized)];
+  const additional = (spell.additionalSpellLists || [])
+    .map((entry) => normalizeListName(entry))
+    .filter(Boolean);
+
+  return [...new Set([...normalized, ...additional])];
 }
 
 export function getValidAssignmentLists(
-  spell: Pick<SpellRecord, 'availableFor'>,
+  spell: Pick<SpellRecord, 'availableFor' | 'additionalSpellLists'>,
   profile: Pick<CharacterProfile, 'availableLists'>,
 ): string[] {
   const spellLists = getSpellLists(spell);
   if (spellLists.length === 0) return [];
-
   const allowedLists = (profile.availableLists || [])
     .map((entry) => normalizeListName(entry))
     .filter(Boolean);
@@ -47,7 +50,10 @@ export function getValidAssignmentLists(
   return spellLists.filter((entry) => allowedLists.includes(entry));
 }
 
-export function isSpellEligibleForCharacter(spell: Pick<SpellRecord, 'availableFor'>, profile: Pick<CharacterProfile, 'availableLists'>): boolean {
+export function isSpellEligibleForCharacter(
+  spell: Pick<SpellRecord, 'availableFor' | 'additionalSpellLists'>,
+  profile: Pick<CharacterProfile, 'availableLists'>,
+): boolean {
   return getValidAssignmentLists(spell, profile).length > 0;
 }
 
@@ -78,7 +84,10 @@ export function getPreparationLimits(input: CharacterProfileInput | CharacterPro
   return [...byList.entries()].map(([list, config]) => ({ list, limit: config.limit, maxSpellLevel: config.maxSpellLevel }));
 }
 
-export function getSpellAssignmentList(spell: Pick<SpellRecord, 'availableFor'>, profile: Pick<CharacterProfile, 'availableLists'>): string | null {
+export function getSpellAssignmentList(
+  spell: Pick<SpellRecord, 'availableFor' | 'additionalSpellLists'>,
+  profile: Pick<CharacterProfile, 'availableLists'>,
+): string | null {
   return getValidAssignmentLists(spell, profile)[0] || null;
 }
 
@@ -257,7 +266,7 @@ function getPreparationLimitConfig(
 }
 
 export function getAddableAssignmentLists(
-  spell: Pick<SpellRecord, 'availableFor' | 'level'>,
+  spell: Pick<SpellRecord, 'availableFor' | 'additionalSpellLists' | 'level'>,
   profile: Pick<CharacterProfile, 'availableLists' | 'preparationLimits'>,
 ): string[] {
   const validLists = getValidAssignmentLists(spell, profile as Pick<CharacterProfile, 'availableLists'>);
@@ -270,7 +279,7 @@ export function getAddableAssignmentLists(
 }
 
 export function assertSpellCanBeAddedToList(
-  spell: Pick<SpellRecord, 'name' | 'level' | 'availableFor'>,
+  spell: Pick<SpellRecord, 'name' | 'level' | 'availableFor' | 'additionalSpellLists'>,
   profile: Pick<CharacterProfile, 'availableLists' | 'preparationLimits'>,
   assignedList: string,
 ) {

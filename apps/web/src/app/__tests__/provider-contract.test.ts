@@ -25,6 +25,7 @@ const snapshotPayload = {
       atHigherLevels: '',
       spellTags: ['Damage'],
       availableFor: ['Sorcerer (Legacy)', 'Wizard (Legacy)'],
+      additionalSpellLists: [],
       notes: '',
       ddbUrl: 'https://www.dndbeyond.com/spells/2191-magic-missile',
     },
@@ -49,6 +50,7 @@ const snapshotPayload = {
       atHigherLevels: '',
       spellTags: ['Warding'],
       availableFor: ['Sorcerer (Legacy)', 'Wizard (Legacy)'],
+      additionalSpellLists: [],
       notes: '',
       ddbUrl: 'https://www.dndbeyond.com/spells/2253-shield',
     },
@@ -73,6 +75,7 @@ const snapshotPayload = {
       atHigherLevels: '',
       spellTags: ['Buff'],
       availableFor: ['Cleric (Legacy)', 'Paladin (Legacy)'],
+      additionalSpellLists: ['BARD', 'RANGER'],
       notes: '',
       ddbUrl: 'https://www.dndbeyond.com/spells/2035-bless',
     },
@@ -90,6 +93,7 @@ function makeResponse(payload: unknown, ok = true): Response {
 async function assertProviderContract(provider: SpellCatalogProvider) {
   const spells = await provider.listSpells();
   expect(spells.length).toBeGreaterThan(0);
+  expect(spells.find((entry) => entry.id === 'bless')?.additionalSpellLists).toEqual(['BARD', 'RANGER']);
 
   const profile = await provider.createCharacterProfile({
     id: 'tester',
