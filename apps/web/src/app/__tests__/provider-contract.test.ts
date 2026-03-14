@@ -155,7 +155,7 @@ describe('provider contract', () => {
     const provider = new LocalSnapshotProvider();
     await assertProviderContract(provider);
     await assertQueueOnlyRetention(provider);
-    expect(fetchMock).toHaveBeenCalledWith('/spells.snapshot.json', { cache: 'no-store' });
+    expect(fetchMock).toHaveBeenCalledWith(resolveSnapshotPath(import.meta.env.BASE_URL || '/'), { cache: 'no-store' });
   });
 
   it('fails when the canonical snapshot file is missing instead of falling back to legacy paths', async () => {
