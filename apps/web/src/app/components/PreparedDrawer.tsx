@@ -10,7 +10,7 @@ interface PreparedDrawerProps {
 
 interface GroupedEntry {
   list: string;
-  spells: SpellRecord[];
+  spells: Array<{ spell: SpellRecord; mode: CharacterProfile['preparedSpells'][number]['mode'] }>;
 }
 
 function buildGroups(
@@ -24,7 +24,7 @@ function buildGroups(
     if (!spell) continue;
     const list = entry.assignedList || 'UNASSIGNED';
     const listEntries = byList.get(list) || [];
-    listEntries.push(spell);
+    listEntries.push({ spell, mode: entry.mode });
     byList.set(list, listEntries);
   }
 
@@ -65,12 +65,19 @@ export function PreparedDrawer({
           {groups.map((group) => (
             <section key={group.list} className="space-y-2">
               <h3 className="text-xs uppercase tracking-wide text-text-dim">{group.list}</h3>
-              {group.spells.map((spell) => (
+              {group.spells.map(({ spell, mode }) => (
                 <div
-                  key={spell.id}
+                  key={`${group.list}:${spell.id}:${mode}`}
                   className={`rounded-xl border px-3 py-2 text-sm ${highlightedSpellIds.has(spell.id) ? 'border-gold-soft bg-gold-soft/15' : 'border-border-dark bg-bg'}`}
                 >
-                  <p className="font-medium text-text">{spell.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-text">{spell.name}</p>
+                    {mode === 'always' ? (
+                      <span className="rounded-full border border-gold-soft bg-gold-soft/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-text-muted">
+                        Always Prepared
+                      </span>
+                    ) : null}
+                  </div>
                   <p className="text-xs text-text-dim">Save: {spell.save || '-'} · Action: {spell.castingTime || '-'}</p>
                 </div>
               ))}

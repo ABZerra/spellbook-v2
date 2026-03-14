@@ -56,22 +56,26 @@ export function getPreparationLimits(input: CharacterProfileInput | CharacterPro
     .map((entry) => normalizeListName(entry))
     .filter(Boolean))];
 
-  const byList = new Map<string, number>();
+  const byList = new Map<string, { limit: number; maxSpellLevel: number }>();
   for (const entry of input.preparationLimits || []) {
     const list = normalizeListName(entry.list);
     if (!list) continue;
     const parsed = Number(entry.limit);
     const limit = Number.isFinite(parsed) ? Math.max(1, Math.trunc(parsed)) : 1;
-    byList.set(list, limit);
+    const parsedMaxSpellLevel = Number((entry as PreparationLimit).maxSpellLevel);
+    const maxSpellLevel = Number.isFinite(parsedMaxSpellLevel)
+      ? Math.max(0, Math.min(9, Math.trunc(parsedMaxSpellLevel)))
+      : 9;
+    byList.set(list, { limit, maxSpellLevel });
   }
 
   for (const list of availableLists) {
     if (!byList.has(list)) {
-      byList.set(list, 8);
+      byList.set(list, { limit: 8, maxSpellLevel: 9 });
     }
   }
 
-  return [...byList.entries()].map(([list, limit]) => ({ list, limit }));
+  return [...byList.entries()].map(([list, config]) => ({ list, limit: config.limit, maxSpellLevel: config.maxSpellLevel }));
 }
 
 export function getSpellAssignmentList(spell: Pick<SpellRecord, 'availableFor'>, profile: Pick<CharacterProfile, 'availableLists'>): string | null {
@@ -92,23 +96,25 @@ export function normalizePreparedSpells(
   for (const raw of values || []) {
     let spellId = '';
     let assignedList = '';
+    let mode: PreparedSpellEntry['mode'] = 'normal';
 
     if (typeof raw === 'string') {
       spellId = raw;
       assignedList = getFallbackAssignedList(profile);
     } else if (raw && typeof raw === 'object') {
-      const candidate = raw as { spellId?: string; assignedList?: string };
+      const candidate = raw as { spellId?: string; assignedList?: string; mode?: string };
       spellId = String(candidate.spellId || '').trim();
       assignedList = normalizeListName(candidate.assignedList || '') || getFallbackAssignedList(profile);
+      mode = candidate.mode === 'always' ? 'always' : 'normal';
     }
 
     const normalizedSpellId = String(spellId || '').trim();
     if (!normalizedSpellId) continue;
 
-    const key = `${assignedList}::${normalizedSpellId}`;
+    const key = `${assignedList}::${normalizedSpellId}::${mode}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    output.push({ spellId: normalizedSpellId, assignedList });
+    output.push({ spellId: normalizedSpellId, assignedList, mode });
   }
 
   return output;
@@ -142,7 +148,7 @@ export function enforcePreparationLimits(
       throw new Error(`${spell.name}: choose a valid spell list.`);
     }
 
-    if (spell.level <= 0) continue;
+    if (spell.level <= 0 || entry.mode === 'always') continue;
 
     const nextCount = (counts.get(assignedList) || 0) + 1;
     counts.set(assignedList, nextCount);
@@ -162,7 +168,7 @@ export function buildPreparationUsage(
 
   for (const entry of preparedSpells) {
     const spell = spellsById.get(entry.spellId);
-    if (!spell || spell.level <= 0) continue;
+    if (!spell || spell.level <= 0 || entry.mode === 'always') continue;
 
     const assignedList = normalizeListName(entry.assignedList || '');
     if (!assignedList) continue;
@@ -191,6 +197,94 @@ export function findDuplicatePreparedSpellWarnings(
   }
 
   return warnings;
+}
+
+function matchesPreparedSpellEntry(
+  entry: PreparedSpellEntry,
+  target: Pick<PreparedSpellEntry, 'spellId' | 'assignedList' | 'mode'>,
+): boolean {
+  return entry.spellId === target.spellId
+    && normalizeListName(entry.assignedList) === normalizeListName(target.assignedList)
+    && entry.mode === target.mode;
+}
+
+export function removePreparedSpellEntryAtOccurrence(
+  preparedSpells: PreparedSpellEntry[],
+  target: Pick<PreparedSpellEntry, 'spellId' | 'assignedList' | 'mode'>,
+  occurrenceIndex: number,
+): PreparedSpellEntry[] {
+  let seen = -1;
+  return preparedSpells.filter((entry) => {
+    if (!matchesPreparedSpellEntry(entry, target)) {
+      return true;
+    }
+
+    seen += 1;
+    return seen !== occurrenceIndex;
+  });
+}
+
+export function reassignPreparedSpellEntryAtOccurrence(
+  preparedSpells: PreparedSpellEntry[],
+  target: Pick<PreparedSpellEntry, 'spellId' | 'assignedList' | 'mode'>,
+  occurrenceIndex: number,
+  nextAssignedList: string,
+): PreparedSpellEntry[] {
+  let seen = -1;
+  return preparedSpells.map((entry) => {
+    if (!matchesPreparedSpellEntry(entry, target)) {
+      return entry;
+    }
+
+    seen += 1;
+    if (seen !== occurrenceIndex) {
+      return entry;
+    }
+
+    return {
+      ...entry,
+      assignedList: normalizeListName(nextAssignedList),
+    };
+  });
+}
+
+function getPreparationLimitConfig(
+  profile: Pick<CharacterProfile, 'preparationLimits'>,
+  list: string,
+): PreparationLimit | null {
+  const normalizedList = normalizeListName(list);
+  return profile.preparationLimits.find((entry) => normalizeListName(entry.list) === normalizedList) || null;
+}
+
+export function getAddableAssignmentLists(
+  spell: Pick<SpellRecord, 'availableFor' | 'level'>,
+  profile: Pick<CharacterProfile, 'availableLists' | 'preparationLimits'>,
+): string[] {
+  const validLists = getValidAssignmentLists(spell, profile as Pick<CharacterProfile, 'availableLists'>);
+
+  return validLists.filter((list) => {
+    const config = getPreparationLimitConfig(profile, list);
+    const maxSpellLevel = config?.maxSpellLevel ?? 9;
+    return spell.level <= maxSpellLevel;
+  });
+}
+
+export function assertSpellCanBeAddedToList(
+  spell: Pick<SpellRecord, 'name' | 'level' | 'availableFor'>,
+  profile: Pick<CharacterProfile, 'availableLists' | 'preparationLimits'>,
+  assignedList: string,
+) {
+  const normalizedList = normalizeListName(assignedList);
+  const validLists = getValidAssignmentLists(spell, profile as Pick<CharacterProfile, 'availableLists'>);
+  if (!validLists.includes(normalizedList)) {
+    throw new Error(`${spell.name}: choose a valid spell list.`);
+  }
+
+  const config = getPreparationLimitConfig(profile, normalizedList);
+  const maxSpellLevel = config?.maxSpellLevel ?? 9;
+  if (spell.level > maxSpellLevel) {
+    throw new Error(`${spell.name} exceeds ${normalizedList} max spell level ${maxSpellLevel}.`);
+  }
 }
 
 export function normalizeSpellIdList(values: string[]): string[] {

@@ -1,4 +1,5 @@
 import {
+  assertSpellCanBeAddedToList,
   findDuplicatePreparedSpellWarnings,
   enforcePreparationLimits,
   getValidAssignmentLists,
@@ -101,16 +102,18 @@ export function computeApplyResult(input: ComputeApplyInput): ComputeApplyOutput
         && preparedEntry.assignedList === assignedList
       ));
       if (replaceIndex === -1) {
-        throw new Error(`${spell.name}: must replace a spell from the same list.`);
+      throw new Error(`${spell.name}: must replace a spell from the same list.`);
       }
 
-      nextPrepared[replaceIndex] = { spellId: entry.spellId, assignedList };
+      assertSpellCanBeAddedToList(spell, input.profile, assignedList);
+      nextPrepared[replaceIndex] = { spellId: entry.spellId, assignedList, mode: 'normal' };
       appliedSpellIds.push(entry.spellId);
       continue;
     }
 
     summary.adds += 1;
-    nextPrepared.push({ spellId: entry.spellId, assignedList });
+    assertSpellCanBeAddedToList(spell, input.profile, assignedList);
+    nextPrepared.push({ spellId: entry.spellId, assignedList, mode: 'normal' });
     appliedSpellIds.push(entry.spellId);
   }
 

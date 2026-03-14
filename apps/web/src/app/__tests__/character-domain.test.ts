@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { getPreparationLimits, getSpellLists, isSpellEligibleForCharacter, normalizeCharacterProfile, normalizeSpellIdList } from '../domain/character';
+import {
+  getPreparationLimits,
+  getSpellLists,
+  isSpellEligibleForCharacter,
+  normalizeCharacterProfile,
+  normalizeSpellIdList,
+  reassignPreparedSpellEntryAtOccurrence,
+  removePreparedSpellEntryAtOccurrence,
+} from '../domain/character';
 
 describe('character domain', () => {
   it('normalizes spell list extraction from availableFor entries', () => {
@@ -21,8 +29,8 @@ describe('character domain', () => {
   it('builds default per-list preparation limits', () => {
     const limits = getPreparationLimits({ id: 'x', name: 'X', availableLists: ['Wizard', 'Cleric'] });
     expect(limits).toEqual([
-      { list: 'WIZARD', limit: 8 },
-      { list: 'CLERIC', limit: 8 },
+      { list: 'WIZARD', limit: 8, maxSpellLevel: 9 },
+      { list: 'CLERIC', limit: 8, maxSpellLevel: 9 },
     ]);
   });
 
@@ -65,7 +73,76 @@ describe('character domain', () => {
     } as any) as any;
 
     expect(profile.preparedSpells).toEqual([
-      { spellId: 'shield', assignedList: 'WIZARD' },
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+    ]);
+  });
+
+  it('defaults prepared entries without mode to normal', () => {
+    const profile = normalizeCharacterProfile({
+      id: 'aelric',
+      name: 'Aelric',
+      class: '',
+      subclass: '',
+      castingAbility: '',
+      availableLists: ['Wizard'],
+      preparationLimits: [{ list: 'Wizard', limit: 8 }],
+      preparedSpells: [{ spellId: 'shield', assignedList: 'WIZARD' }],
+      nextPreparationQueue: [],
+      savedIdeas: [],
+      updatedAt: new Date().toISOString(),
+    } as any) as any;
+
+    expect(profile.preparedSpells).toEqual([
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+    ]);
+  });
+
+  it('defaults list max spell level to 9 when omitted', () => {
+    const limits = getPreparationLimits({
+      id: 'x',
+      name: 'X',
+      availableLists: ['Wizard'],
+      preparationLimits: [{ list: 'Wizard', limit: 5 }],
+    } as any);
+
+    expect(limits).toEqual([
+      { list: 'WIZARD', limit: 5, maxSpellLevel: 9 },
+    ]);
+  });
+
+  it('removes only the targeted duplicate prepared entry occurrence', () => {
+    const preparedSpells = [
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'shield', assignedList: 'CLERIC', mode: 'normal' },
+    ] as const;
+
+    expect(removePreparedSpellEntryAtOccurrence(
+      [...preparedSpells],
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+      0,
+    )).toEqual([
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'shield', assignedList: 'CLERIC', mode: 'normal' },
+    ]);
+  });
+
+  it('reassigns only the targeted duplicate prepared entry occurrence', () => {
+    const preparedSpells = [
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'shield', assignedList: 'CLERIC', mode: 'normal' },
+    ] as const;
+
+    expect(reassignPreparedSpellEntryAtOccurrence(
+      [...preparedSpells],
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+      1,
+      'cleric',
+    )).toEqual([
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'shield', assignedList: 'CLERIC', mode: 'normal' },
+      { spellId: 'shield', assignedList: 'CLERIC', mode: 'normal' },
     ]);
   });
 });
