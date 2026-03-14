@@ -11,6 +11,7 @@ import type {
   CharacterProfile,
   CharacterProfileInput,
   NextPreparationQueueEntry,
+  PreparedSpellEntry,
   SpellRecord,
 } from '../types';
 import type { SpellCatalogProvider } from './provider';
@@ -110,7 +111,7 @@ export class LocalSnapshotProvider implements SpellCatalogProvider {
 
   async applyPlan(
     characterId: string,
-    nextPreparedSpellIds: string[],
+    nextPreparedSpells: PreparedSpellEntry[],
     remainingQueue: NextPreparationQueueEntry[] = [],
   ): Promise<ApplyPlanResult> {
     const spells = await this.listSpells();
@@ -123,7 +124,10 @@ export class LocalSnapshotProvider implements SpellCatalogProvider {
     }
 
     const profile = normalizeCharacterProfile(state.characters[index]);
-    const normalizedPrepared = normalizeSpellIdList(nextPreparedSpellIds);
+    const normalizedPrepared = normalizeCharacterProfile({
+      ...profile,
+      preparedSpells: nextPreparedSpells,
+    }).preparedSpells;
     enforcePreparationLimits(normalizedPrepared, profile, byId);
     const normalizedRemainingQueue = normalizeCharacterProfile({
       ...profile,
@@ -132,10 +136,10 @@ export class LocalSnapshotProvider implements SpellCatalogProvider {
 
     const nextProfile = touchProfile({
       ...profile,
-      preparedSpellIds: normalizedPrepared,
+      preparedSpells: normalizedPrepared,
       nextPreparationQueue: normalizedRemainingQueue,
       savedIdeas: profile.savedIdeas.filter((idea) => (
-        normalizedPrepared.includes(idea.spellId)
+        normalizedPrepared.some((entry) => entry.spellId === idea.spellId)
         || normalizedRemainingQueue.some((entry) => entry.spellId === idea.spellId)
       )),
     });
@@ -145,7 +149,7 @@ export class LocalSnapshotProvider implements SpellCatalogProvider {
 
     return {
       profile: clone(nextProfile),
-      appliedSpellIds: normalizedPrepared,
+      appliedSpellIds: normalizeSpellIdList(normalizedPrepared.map((entry) => entry.spellId)),
     };
   }
 }

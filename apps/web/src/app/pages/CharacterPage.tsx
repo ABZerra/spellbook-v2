@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { getPreparationLimits } from '../domain/character';
 import { useApp } from '../state/AppContext';
 
@@ -17,12 +17,27 @@ export function CharacterPage() {
 
   const [createName, setCreateName] = useState('');
   const [createLists, setCreateLists] = useState('');
-  const [createLimit, setCreateLimit] = useState(8);
+  const [createLimitByList, setCreateLimitByList] = useState<Record<string, number>>({});
+
+  const parsedCreateLists = useMemo(
+    () => [...new Set(createLists.split(',').map((entry) => entry.trim().toUpperCase()).filter(Boolean))],
+    [createLists],
+  );
+
+  useEffect(() => {
+    setCreateLimitByList((current) => {
+      const next: Record<string, number> = {};
+      for (const list of parsedCreateLists) {
+        next[list] = current[list] || 8;
+      }
+      return JSON.stringify(next) === JSON.stringify(current) ? current : next;
+    });
+  }, [parsedCreateLists]);
 
   const summary = useMemo(() => {
     if (!activeCharacter) return null;
     return {
-      prepared: activeCharacter.preparedSpellIds.length,
+      prepared: activeCharacter.preparedSpells.length,
       queued: activeCharacter.nextPreparationQueue.length,
       ideas: activeCharacter.savedIdeas.length,
     };
@@ -38,17 +53,17 @@ export function CharacterPage() {
     setBusy(true);
 
     try {
-      const lists = createLists.split(',').map((entry) => entry.trim()).filter(Boolean);
+      const lists = parsedCreateLists;
 
       await createCharacter({
         name: createName,
         availableLists: lists,
-        preparationLimits: lists.map((list) => ({ list, limit: Math.max(1, createLimit) })),
+        preparationLimits: lists.map((list) => ({ list, limit: Math.max(1, createLimitByList[list] || 8) })),
       });
 
       setCreateName('');
       setCreateLists('');
-      setCreateLimit(8);
+      setCreateLimitByList({});
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : 'Unable to create character.');
     } finally {
@@ -94,14 +109,21 @@ export function CharacterPage() {
               value={createLists}
               onChange={(event) => setCreateLists(event.target.value)}
             />
-            <input
-              className="w-full rounded-xl border border-border-dark bg-bg px-3 py-2 text-sm text-text"
-              type="number"
-              min={1}
-              value={createLimit}
-              onChange={(event) => setCreateLimit(Number(event.target.value) || 1)}
-              placeholder="Preparation limit per list"
-            />
+            {parsedCreateLists.map((list) => (
+              <label key={list} className="block rounded-xl border border-border-dark bg-bg px-3 py-2 text-sm">
+                <span className="text-text-muted">{list} limit</span>
+                <input
+                  className="mt-1 w-full rounded-md border border-border-dark bg-bg-2 px-2 py-1 text-text"
+                  type="number"
+                  min={1}
+                  value={createLimitByList[list] || 8}
+                  onChange={(event) => setCreateLimitByList((current) => ({
+                    ...current,
+                    [list]: Math.max(1, Number(event.target.value) || 1),
+                  }))}
+                />
+              </label>
+            ))}
             <button type="submit" className="w-full rounded-xl border border-gold-soft bg-gold-soft/20 px-3 py-2 text-sm" disabled={busy}>
               {busy ? 'Creating...' : 'Create'}
             </button>

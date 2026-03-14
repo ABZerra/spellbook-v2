@@ -3,6 +3,7 @@ import type {
   CharacterProfile,
   CharacterProfileInput,
   NextPreparationQueueEntry,
+  PreparedSpellEntry,
   SpellRecord,
 } from '../types';
 
@@ -13,5 +14,5 @@ export interface SpellCatalogProvider {
   createCharacterProfile(input: CharacterProfileInput): Promise<CharacterProfile>;
   saveCharacterProfile(profile: CharacterProfile): Promise<CharacterProfile>;
   deleteCharacterProfile(characterId: string): Promise<void>;
-  applyPlan(characterId: string, nextPreparedSpellIds: string[], remainingQueue?: NextPreparationQueueEntry[]): Promise<ApplyPlanResult>;
+  applyPlan(characterId: string, nextPreparedSpells: PreparedSpellEntry[], remainingQueue?: NextPreparationQueueEntry[]): Promise<ApplyPlanResult>;
 }

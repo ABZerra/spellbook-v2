@@ -1,10 +1,9 @@
-import { getSpellAssignmentList } from '../domain/character';
 import type { CharacterProfile, SpellRecord } from '../types';
 
 interface PreparedDrawerProps {
   open: boolean;
   onClose: () => void;
-  profile: Pick<CharacterProfile, 'availableLists' | 'preparedSpellIds'>;
+  profile: Pick<CharacterProfile, 'preparedSpells'>;
   spellsById: Map<string, SpellRecord>;
   highlightedSpellIds?: Set<string>;
 }
@@ -15,15 +14,15 @@ interface GroupedEntry {
 }
 
 function buildGroups(
-  profile: Pick<CharacterProfile, 'availableLists' | 'preparedSpellIds'>,
+  profile: Pick<CharacterProfile, 'preparedSpells'>,
   spellsById: Map<string, SpellRecord>,
 ): GroupedEntry[] {
   const byList = new Map<string, SpellRecord[]>();
 
-  for (const spellId of profile.preparedSpellIds) {
-    const spell = spellsById.get(spellId);
+  for (const entry of profile.preparedSpells) {
+    const spell = spellsById.get(entry.spellId);
     if (!spell) continue;
-    const list = getSpellAssignmentList(spell, profile) || 'UNASSIGNED';
+    const list = entry.assignedList || 'UNASSIGNED';
     const listEntries = byList.get(list) || [];
     listEntries.push(spell);
     byList.set(list, listEntries);
@@ -86,4 +85,3 @@ export function PreparedDrawer({
     </div>
   );
 }
-

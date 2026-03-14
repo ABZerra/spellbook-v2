@@ -11,7 +11,10 @@ function makeProfile(): CharacterProfile {
     castingAbility: 'INT',
     availableLists: ['WIZARD'],
     preparationLimits: [{ list: 'WIZARD', limit: 6 }],
-    preparedSpellIds: ['shield', 'mage-armor'],
+    preparedSpells: [
+      { spellId: 'shield', assignedList: 'WIZARD' },
+      { spellId: 'mage-armor', assignedList: 'WIZARD' },
+    ],
     nextPreparationQueue: [],
     savedIdeas: [],
     updatedAt: new Date().toISOString(),
@@ -25,6 +28,7 @@ function makeSpells(): SpellRecord[] {
     { id: 'absorb-elements', ddbSpellId: '2058', name: 'Absorb Elements', level: 1, source: 'Elemental Evil Player\'s Companion', page: '150', sourceCitation: 'Elemental Evil Player\'s Companion, pg. 150', save: '', castingTime: '1 Reaction', notes: '', description: '', school: '', duration: '', rangeArea: 'Self', components: 'S', componentsExpanded: 'S', attackSave: 'None', damageEffect: 'Acid', spellTags: [], availableFor: ['Wizard (Legacy)'], ddbUrl: '' },
     { id: 'counterspell', ddbSpellId: '2065', name: 'Counterspell', level: 3, source: 'Basic Rules (2014)', page: '228', sourceCitation: 'Basic Rules (2014), pg. 228', save: '', castingTime: '1 Reaction', notes: '', description: '', school: '', duration: '', rangeArea: '60 ft.', components: 'S', componentsExpanded: 'S', attackSave: 'None', damageEffect: 'Control', spellTags: [], availableFor: ['Wizard (Legacy)'], ddbUrl: '' },
     { id: 'bless', ddbSpellId: '2035', name: 'Bless', level: 1, source: 'Basic Rules (2014)', page: '219', sourceCitation: 'Basic Rules (2014), pg. 219', save: '', castingTime: '1 Action', notes: '', description: '', school: '', duration: '', rangeArea: '30 ft.', components: 'V, S, M', componentsExpanded: 'V, S, M', attackSave: 'None', damageEffect: 'Buff', spellTags: [], availableFor: ['Cleric (Legacy)'], ddbUrl: '' },
+    { id: 'light', ddbSpellId: '2175', name: 'Light', level: 0, source: 'Basic Rules (2014)', page: '255', sourceCitation: 'Basic Rules (2014), pg. 255', save: '', castingTime: '1 Action', notes: '', description: '', school: '', duration: '', rangeArea: 'Touch', components: 'V, M', componentsExpanded: 'V, M', attackSave: 'None', damageEffect: 'Utility', spellTags: [], availableFor: ['Wizard (Legacy)', 'Cleric (Legacy)'], ddbUrl: '' },
     { id: 'water-breathing', ddbSpellId: '2309', name: 'Water Breathing', level: 3, source: 'Basic Rules (2014)', page: '287', sourceCitation: 'Basic Rules (2014), pg. 287', save: '', castingTime: '1 Action', notes: '', description: '', school: '', duration: '', rangeArea: '30 ft.', components: 'V, S, M', componentsExpanded: 'V, S, M', attackSave: 'None', damageEffect: 'Utility', spellTags: [], availableFor: ['Wizard (Legacy)'], ddbUrl: '' },
   ];
 }
@@ -38,13 +42,17 @@ describe('computeApplyResult', () => {
       profile,
       spellsById: new Map(spells.map((spell) => [spell.id, spell])),
       queue: [
-        { spellId: 'absorb-elements', intent: 'add' },
-        { spellId: 'counterspell', intent: 'replace', replaceTarget: 'shield' },
+        { spellId: 'absorb-elements', intent: 'add', assignedList: 'WIZARD' },
+        { spellId: 'counterspell', intent: 'replace', assignedList: 'WIZARD', replaceTarget: 'shield' },
         { spellId: 'water-breathing', intent: 'queue_only' },
       ],
     });
 
-    expect(output.finalPreparedSpellIds).toEqual(['counterspell', 'mage-armor', 'absorb-elements']);
+    expect(output.finalPreparedSpells).toEqual([
+      { spellId: 'counterspell', assignedList: 'WIZARD' },
+      { spellId: 'mage-armor', assignedList: 'WIZARD' },
+      { spellId: 'absorb-elements', assignedList: 'WIZARD' },
+    ]);
     expect(output.remainingQueue).toEqual([
       { spellId: 'water-breathing', intent: 'queue_only' },
     ]);
@@ -62,13 +70,13 @@ describe('computeApplyResult', () => {
     expect(() => computeApplyResult({
       profile,
       spellsById: new Map(spells.map((spell) => [spell.id, spell])),
-      queue: [{ spellId: 'counterspell', intent: 'replace' }],
+      queue: [{ spellId: 'counterspell', intent: 'replace', assignedList: 'WIZARD' }],
     })).toThrow('must choose a prepared spell to replace');
   });
 
   it('fails when replace target is from a different list', () => {
     const profile = makeProfile();
-    profile.preparedSpellIds = ['bless'];
+    profile.preparedSpells = [{ spellId: 'bless', assignedList: 'CLERIC' }];
     profile.availableLists = ['WIZARD', 'CLERIC'];
     profile.preparationLimits = [{ list: 'WIZARD', limit: 6 }, { list: 'CLERIC', limit: 6 }];
 
@@ -77,7 +85,64 @@ describe('computeApplyResult', () => {
     expect(() => computeApplyResult({
       profile,
       spellsById: new Map(spells.map((spell) => [spell.id, spell])),
-      queue: [{ spellId: 'counterspell', intent: 'replace', replaceTarget: 'bless' }],
+      queue: [{ spellId: 'counterspell', intent: 'replace', assignedList: 'WIZARD', replaceTarget: 'bless' }],
     })).toThrow('must replace a spell from the same list');
+  });
+
+  it('does not count level 0 spells against an assigned list limit', () => {
+    const spells = makeSpells();
+
+    const output = computeApplyResult({
+      profile: {
+        id: 'char-1',
+        name: 'Aelric',
+        class: '',
+        subclass: '',
+        castingAbility: 'INT',
+        availableLists: ['WIZARD'],
+        preparationLimits: [{ list: 'WIZARD', limit: 1 }],
+        preparedSpells: [{ spellId: 'shield', assignedList: 'WIZARD' }],
+        nextPreparationQueue: [],
+        savedIdeas: [],
+        updatedAt: new Date().toISOString(),
+      } as any,
+      spellsById: new Map(spells.map((spell) => [spell.id, spell])),
+      queue: [{ spellId: 'light', intent: 'add', assignedList: 'WIZARD' } as any],
+    });
+
+    expect(output.finalPreparedSpells).toEqual([
+      { spellId: 'shield', assignedList: 'WIZARD' },
+      { spellId: 'light', assignedList: 'WIZARD' },
+    ]);
+  });
+
+  it('allows duplicate prepared spells across assigned lists and returns a warning', () => {
+    const spells = makeSpells();
+
+    const output = computeApplyResult({
+      profile: {
+        id: 'char-1',
+        name: 'Aelric',
+        class: '',
+        subclass: '',
+        castingAbility: 'INT',
+        availableLists: ['WIZARD', 'CLERIC'],
+        preparationLimits: [{ list: 'WIZARD', limit: 6 }, { list: 'CLERIC', limit: 6 }],
+        preparedSpells: [{ spellId: 'light', assignedList: 'WIZARD' }],
+        nextPreparationQueue: [],
+        savedIdeas: [],
+        updatedAt: new Date().toISOString(),
+      } as any,
+      spellsById: new Map(spells.map((spell) => [spell.id, spell])),
+      queue: [{ spellId: 'light', intent: 'add', assignedList: 'CLERIC' } as any],
+    });
+
+    expect(output.finalPreparedSpells).toEqual([
+      { spellId: 'light', assignedList: 'WIZARD' },
+      { spellId: 'light', assignedList: 'CLERIC' },
+    ]);
+    expect(output.warnings).toEqual([
+      'Light is prepared more than once.',
+    ]);
   });
 });
