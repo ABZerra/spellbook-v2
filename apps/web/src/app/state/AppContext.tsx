@@ -6,7 +6,7 @@ import {
 import { computeApplyResult } from '../domain/prepareQueue';
 import { buildSpellSyncPayloadV3, publishSpellSyncPayloadV3, waitForSpellSyncPayloadAck } from '../services/extensionSyncV3';
 import type { CharacterProfile, CharacterProfileInput, QueueIntent, SpellRecord, SpellSyncPayloadV3 } from '../types';
-import { createProvider } from '../providers/createProvider';
+import { LocalSnapshotProvider } from '../providers/localSnapshotProvider';
 import type { SpellCatalogProvider } from '../providers/provider';
 
 const ACTIVE_CHARACTER_KEY = 'spellbook.activeCharacter';
@@ -32,10 +32,8 @@ interface AppContextValue {
   spells: SpellRecord[];
   characters: CharacterProfile[];
   activeCharacter: CharacterProfile | null;
-  runtime: 'local' | 'production';
 
   refreshAll: () => Promise<void>;
-  syncCatalog: () => Promise<void>;
   setActiveCharacter: (characterId: string) => void;
   createCharacter: (input: CharacterProfileInput) => Promise<void>;
   saveCharacter: (profile: CharacterProfile) => Promise<void>;
@@ -74,7 +72,7 @@ interface AppProviderProps {
 }
 
 export function AppProvider({ children, provider }: AppProviderProps) {
-  const [resolvedProvider] = useState<SpellCatalogProvider>(() => provider || createProvider());
+  const [resolvedProvider] = useState<SpellCatalogProvider>(() => provider || new LocalSnapshotProvider());
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -278,21 +276,13 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     await hydrate();
   }, [hydrate]);
 
-  const syncCatalog = useCallback(async () => {
-    await resolvedProvider.syncCatalog();
-    const nextSpells = await resolvedProvider.listSpells();
-    setSpells(nextSpells);
-  }, [resolvedProvider]);
-
   const value = useMemo<AppContextValue>(() => ({
     loading,
     error,
     spells,
     characters,
     activeCharacter,
-    runtime: resolvedProvider.runtime,
     refreshAll,
-    syncCatalog,
     setActiveCharacter,
     createCharacter,
     saveCharacter,
@@ -310,9 +300,7 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     spells,
     characters,
     activeCharacter,
-    resolvedProvider.runtime,
     refreshAll,
-    syncCatalog,
     setActiveCharacter,
     createCharacter,
     saveCharacter,

@@ -11,19 +11,27 @@ export function normalizeListName(value: string): string {
   return String(value || '').replace(/\s+/g, ' ').trim().toUpperCase();
 }
 
-export function getSpellLists(spell: Pick<SpellRecord, 'spellList' | 'source'>): string[] {
-  const list = Array.isArray(spell.spellList) && spell.spellList.length > 0
-    ? spell.spellList
-    : spell.source;
+function parseAvailableForEntry(value: string): string {
+  let next = String(value || '').replace(/\(LEGACY\)/gi, '').trim();
+  if (!next) return '';
 
-  const normalized = list
-    .map((entry) => normalizeListName(entry))
+  const dashIndex = next.indexOf(' - ');
+  if (dashIndex >= 0) {
+    next = next.slice(0, dashIndex).trim();
+  }
+
+  return normalizeListName(next);
+}
+
+export function getSpellLists(spell: Pick<SpellRecord, 'availableFor'>): string[] {
+  const normalized = (spell.availableFor || [])
+    .map((entry) => parseAvailableForEntry(entry))
     .filter(Boolean);
 
   return [...new Set(normalized)];
 }
 
-export function isSpellEligibleForCharacter(spell: Pick<SpellRecord, 'spellList' | 'source'>, profile: Pick<CharacterProfile, 'availableLists'>): boolean {
+export function isSpellEligibleForCharacter(spell: Pick<SpellRecord, 'availableFor'>, profile: Pick<CharacterProfile, 'availableLists'>): boolean {
   const allowedLists = (profile.availableLists || [])
     .map((entry) => normalizeListName(entry))
     .filter(Boolean);
@@ -58,7 +66,7 @@ export function getPreparationLimits(input: CharacterProfileInput | CharacterPro
   return [...byList.entries()].map(([list, limit]) => ({ list, limit }));
 }
 
-export function getSpellAssignmentList(spell: Pick<SpellRecord, 'spellList' | 'source'>, profile: Pick<CharacterProfile, 'availableLists'>): string | null {
+export function getSpellAssignmentList(spell: Pick<SpellRecord, 'availableFor'>, profile: Pick<CharacterProfile, 'availableLists'>): string | null {
   const spellLists = getSpellLists(spell);
   if (spellLists.length === 0) return null;
 

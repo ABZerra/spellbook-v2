@@ -10,7 +10,6 @@ export function AppShell({ children }: AppShellProps) {
     characters,
     activeCharacter,
     setActiveCharacter,
-    runtime,
   } = useApp();
 
   return (
@@ -19,7 +18,7 @@ export function AppShell({ children }: AppShellProps) {
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-3 px-4 py-3">
           <div className="min-w-[180px] flex-1">
             <p className="font-display text-2xl leading-none">Spellbook</p>
-            <p className="text-xs text-text-muted">Character-centric planning flow ({runtime})</p>
+            <p className="text-xs text-text-muted">Character-centric planning flow</p>
           </div>
 
           <nav className="flex items-center gap-2 rounded-full border border-border-dark bg-bg px-2 py-1">

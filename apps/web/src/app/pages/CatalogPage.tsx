@@ -206,7 +206,7 @@ export function CatalogPage() {
               <p><strong>Assigned List:</strong> {activeCharacter ? (getSpellAssignmentList(selectedSpell, activeCharacter) || '-') : '-'}</p>
               <p><strong>Save:</strong> {selectedSpell.save || '-'}</p>
               <p><strong>Action:</strong> {selectedSpell.castingTime || '-'}</p>
-              <p><strong>Range:</strong> {selectedSpell.range || '-'}</p>
+              <p><strong>Range:</strong> {selectedSpell.rangeArea || '-'}</p>
               <p><strong>Duration:</strong> {selectedSpell.duration || '-'}</p>
               <p><strong>Components:</strong> {selectedSpell.components || '-'}</p>
             </div>

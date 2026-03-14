@@ -12,9 +12,9 @@ describe('extension sync v3', () => {
       },
       ['shield', 'counterspell'],
       [
-        { id: 'magic-missile', name: 'Magic Missile', level: 1, source: ['Wizard'], spellList: ['Wizard'], save: '', castingTime: '1 Action', notes: '', description: '', school: '', duration: '', range: '', components: '', tags: [] },
-        { id: 'shield', name: 'Shield', level: 1, source: ['Wizard'], spellList: ['Wizard'], save: '', castingTime: 'Reaction', notes: '', description: '', school: '', duration: '', range: '', components: '', tags: [] },
-        { id: 'counterspell', name: 'Counterspell', level: 3, source: ['Wizard'], spellList: ['Wizard'], save: '', castingTime: 'Reaction', notes: '', description: '', school: '', duration: '', range: '', components: '', tags: [] },
+        { id: 'magic-missile', ddbSpellId: '2191', name: 'Magic Missile', level: 1, source: 'Basic Rules (2014)', page: '257', sourceCitation: 'Basic Rules (2014), pg. 257', save: '', castingTime: '1 Action', notes: '', description: '', school: '', duration: '', rangeArea: '120 ft.', components: 'V, S', componentsExpanded: 'V, S', attackSave: 'None', damageEffect: 'Force', spellTags: [], availableFor: ['Wizard (Legacy)'], ddbUrl: '' },
+        { id: 'shield', ddbSpellId: '2253', name: 'Shield', level: 1, source: 'Basic Rules (2014)', page: '275', sourceCitation: 'Basic Rules (2014), pg. 275', save: '', castingTime: '1 Reaction', notes: '', description: '', school: '', duration: '', rangeArea: 'Self', components: 'V, S', componentsExpanded: 'V, S', attackSave: 'None', damageEffect: 'Warding', spellTags: [], availableFor: ['Wizard (Legacy)'], ddbUrl: '' },
+        { id: 'counterspell', ddbSpellId: '2065', name: 'Counterspell', level: 3, source: 'Basic Rules (2014)', page: '228', sourceCitation: 'Basic Rules (2014), pg. 228', save: '', castingTime: '1 Reaction', notes: '', description: '', school: '', duration: '', rangeArea: '60 ft.', components: 'S', componentsExpanded: 'S', attackSave: 'None', damageEffect: 'Control', spellTags: [], availableFor: ['Wizard (Legacy)'], ddbUrl: '' },
       ],
     );
 
@@ -37,8 +37,8 @@ describe('extension sync v3', () => {
       },
       ['magic-missile', 'shield'],
       [
-        { id: 'magic-missile', name: 'Magic Missile', level: 1, source: ['Wizard'], spellList: ['Wizard'], save: '', castingTime: '1 Action', notes: '', description: '', school: '', duration: '', range: '', components: '', tags: [] },
-        { id: 'shield', name: 'Shield', level: 1, source: ['Wizard'], spellList: ['Wizard'], save: '', castingTime: 'Reaction', notes: '', description: '', school: '', duration: '', range: '', components: '', tags: [] },
+        { id: 'magic-missile', ddbSpellId: '2191', name: 'Magic Missile', level: 1, source: 'Basic Rules (2014)', page: '257', sourceCitation: 'Basic Rules (2014), pg. 257', save: '', castingTime: '1 Action', notes: '', description: '', school: '', duration: '', rangeArea: '120 ft.', components: 'V, S', componentsExpanded: 'V, S', attackSave: 'None', damageEffect: 'Force', spellTags: [], availableFor: ['Wizard (Legacy)'], ddbUrl: '' },
+        { id: 'shield', ddbSpellId: '2253', name: 'Shield', level: 1, source: 'Basic Rules (2014)', page: '275', sourceCitation: 'Basic Rules (2014), pg. 275', save: '', castingTime: '1 Reaction', notes: '', description: '', school: '', duration: '', rangeArea: 'Self', components: 'V, S', componentsExpanded: 'V, S', attackSave: 'None', damageEffect: 'Warding', spellTags: [], availableFor: ['Wizard (Legacy)'], ddbUrl: '' },
       ],
     );
 
