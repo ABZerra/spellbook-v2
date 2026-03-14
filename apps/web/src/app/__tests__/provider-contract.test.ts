@@ -1,13 +1,81 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { LocalSnapshotProvider } from '../providers/localSnapshotProvider';
-import { ProductionProvider } from '../providers/productionProvider';
 import type { SpellCatalogProvider } from '../providers/provider';
 
 const snapshotPayload = {
   spells: [
-    { id: 'magic-missile', name: 'Magic Missile', level: 1, source: ['Wizard'], spellList: ['Wizard'], castingTime: '1 Action', save: '' },
-    { id: 'shield', name: 'Shield', level: 1, source: ['Wizard'], spellList: ['Wizard'], castingTime: 'Reaction', save: '' },
-    { id: 'bless', name: 'Bless', level: 1, source: ['Cleric'], spellList: ['Cleric'], castingTime: '1 Action', save: '' },
+    {
+      id: 'magic-missile',
+      ddbSpellId: '2191',
+      name: 'Magic Missile',
+      level: 1,
+      source: 'Basic Rules (2014)',
+      page: '257',
+      sourceCitation: 'Basic Rules (2014), pg. 257',
+      castingTime: '1 Action',
+      rangeArea: '120 ft.',
+      components: 'V, S',
+      componentsExpanded: 'V, S',
+      duration: 'Instantaneous',
+      school: 'Evocation',
+      attackSave: 'None',
+      save: '',
+      damageEffect: 'Force',
+      description: 'Three glowing darts of magical force strike targets of your choice.',
+      atHigherLevels: '',
+      spellTags: ['Damage'],
+      availableFor: ['Sorcerer (Legacy)', 'Wizard (Legacy)'],
+      notes: '',
+      ddbUrl: 'https://www.dndbeyond.com/spells/2191-magic-missile',
+    },
+    {
+      id: 'shield',
+      ddbSpellId: '2253',
+      name: 'Shield',
+      level: 1,
+      source: 'Basic Rules (2014)',
+      page: '275',
+      sourceCitation: 'Basic Rules (2014), pg. 275',
+      castingTime: '1 Reaction',
+      rangeArea: 'Self',
+      components: 'V, S',
+      componentsExpanded: 'V, S',
+      duration: '1 Round',
+      school: 'Abjuration',
+      attackSave: 'None',
+      save: '',
+      damageEffect: 'Warding',
+      description: 'An invisible barrier of magical force appears and protects you.',
+      atHigherLevels: '',
+      spellTags: ['Warding'],
+      availableFor: ['Sorcerer (Legacy)', 'Wizard (Legacy)'],
+      notes: '',
+      ddbUrl: 'https://www.dndbeyond.com/spells/2253-shield',
+    },
+    {
+      id: 'bless',
+      ddbSpellId: '2035',
+      name: 'Bless',
+      level: 1,
+      source: 'Basic Rules (2014)',
+      page: '219',
+      sourceCitation: 'Basic Rules (2014), pg. 219',
+      castingTime: '1 Action',
+      rangeArea: '30 ft.',
+      components: 'V, S, M',
+      componentsExpanded: 'V, S, M (a sprinkling of holy water)',
+      duration: 'Concentration 1 Minute',
+      school: 'Enchantment',
+      attackSave: 'None',
+      save: '',
+      damageEffect: 'Buff',
+      description: 'You bless up to three creatures of your choice within range.',
+      atHigherLevels: '',
+      spellTags: ['Buff'],
+      availableFor: ['Cleric (Legacy)', 'Paladin (Legacy)'],
+      notes: '',
+      ddbUrl: 'https://www.dndbeyond.com/spells/2035-bless',
+    },
   ],
 };
 
@@ -75,34 +143,34 @@ describe('provider contract', () => {
     vi.unstubAllGlobals();
   });
 
-  it('local provider satisfies shared contract', async () => {
-    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+  it('snapshot provider satisfies shared contract', async () => {
+    const fetchMock = vi.fn(async (url: string) => {
       if (url === '/spells.snapshot.json' || url === '/spells.json') {
+        return makeResponse(snapshotPayload);
+      }
+      throw new Error(`Unexpected URL: ${url}`);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const provider = new LocalSnapshotProvider();
+    await assertProviderContract(provider);
+    await assertQueueOnlyRetention(provider);
+    expect(fetchMock).toHaveBeenCalledWith('/spells.snapshot.json', { cache: 'no-store' });
+  });
+
+  it('fails when the canonical snapshot file is missing instead of falling back to legacy paths', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      if (url === '/spells.snapshot.json') {
+        return makeResponse({}, false);
+      }
+      if (url === '/spells.json') {
         return makeResponse(snapshotPayload);
       }
       throw new Error(`Unexpected URL: ${url}`);
     }));
 
     const provider = new LocalSnapshotProvider();
-    await assertProviderContract(provider);
-    await assertQueueOnlyRetention(provider);
-  });
 
-  it('production provider satisfies shared contract', async () => {
-    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
-      if (url === '/api/spells') {
-        return makeResponse({ count: snapshotPayload.spells.length, spells: snapshotPayload.spells });
-      }
-      if (url === '/api/spells/sync' && init?.method === 'POST') {
-        return makeResponse({ ok: true, syncMeta: { refreshedAt: '2026-03-07T00:00:00.000Z' } });
-      }
-      throw new Error(`Unexpected URL: ${url}`);
-    }));
-
-    const provider = new ProductionProvider();
-    await assertProviderContract(provider);
-    await assertQueueOnlyRetention(provider);
-    const sync = await provider.syncCatalog();
-    expect(sync.ok).toBe(true);
+    await expect(provider.listSpells()).rejects.toThrow(/Failed to load local spell snapshot/i);
   });
 });

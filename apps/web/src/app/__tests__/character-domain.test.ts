@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { getPreparationLimits, getSpellLists, isSpellEligibleForCharacter, normalizeCharacterProfile, normalizeSpellIdList } from '../domain/character';
 
 describe('character domain', () => {
-  it('normalizes spell list extraction from spellList/source', () => {
-    expect(getSpellLists({ spellList: [' Wizard ', 'wizard'], source: [] })).toEqual(['WIZARD']);
-    expect(getSpellLists({ spellList: [], source: ['cleric'] })).toEqual(['CLERIC']);
+  it('normalizes spell list extraction from availableFor entries', () => {
+    expect(getSpellLists({ availableFor: [' Wizard (Legacy) ', 'wizard'] } as any)).toEqual(['WIZARD']);
+    expect(getSpellLists({ availableFor: ['Cleric (Legacy) - Life Domain'] } as any)).toEqual(['CLERIC']);
   });
 
   it('enforces eligibility when character has constrained lists', () => {
-    const spell = { spellList: ['Wizard'], source: [] };
+    const spell = { availableFor: ['Wizard (Legacy)', 'Wizard - Graviturgy Magic (EGtW)'] } as any;
     expect(isSpellEligibleForCharacter(spell, { availableLists: ['WIZARD'] })).toBe(true);
     expect(isSpellEligibleForCharacter(spell, { availableLists: ['CLERIC'] })).toBe(false);
   });

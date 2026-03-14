@@ -1,15 +1,11 @@
 import {
   extractDndBeyondCharacterId,
   isDndBeyondCharacterUrl,
-  parseSyncPayload,
   summarizeOpsPreview,
 } from './payload-utils.js';
+import { loadStoredPayloadState } from './background-state.js';
 
 const SYNC_PAYLOAD_STORAGE_KEY = 'spellbook.syncPayload.v1';
-const SPELLBOOK_API_BASES = [
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-];
 
 async function getPayload() {
   const stored = await chrome.storage.local.get(SYNC_PAYLOAD_STORAGE_KEY);
@@ -30,101 +26,8 @@ function dedupeSpellNames(spellNames) {
   return output;
 }
 
-function normalizeListName(listName) {
-  return String(listName || '').replace(/\s+/g, ' ').trim().toUpperCase();
-}
-
-async function fetchJsonFromSpellbook(pathname) {
-  let lastError = null;
-  for (const baseUrl of SPELLBOOK_API_BASES) {
-    try {
-      const response = await fetch(`${baseUrl}${pathname}`, {
-        method: 'GET',
-        cache: 'no-store',
-      });
-      if (!response.ok) {
-        lastError = new Error(`HTTP ${response.status} for ${pathname} at ${baseUrl}`);
-        continue;
-      }
-      return await response.json();
-    } catch (error) {
-      lastError = error;
-    }
-  }
-  throw lastError || new Error(`Unable to fetch ${pathname} from local Spellbook API.`);
-}
-
-async function hydratePayloadFromSpellbookApi() {
-  const [config, spellsPayload] = await Promise.all([
-    fetchJsonFromSpellbook('/api/config'),
-    fetchJsonFromSpellbook('/api/spells'),
-  ]);
-
-  const spells = Array.isArray(spellsPayload?.spells) ? spellsPayload.spells : [];
-  const operations = [];
-  for (const spell of spells) {
-    if (!spell?.prepared) continue;
-    const spellName = String(spell?.name || '').trim();
-    if (!spellName) continue;
-    const lists = Array.isArray(spell?.spellList) && spell.spellList.length
-      ? spell.spellList
-      : Array.isArray(spell?.source) ? spell.source : [];
-    const list = normalizeListName(lists[0] || '');
-    if (!list) continue;
-    operations.push({ type: 'prepare', list, spell: spellName });
-  }
-
-  const payload = {
-    version: 3,
-    character: {
-      id: String(config?.characterId || 'unknown'),
-      name: String(config?.characterId || 'Unknown Character'),
-    },
-    operations,
-    issues: [],
-    timestamp: Date.now(),
-    source: 'spellbook',
-  };
-
-  await chrome.storage.local.set({ [SYNC_PAYLOAD_STORAGE_KEY]: payload });
-  return payload;
-}
-
 async function getPayloadWithFallback() {
-  const storedPayload = await getPayload();
-  const storedValidation = parseSyncPayload(storedPayload);
-  if (storedValidation.ok) {
-    return {
-      payload: storedValidation.payload,
-      hydrated: false,
-      payloadError: null,
-    };
-  }
-
-  try {
-    const hydratedPayload = await hydratePayloadFromSpellbookApi();
-    const hydratedValidation = parseSyncPayload(hydratedPayload);
-    if (hydratedValidation.ok) {
-      return {
-        payload: hydratedValidation.payload,
-        hydrated: true,
-        payloadError: null,
-      };
-    }
-
-    return {
-      payload: null,
-      hydrated: false,
-      payloadError: hydratedValidation.error || 'Hydrated Spellbook payload is invalid.',
-    };
-  } catch (error) {
-    const detail = error instanceof Error ? error.message : 'Unknown error.';
-    return {
-      payload: null,
-      hydrated: false,
-      payloadError: `No Spellbook payload available yet. Local API fallback failed: ${detail}`,
-    };
-  }
+  return loadStoredPayloadState(getPayload);
 }
 
 async function getActiveTab() {

@@ -1,4 +1,4 @@
-import type { ApiSpell } from '../../shared/api';
+import type { SnapshotSpell } from '../../shared/snapshot';
 import type { SpellRecord } from '../types';
 
 function asString(value: unknown): string {
@@ -6,8 +6,9 @@ function asString(value: unknown): string {
 }
 
 function asStringList(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
-  return value.map((entry) => asString(entry)).filter(Boolean);
+  if (Array.isArray(value)) return value.map((entry) => asString(entry)).filter(Boolean);
+  if (typeof value === 'string') return value.split(',').map((entry) => asString(entry)).filter(Boolean);
+  return [];
 }
 
 function asLevel(value: unknown): number {
@@ -16,26 +17,34 @@ function asLevel(value: unknown): number {
   return Math.trunc(parsed);
 }
 
-export function normalizeSpell(input: ApiSpell): SpellRecord {
+export function normalizeSpell(input: SnapshotSpell): SpellRecord {
   return {
     id: asString(input.id),
+    ddbSpellId: asString(input.ddbSpellId),
     name: asString(input.name),
     level: asLevel(input.level),
-    source: asStringList(input.source),
-    spellList: asStringList(input.spellList),
+    source: asString(input.source),
+    page: asString(input.page),
+    sourceCitation: asString(input.sourceCitation),
     save: asString(input.save),
     castingTime: asString(input.castingTime),
     notes: asString(input.notes),
     description: asString(input.description),
     school: asString(input.school),
     duration: asString(input.duration),
-    range: asString(input.range),
-    components: asString(input.components || input.component),
-    tags: asStringList(input.tags),
+    rangeArea: asString(input.rangeArea),
+    attackSave: asString(input.attackSave),
+    damageEffect: asString(input.damageEffect),
+    atHigherLevels: asString(input.atHigherLevels),
+    components: asString(input.components),
+    componentsExpanded: asString(input.componentsExpanded || input.components),
+    spellTags: asStringList(input.spellTags),
+    availableFor: asStringList(input.availableFor),
+    ddbUrl: asString(input.ddbUrl),
   };
 }
 
-export function normalizeSpells(spells: ApiSpell[]): SpellRecord[] {
+export function normalizeSpells(spells: SnapshotSpell[]): SpellRecord[] {
   const output: SpellRecord[] = [];
   for (const spell of spells) {
     const normalized = normalizeSpell(spell);

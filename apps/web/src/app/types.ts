@@ -1,18 +1,26 @@
 export interface SpellRecord {
   id: string;
+  ddbSpellId: string;
   name: string;
   level: number;
-  source: string[];
-  spellList: string[];
+  source: string;
+  page: string;
+  sourceCitation: string;
   save: string;
   castingTime: string;
   notes: string;
   description: string;
   school: string;
   duration: string;
-  range: string;
+  rangeArea: string;
+  attackSave: string;
+  damageEffect: string;
+  atHigherLevels: string;
   components: string;
-  tags: string[];
+  componentsExpanded: string;
+  spellTags: string[];
+  availableFor: string[];
+  ddbUrl: string;
 }
 
 export interface SavedIdea {
@@ -62,13 +70,6 @@ export interface CharacterProfileInput {
 export interface ApplyPlanResult {
   profile: CharacterProfile;
   appliedSpellIds: string[];
-}
-
-export type ProviderRuntime = 'local' | 'production';
-
-export interface CatalogSyncResult {
-  ok: boolean;
-  refreshedAt: string | null;
 }
 
 export interface SpellSyncIssue {

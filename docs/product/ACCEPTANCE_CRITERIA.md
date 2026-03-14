@@ -12,7 +12,7 @@
 
 ## Runtime Behavior
 - Local/pages runtime loads spell snapshot from static artifact and does not require API.
-- Production runtime serves spells from API and can refresh from Notion via sync endpoint.
+- Production builds use the same committed spell snapshot as local/pages runtime.
 
 ## Extension Behavior
 - Sync payload remains version 3.

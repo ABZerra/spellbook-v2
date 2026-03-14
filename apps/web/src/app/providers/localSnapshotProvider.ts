@@ -1,4 +1,4 @@
-import type { ApiSpell } from '../../shared/api';
+import type { SnapshotSpell, SpellSnapshotPayload } from '../../shared/snapshot';
 import {
   createCharacterProfile,
   enforcePreparationLimits,
@@ -8,7 +8,6 @@ import {
 } from '../domain/character';
 import type {
   ApplyPlanResult,
-  CatalogSyncResult,
   CharacterProfile,
   CharacterProfileInput,
   NextPreparationQueueEntry,
@@ -19,24 +18,18 @@ import { createStateDb, type StateDb } from './localDb';
 import { normalizeSpells } from './spellNormalizer';
 
 async function fetchSnapshot(): Promise<SpellRecord[]> {
-  const candidates = ['/spells.snapshot.json', '/spells.json'];
-  let lastError: unknown = null;
-
-  for (const path of candidates) {
-    try {
-      const response = await fetch(path, { cache: 'no-store' });
-      if (!response.ok) continue;
-      const payload = await response.json() as { spells?: ApiSpell[] };
-      const spells = Array.isArray(payload.spells) ? payload.spells : [];
-      return normalizeSpells(spells);
-    } catch (error) {
-      lastError = error;
+  try {
+    const response = await fetch('/spells.snapshot.json', { cache: 'no-store' });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
     }
+    const payload = await response.json() as SpellSnapshotPayload;
+    const spells = Array.isArray(payload.spells) ? payload.spells as SnapshotSpell[] : [];
+    return normalizeSpells(spells);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error || '');
+    throw new Error(`Failed to load local spell snapshot. ${detail}`.trim());
   }
-
-  throw new Error(
-    `Failed to load local spell snapshot. ${lastError instanceof Error ? lastError.message : ''}`.trim(),
-  );
 }
 
 function clone<T>(value: T): T {
@@ -44,8 +37,6 @@ function clone<T>(value: T): T {
 }
 
 export class LocalSnapshotProvider implements SpellCatalogProvider {
-  readonly runtime = 'local' as const;
-
   private readonly stateDb: StateDb;
   private spellsCache: SpellRecord[] | null = null;
 
@@ -156,10 +147,5 @@ export class LocalSnapshotProvider implements SpellCatalogProvider {
       profile: clone(nextProfile),
       appliedSpellIds: normalizedPrepared,
     };
-  }
-
-  async syncCatalog(): Promise<CatalogSyncResult> {
-    this.spellsCache = await fetchSnapshot();
-    return { ok: true, refreshedAt: new Date().toISOString() };
   }
 }

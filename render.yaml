@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: spellbook-api
-    env: node
-    rootDir: apps/api
-    buildCommand: npm install
-    startCommand: npm run start
-    healthCheckPath: /health
