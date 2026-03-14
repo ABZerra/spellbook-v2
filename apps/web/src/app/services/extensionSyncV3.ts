@@ -1,6 +1,6 @@
 import { getSpellLists } from '../domain/character';
 import { buildPlanDiff } from '../domain/plan';
-import type { CharacterProfile, SpellRecord, SpellSyncIssue, SpellSyncOperation, SpellSyncPayloadV3 } from '../types';
+import type { CharacterProfile, PreparedSpellEntry, SpellRecord, SpellSyncIssue, SpellSyncOperation, SpellSyncPayloadV3 } from '../types';
 
 export const SYNC_PAYLOAD_EVENT_TYPE = 'SPELLBOOK_SYNC_PAYLOAD_SET';
 export const SYNC_PAYLOAD_ACK_EVENT_TYPE = 'SPELLBOOK_SYNC_PAYLOAD_ACK';
@@ -13,37 +13,22 @@ function createIssue(code: SpellSyncIssue['code'], operationIndex: number, detai
   return { code, operationIndex, detail };
 }
 
-function chooseList(spell: SpellRecord, fallbackLists: string[]): string | null {
-  const spellLists = getSpellLists(spell);
-  if (spellLists.length === 1) return spellLists[0];
-
-  if (fallbackLists.length === 1 && spellLists.includes(fallbackLists[0])) {
-    return fallbackLists[0];
-  }
-
-  return null;
-}
-
 export function buildSpellSyncPayloadV3(
-  character: Pick<CharacterProfile, 'id' | 'name' | 'availableLists' | 'preparedSpellIds'>,
-  finalPreparedSpellIds: string[],
+  character: Pick<CharacterProfile, 'id' | 'name' | 'preparedSpells'>,
+  finalPreparedSpells: PreparedSpellEntry[],
   spells: SpellRecord[],
 ): SpellSyncPayloadV3 {
   const byId = new Map(spells.map((spell) => [spell.id, spell]));
-  const diff = buildPlanDiff(character.preparedSpellIds, finalPreparedSpellIds);
+  const diff = buildPlanDiff(character.preparedSpells, finalPreparedSpells);
   const operations: SpellSyncOperation[] = [];
   const issues: SpellSyncIssue[] = [];
-
-  const fallbackLists = character.availableLists
-    .map((entry) => String(entry || '').trim().toUpperCase())
-    .filter(Boolean);
 
   for (let index = 0; index < diff.length; index += 1) {
     const item = diff[index];
 
     if (item.type === 'replace') {
-      const fromSpell = item.fromSpellId ? byId.get(item.fromSpellId) : null;
-      const toSpell = item.toSpellId ? byId.get(item.toSpellId) : null;
+      const fromSpell = item.from ? byId.get(item.from.spellId) : null;
+      const toSpell = item.to ? byId.get(item.to.spellId) : null;
 
       if (!fromSpell || !toSpell) {
         issues.push(createIssue('MISSING_SPELL', index, `Missing spell record for replace operation at position ${item.index + 1}.`));
@@ -57,7 +42,7 @@ export function buildSpellSyncPayloadV3(
         continue;
       }
 
-      const list = chooseList(fromSpell, fallbackLists);
+      const list = item.from?.assignedList || item.to?.assignedList || null;
       if (!list) {
         issues.push(createIssue('AMBIGUOUS_LIST', index, `Replace operation for ${remove} has ambiguous list context.`));
         continue;
@@ -74,7 +59,7 @@ export function buildSpellSyncPayloadV3(
     }
 
     if (item.type === 'add') {
-      const spell = item.toSpellId ? byId.get(item.toSpellId) : null;
+      const spell = item.to ? byId.get(item.to.spellId) : null;
       if (!spell) {
         issues.push(createIssue('MISSING_SPELL', index, `Missing spell record for prepare operation at position ${item.index + 1}.`));
         continue;
@@ -86,7 +71,7 @@ export function buildSpellSyncPayloadV3(
         continue;
       }
 
-      const list = chooseList(spell, fallbackLists);
+      const list = item.to?.assignedList || null;
       if (!list) {
         issues.push(createIssue('AMBIGUOUS_LIST', index, `Prepare operation for ${spellName} has ambiguous list context.`));
         continue;
@@ -96,7 +81,7 @@ export function buildSpellSyncPayloadV3(
       continue;
     }
 
-    const spell = item.fromSpellId ? byId.get(item.fromSpellId) : null;
+    const spell = item.from ? byId.get(item.from.spellId) : null;
     if (!spell) {
       issues.push(createIssue('MISSING_SPELL', index, `Missing spell record for unprepare operation at position ${item.index + 1}.`));
       continue;
@@ -108,7 +93,7 @@ export function buildSpellSyncPayloadV3(
       continue;
     }
 
-    const list = chooseList(spell, fallbackLists);
+    const list = item.from?.assignedList || null;
     if (!list) {
       issues.push(createIssue('AMBIGUOUS_LIST', index, `Unprepare operation for ${spellName} has ambiguous list context.`));
       continue;

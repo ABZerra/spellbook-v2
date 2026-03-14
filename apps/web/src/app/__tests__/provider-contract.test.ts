@@ -25,6 +25,7 @@ const snapshotPayload = {
       atHigherLevels: '',
       spellTags: ['Damage'],
       availableFor: ['Sorcerer (Legacy)', 'Wizard (Legacy)'],
+      additionalSpellLists: [],
       notes: '',
       ddbUrl: 'https://www.dndbeyond.com/spells/2191-magic-missile',
     },
@@ -49,6 +50,7 @@ const snapshotPayload = {
       atHigherLevels: '',
       spellTags: ['Warding'],
       availableFor: ['Sorcerer (Legacy)', 'Wizard (Legacy)'],
+      additionalSpellLists: [],
       notes: '',
       ddbUrl: 'https://www.dndbeyond.com/spells/2253-shield',
     },
@@ -73,6 +75,7 @@ const snapshotPayload = {
       atHigherLevels: '',
       spellTags: ['Buff'],
       availableFor: ['Cleric (Legacy)', 'Paladin (Legacy)'],
+      additionalSpellLists: ['BARD', 'RANGER'],
       notes: '',
       ddbUrl: 'https://www.dndbeyond.com/spells/2035-bless',
     },
@@ -90,6 +93,7 @@ function makeResponse(payload: unknown, ok = true): Response {
 async function assertProviderContract(provider: SpellCatalogProvider) {
   const spells = await provider.listSpells();
   expect(spells.length).toBeGreaterThan(0);
+  expect(spells.find((entry) => entry.id === 'bless')?.additionalSpellLists).toEqual(['BARD', 'RANGER']);
 
   const profile = await provider.createCharacterProfile({
     id: 'tester',
@@ -106,7 +110,7 @@ async function assertProviderContract(provider: SpellCatalogProvider) {
   const saved = await provider.saveCharacterProfile(profile);
   expect(saved.nextPreparationQueue).toEqual([{ spellId: 'magic-missile', intent: 'add' }]);
 
-  const applied = await provider.applyPlan('tester', ['magic-missile']);
+  const applied = await provider.applyPlan('tester', [{ spellId: 'magic-missile', assignedList: 'WIZARD', mode: 'normal' } as any]);
   expect(applied.appliedSpellIds).toEqual(['magic-missile']);
 
   await provider.deleteCharacterProfile('tester');
@@ -121,16 +125,16 @@ async function assertQueueOnlyRetention(provider: SpellCatalogProvider) {
     availableLists: ['Wizard'],
   });
 
-  profile.preparedSpellIds = ['magic-missile'];
+  profile.preparedSpells = [{ spellId: 'magic-missile', assignedList: 'WIZARD', mode: 'normal' } as any];
   profile.nextPreparationQueue = [
-    { spellId: 'shield', intent: 'replace', replaceTarget: 'magic-missile' },
+    { spellId: 'shield', intent: 'replace', assignedList: 'WIZARD', replaceTarget: 'magic-missile' },
     { spellId: 'bless', intent: 'queue_only' },
   ];
 
   await provider.saveCharacterProfile(profile);
-  const applied = await provider.applyPlan('queue-check', ['shield'], [{ spellId: 'bless', intent: 'queue_only' }]);
+  const applied = await provider.applyPlan('queue-check', [{ spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' } as any], [{ spellId: 'bless', intent: 'queue_only' }]);
 
-  expect(applied.profile.preparedSpellIds).toEqual(['shield']);
+  expect(applied.profile.preparedSpells).toEqual([{ spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' }]);
   expect(applied.profile.nextPreparationQueue).toEqual([
     { spellId: 'bless', intent: 'queue_only' },
   ]);
@@ -174,5 +178,31 @@ describe('provider contract', () => {
   it('resolves the snapshot path relative to the configured app base path', () => {
     expect(resolveSnapshotPath('/')).toBe('/spells.snapshot.json');
     expect(resolveSnapshotPath('/spellbook-v2/')).toBe('/spellbook-v2/spells.snapshot.json');
+  });
+
+  it('persists prepared entries with explicit mode data', async () => {
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === '/spells.snapshot.json' || url === '/spellbook-v2/spells.snapshot.json') {
+        return makeResponse(snapshotPayload);
+      }
+      throw new Error(`Unexpected URL: ${url}`);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const provider = new LocalSnapshotProvider();
+    const profile = await provider.createCharacterProfile({
+      id: 'mode-check',
+      name: 'Mode Check',
+      availableLists: ['Wizard'],
+    });
+
+    profile.preparedSpells = [{ spellId: 'shield', assignedList: 'WIZARD', mode: 'always' } as any];
+    const saved = await provider.saveCharacterProfile(profile);
+
+    expect(saved.preparedSpells).toEqual([
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'always' },
+    ]);
+
+    await provider.deleteCharacterProfile('mode-check');
   });
 });

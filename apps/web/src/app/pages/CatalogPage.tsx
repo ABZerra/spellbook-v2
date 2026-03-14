@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getSpellAssignmentList, getSpellLists, isSpellEligibleForCharacter } from '../domain/character';
+import { getAddableAssignmentLists, getSpellAssignmentList, getSpellLists, isSpellEligibleForCharacter } from '../domain/character';
 import {
   buildCatalogRows,
   getDefaultCatalogPreferences,
@@ -80,13 +80,20 @@ export function CatalogPage() {
     [spells, selectedSpellId],
   );
   const selectedSpellQueued = selectedSpell ? isSpellQueuedForNextPreparation(selectedSpell.id) : false;
+  const selectedSpellAddableLists = selectedSpell && activeCharacter
+    ? getAddableAssignmentLists(selectedSpell, activeCharacter)
+    : [];
   const selectedSpellEligible = selectedSpell
     ? (activeCharacter ? isSpellEligibleForCharacter(selectedSpell, activeCharacter) : true)
     : false;
-  const selectedSpellCannotQueue = selectedSpell ? (!selectedSpellQueued && !selectedSpellEligible) : false;
+  const selectedSpellCannotQueue = selectedSpell
+    ? (!selectedSpellQueued && (!selectedSpellEligible || selectedSpellAddableLists.length === 0))
+    : false;
   const selectedSpellDisabledReason = selectedSpell && activeCharacter && !selectedSpellEligible
     ? 'This spell is outside the active character spell lists.'
-    : '';
+    : selectedSpell && selectedSpellAddableLists.length === 0
+      ? 'This spell is above every owned list max spell level.'
+      : '';
 
   const rows = useMemo(
     () => buildCatalogRows({
@@ -164,7 +171,7 @@ export function CatalogPage() {
 
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-text-muted">
           <span>Queued: {activeCharacter?.nextPreparationQueue.length || 0}</span>
-          <span>Prepared: {activeCharacter?.preparedSpellIds.length || 0}</span>
+          <span>Prepared: {activeCharacter?.preparedSpells.length || 0}</span>
         </div>
 
         <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-end">
@@ -233,9 +240,12 @@ export function CatalogPage() {
           {rows.map((row) => {
             const spell = row.spell;
             const displayList = showListColumn ? row.displayList : '-';
-            const cannotQueue = !row.queued && !row.eligible;
+            const addableLists = activeCharacter ? getAddableAssignmentLists(spell, activeCharacter) : [];
+            const cannotQueue = !row.queued && (!row.eligible || addableLists.length === 0);
             const disabledReason = !row.eligible && activeCharacter
               ? 'This spell is outside the active character spell lists.'
+              : addableLists.length === 0
+                ? 'This spell is above every owned list max spell level.'
               : '';
 
             return (

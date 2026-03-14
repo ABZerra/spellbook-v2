@@ -17,6 +17,7 @@ const spells = [
     save: '',
     castingTime: '1 Action',
     availableFor: ['Wizard (Legacy)'],
+    additionalSpellLists: [],
   },
   {
     id: 'shield',
@@ -27,6 +28,7 @@ const spells = [
     save: '',
     castingTime: '1 Reaction',
     availableFor: ['Wizard (Legacy)'],
+    additionalSpellLists: [],
   },
   {
     id: 'bless',
@@ -37,6 +39,7 @@ const spells = [
     save: '',
     castingTime: '1 Action',
     availableFor: ['Cleric (Legacy)'],
+    additionalSpellLists: [],
   },
   {
     id: 'acid-arrow',
@@ -47,12 +50,14 @@ const spells = [
     save: 'DEX',
     castingTime: '',
     availableFor: ['Wizard (Legacy)'],
+    additionalSpellLists: [],
   },
 ] as any;
 
 const activeCharacter = {
   availableLists: ['Wizard'],
-  preparedSpellIds: ['shield'],
+  preparationLimits: [{ list: 'Wizard', limit: 8, maxSpellLevel: 9 }],
+  preparedSpells: [{ spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' }],
   nextPreparationQueue: [{ spellId: 'magic-missile', intent: 'add' }],
 } as any;
 
@@ -77,7 +82,8 @@ describe('catalog view model', () => {
       spells,
       activeCharacter: {
         availableLists: ['Druid'],
-        preparedSpellIds: [],
+        preparationLimits: [{ list: 'Druid', limit: 8, maxSpellLevel: 9 }],
+        preparedSpells: [],
         nextPreparationQueue: [],
       } as any,
       search: '',

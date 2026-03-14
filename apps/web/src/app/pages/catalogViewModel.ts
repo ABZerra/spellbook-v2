@@ -155,7 +155,7 @@ function compareRows(left: CatalogRow, right: CatalogRow, preferences: CatalogPr
 }
 
 export function buildCatalogRows(input: BuildCatalogRowsInput): CatalogRow[] {
-  const preparedSet = new Set(input.activeCharacter?.preparedSpellIds || []);
+  const preparedSet = new Set((input.activeCharacter?.preparedSpells || []).map((entry) => entry.spellId));
   const queuedSet = new Set((input.activeCharacter?.nextPreparationQueue || []).map((entry) => entry.spellId));
 
   const rows = input.spells

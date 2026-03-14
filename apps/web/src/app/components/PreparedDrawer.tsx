@@ -1,31 +1,30 @@
-import { getSpellAssignmentList } from '../domain/character';
 import type { CharacterProfile, SpellRecord } from '../types';
 
 interface PreparedDrawerProps {
   open: boolean;
   onClose: () => void;
-  profile: Pick<CharacterProfile, 'availableLists' | 'preparedSpellIds'>;
+  profile: Pick<CharacterProfile, 'preparedSpells'>;
   spellsById: Map<string, SpellRecord>;
   highlightedSpellIds?: Set<string>;
 }
 
 interface GroupedEntry {
   list: string;
-  spells: SpellRecord[];
+  spells: Array<{ spell: SpellRecord; mode: CharacterProfile['preparedSpells'][number]['mode'] }>;
 }
 
 function buildGroups(
-  profile: Pick<CharacterProfile, 'availableLists' | 'preparedSpellIds'>,
+  profile: Pick<CharacterProfile, 'preparedSpells'>,
   spellsById: Map<string, SpellRecord>,
 ): GroupedEntry[] {
   const byList = new Map<string, SpellRecord[]>();
 
-  for (const spellId of profile.preparedSpellIds) {
-    const spell = spellsById.get(spellId);
+  for (const entry of profile.preparedSpells) {
+    const spell = spellsById.get(entry.spellId);
     if (!spell) continue;
-    const list = getSpellAssignmentList(spell, profile) || 'UNASSIGNED';
+    const list = entry.assignedList || 'UNASSIGNED';
     const listEntries = byList.get(list) || [];
-    listEntries.push(spell);
+    listEntries.push({ spell, mode: entry.mode });
     byList.set(list, listEntries);
   }
 
@@ -66,12 +65,19 @@ export function PreparedDrawer({
           {groups.map((group) => (
             <section key={group.list} className="space-y-2">
               <h3 className="text-xs uppercase tracking-wide text-text-dim">{group.list}</h3>
-              {group.spells.map((spell) => (
+              {group.spells.map(({ spell, mode }) => (
                 <div
-                  key={spell.id}
+                  key={`${group.list}:${spell.id}:${mode}`}
                   className={`rounded-xl border px-3 py-2 text-sm ${highlightedSpellIds.has(spell.id) ? 'border-gold-soft bg-gold-soft/15' : 'border-border-dark bg-bg'}`}
                 >
-                  <p className="font-medium text-text">{spell.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-text">{spell.name}</p>
+                    {mode === 'always' ? (
+                      <span className="rounded-full border border-gold-soft bg-gold-soft/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-text-muted">
+                        Always Prepared
+                      </span>
+                    ) : null}
+                  </div>
                   <p className="text-xs text-text-dim">Save: {spell.save || '-'} · Action: {spell.castingTime || '-'}</p>
                 </div>
               ))}
@@ -86,4 +92,3 @@ export function PreparedDrawer({
     </div>
   );
 }
-
