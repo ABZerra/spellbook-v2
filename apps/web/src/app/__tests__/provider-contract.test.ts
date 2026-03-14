@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { LocalSnapshotProvider } from '../providers/localSnapshotProvider';
+import { LocalSnapshotProvider, resolveSnapshotPath } from '../providers/localSnapshotProvider';
 import type { SpellCatalogProvider } from '../providers/provider';
 
 const snapshotPayload = {
@@ -172,5 +172,10 @@ describe('provider contract', () => {
     const provider = new LocalSnapshotProvider();
 
     await expect(provider.listSpells()).rejects.toThrow(/Failed to load local spell snapshot/i);
+  });
+
+  it('resolves the snapshot path relative to the configured app base path', () => {
+    expect(resolveSnapshotPath('/')).toBe('/spells.snapshot.json');
+    expect(resolveSnapshotPath('/spellbook-v2/')).toBe('/spellbook-v2/spells.snapshot.json');
   });
 });

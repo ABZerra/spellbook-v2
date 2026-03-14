@@ -17,9 +17,16 @@ import type { SpellCatalogProvider } from './provider';
 import { createStateDb, type StateDb } from './localDb';
 import { normalizeSpells } from './spellNormalizer';
 
+export function resolveSnapshotPath(baseUrl = import.meta.env.BASE_URL || '/') {
+  const normalizedBase = String(baseUrl || '/').trim() || '/';
+  return normalizedBase.endsWith('/')
+    ? `${normalizedBase}spells.snapshot.json`
+    : `${normalizedBase}/spells.snapshot.json`;
+}
+
 async function fetchSnapshot(): Promise<SpellRecord[]> {
   try {
-    const response = await fetch('/spells.snapshot.json', { cache: 'no-store' });
+    const response = await fetch(resolveSnapshotPath(), { cache: 'no-store' });
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
