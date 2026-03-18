@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getAddableAssignmentLists, getSpellAssignmentList, getSpellLists, isSpellEligibleForCharacter } from '../domain/character';
+import { Link } from 'react-router-dom';
+import { getAddableAssignmentLists, getSpellLists, isSpellEligibleForCharacter } from '../domain/character';
+import { useApp } from '../state/AppContext';
+import { SpellDetailDialog } from '../components/SpellDetailDialog';
+import { getCatalogRowPresentation } from './catalogPresentation';
 import {
   buildCatalogRows,
   getDefaultCatalogPreferences,
@@ -9,19 +13,18 @@ import {
   type CatalogPreferences,
   type CatalogSortKey,
 } from './catalogViewModel';
-import { useApp } from '../state/AppContext';
 
 const CATALOG_PREFERENCES_KEY = 'spellbook.catalogPreferences';
 
 const SORTABLE_COLUMNS: Array<{ key: CatalogSortKey; label: string }> = [
-  { key: 'prepared', label: 'Prepared' },
-  { key: 'level', label: 'Level' },
-  { key: 'name', label: 'Name' },
-  { key: 'list', label: 'List' },
-  { key: 'save', label: 'Save' },
-  { key: 'action', label: 'Action' },
-  { key: 'notes', label: 'Notes' },
-  { key: 'queued', label: 'Next Preparation' },
+  { key: 'prepared', label: 'Prepared Status' },
+  { key: 'level', label: 'Spell Level' },
+  { key: 'name', label: 'Spell Name' },
+  { key: 'list', label: 'Spell List' },
+  { key: 'save', label: 'Save Type' },
+  { key: 'action', label: 'Casting Time' },
+  { key: 'notes', label: 'Spell Notes' },
+  { key: 'queued', label: 'Queue Status' },
 ];
 
 function readInitialPreferences(): CatalogPreferences {
@@ -35,9 +38,16 @@ function readInitialPreferences(): CatalogPreferences {
   );
 }
 
-function getSortIndicator(sortKey: CatalogSortKey, preferences: CatalogPreferences): string | null {
-  if (preferences.sortKey !== sortKey) return null;
-  return preferences.sortDirection === 'asc' ? 'Asc' : 'Desc';
+function formatSpellLevel(level: number): string {
+  if (level === 0) return 'Cantrip';
+  return `Level ${level}`;
+}
+
+function getSpellExcerpt(notes: string, description: string): string {
+  const source = notes.trim() || description.trim();
+  if (!source) return 'Open the detail view for the full rules text.';
+  const sentence = source.split(/(?<=[.!?])\s+/)[0] || source;
+  return sentence.length > 120 ? `${sentence.slice(0, 117)}...` : sentence;
 }
 
 export function CatalogPage() {
@@ -118,35 +128,12 @@ export function CatalogPage() {
     [activeCharacter, effectivePreferences, search, spells],
   );
 
+  const queuedCount = activeCharacter?.nextPreparationQueue.length || 0;
+  const eligibleCount = rows.filter((row) => row.eligible).length;
+
   const emptyStateMessage = effectivePreferences.viewMode === 'eligible_only' && searchMatchedRows.length > 0
-    ? 'No spells match this character filter.'
-    : 'No spells match your search.';
-
-  function onSortToggle(sortKey: CatalogSortKey) {
-    if (sortKey === 'list' && !showListColumn) {
-      setPreferences((current) => resetCatalogSort(current));
-      return;
-    }
-
-    setPreferences((current) => {
-      if (current.sortKey !== sortKey) {
-        return {
-          ...current,
-          sortKey,
-          sortDirection: 'asc',
-        };
-      }
-
-      if (current.sortDirection === 'asc') {
-        return {
-          ...current,
-          sortDirection: 'desc',
-        };
-      }
-
-      return resetCatalogSort(current);
-    });
-  }
+    ? 'Nothing in this search fits the active character right now.'
+    : 'No spells match this search yet.';
 
   async function onQueueToggle(spellId: string) {
     setError(null);
@@ -157,198 +144,224 @@ export function CatalogPage() {
         await queueSpellForNextPreparation(spellId);
       }
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : 'Unable to update next preparation queue.');
+      setError(nextError instanceof Error ? nextError.message : 'Unable to update the next preparation queue.');
     }
   }
 
   return (
     <div className="space-y-4">
-      <section className="rounded-2xl border border-border-dark bg-bg-1/90 p-4">
-        <h1 className="font-display text-3xl">Catalog</h1>
-        <p className="mt-1 text-sm text-text-muted">
-          Quick browse flow. Queue spells for next preparation and review details only when needed.
-        </p>
+      <section className="rounded-[1.55rem] border border-border-dark bg-bg-1/92 p-4 md:p-5">
+        <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="text-[11px] uppercase tracking-[0.34em] text-text-dim">Catalog</p>
+              <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-text-muted">
+                Showing {rows.length} of {spells.length}
+              </span>
+            </div>
+            <h1 className="font-display text-3xl text-text md:text-4xl">Browse The Spell Shelf</h1>
+          </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-text-muted">
-          <span>Queued: {activeCharacter?.nextPreparationQueue.length || 0}</span>
-          <span>Prepared: {activeCharacter?.preparedSpells.length || 0}</span>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="rounded-2xl border border-border-dark bg-bg px-4 py-2 text-sm text-text transition-colors hover:bg-bg-2"
+              onClick={() => {
+                setSearch('');
+                setPreferences((current) => resetCatalogSort(current));
+              }}
+            >
+              Reset View
+            </button>
+            <Link
+              to="/prepare"
+              className={`rounded-2xl border px-4 py-2 text-sm transition-colors ${queuedCount ? 'border-gold-soft bg-gold-soft/20 text-text hover:bg-gold-soft/30' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
+            >
+              {queuedCount ? `Review Queue (${queuedCount})` : 'Open Prepare'}
+            </Link>
+          </div>
         </div>
 
-        <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-end">
-          <div className="flex-1">
-            <label className="text-sm text-text-muted" htmlFor="catalog-search">Search</label>
+        <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1.6fr)_220px_180px_auto]">
+          <div className="flex gap-2">
             <input
               id="catalog-search"
-              className="mt-1 w-full rounded-xl border border-border-dark bg-bg px-3 py-2 text-text"
+              className="min-w-0 flex-1 rounded-2xl border border-border-dark bg-bg px-4 py-3 text-text"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search spells"
+              placeholder="Search spells, notes, or rules text"
             />
+            <button
+              type="button"
+              className="rounded-2xl border border-border-dark bg-bg px-4 py-3 text-sm text-text-muted transition-colors hover:bg-bg-2 hover:text-text"
+              onClick={() => setSearch('')}
+            >
+              Clear
+            </button>
           </div>
 
-          <div className="min-w-[240px]">
-            <p className="text-sm text-text-muted">View</p>
-            <div className="mt-1 flex flex-wrap gap-2">
-              {[
-                { value: 'all', label: 'All' },
-                { value: 'eligible_first', label: 'Eligible First' },
-                { value: 'eligible_only', label: 'Eligible Only' },
-              ].map((option) => {
-                const active = effectivePreferences.viewMode === option.value;
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={`rounded-xl border px-3 py-2 text-sm ${active ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted'}`}
-                    onClick={() => setPreferences((current) => ({ ...current, viewMode: option.value as CatalogPreferences['viewMode'] }))}
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
-            </div>
+          <select
+            className="w-full rounded-2xl border border-border-dark bg-bg px-4 py-3 text-text"
+            value={effectivePreferences.sortKey}
+            onChange={(event) => setPreferences((current) => ({
+              ...current,
+              sortKey: event.target.value as CatalogSortKey,
+            }))}
+          >
+            {SORTABLE_COLUMNS
+              .filter((column) => showListColumn || column.key !== 'list')
+              .map((column) => (
+                <option key={column.key} value={column.key}>{column.label}</option>
+              ))}
+          </select>
+
+          <button
+            type="button"
+            className="w-full rounded-2xl border border-border-dark bg-bg px-4 py-3 text-left text-text transition-colors hover:bg-bg-2"
+            onClick={() => setPreferences((current) => ({
+              ...current,
+              sortDirection: current.sortDirection === 'asc' ? 'desc' : 'asc',
+            }))}
+          >
+            {effectivePreferences.sortDirection === 'asc' ? 'Ascending' : 'Descending'}
+          </button>
+
+          <div className="flex flex-wrap gap-2">
+            {[
+              { value: 'all', label: 'All' },
+              { value: 'eligible_first', label: 'Best Fits' },
+              { value: 'eligible_only', label: 'Fits Now' },
+            ].map((option) => {
+              const active = effectivePreferences.viewMode === option.value;
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={`rounded-full border px-4 py-2 text-sm transition-colors ${active ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
+                  onClick={() => setPreferences((current) => ({ ...current, viewMode: option.value as CatalogPreferences['viewMode'] }))}
+                >
+                  {option.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {error ? <p className="mt-3 rounded-xl border border-blood-soft bg-blood-soft px-3 py-2 text-sm text-blood">{error}</p> : null}
+        <div className="mt-4 flex flex-wrap gap-2 text-xs text-text-muted">
+          <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Search matches: {searchMatchedRows.length}</span>
+          <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Eligible on screen: {eligibleCount}</span>
+          <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Queued: {queuedCount}</span>
+        </div>
+
+        {error ? <p className="mt-4 rounded-2xl border border-blood-soft bg-blood-soft px-4 py-3 text-sm text-blood">{error}</p> : null}
       </section>
 
-      <section className="overflow-hidden rounded-2xl border border-border-dark bg-bg-1/90">
-        <div className="grid grid-cols-[90px_80px_minmax(200px,1fr)_120px_110px_140px_minmax(160px,1fr)_150px] gap-2 border-b border-border-dark px-3 py-2 text-xs uppercase tracking-wide text-text-dim">
-          {SORTABLE_COLUMNS.map((column) => {
-            if (column.key === 'list' && !showListColumn) {
-              return <span key={column.key}>List*</span>;
-            }
+      <section className="space-y-3">
+        {rows.map((row) => {
+          const spell = row.spell;
+          const addableLists = activeCharacter ? getAddableAssignmentLists(spell, activeCharacter) : [];
+          const presentation = getCatalogRowPresentation({ row, addableLists });
+          const listLabel = showListColumn ? row.displayList : (getSpellLists(spell)[0] || row.displayList);
 
-            const indicator = getSortIndicator(column.key, effectivePreferences);
+          return (
+            <article
+              key={spell.id}
+              className="rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-4 transition-colors hover:border-gold-soft/40 hover:bg-bg-1"
+            >
+              <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.95fr)_180px] lg:items-center">
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.22em] ${
+                      presentation.stateLabel === 'Queued'
+                        ? 'border border-gold-soft bg-gold-soft/20 text-text'
+                        : presentation.stateLabel === 'Prepared'
+                          ? 'border border-accent-soft bg-accent-soft/25 text-text'
+                          : presentation.stateLabel === 'Available'
+                            ? 'border border-border-dark bg-bg-2 text-text-muted'
+                            : 'border border-blood-soft bg-blood-soft text-blood'
+                    }`}
+                    >
+                      {presentation.stateLabel}
+                    </span>
+                    <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-text-muted">
+                      {formatSpellLevel(spell.level)}
+                    </span>
+                    <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-text-muted">
+                      {listLabel}
+                    </span>
+                  </div>
 
-            return (
-              <button
-                key={column.key}
-                type="button"
-                className="flex items-center gap-1 text-left"
-                onClick={() => onSortToggle(column.key)}
-              >
-                <span>{column.label}</span>
-                {indicator ? <span className="text-[10px] normal-case tracking-normal text-text-muted">{indicator}</span> : null}
-              </button>
-            );
-          })}
-        </div>
+                  <div>
+                    <button
+                      type="button"
+                      className="text-left font-display text-2xl text-text transition-colors hover:text-gold"
+                      title={spell.name}
+                      aria-label={`Inspect ${spell.name}`}
+                      onClick={() => setSelectedSpellId(spell.id)}
+                    >
+                      {spell.name}
+                    </button>
+                    <p className="mt-1 max-w-3xl text-sm text-text-muted">{getSpellExcerpt(spell.notes || '', spell.description || '')}</p>
+                  </div>
+                </div>
 
-        <div className="max-h-[65vh] overflow-y-auto">
-          {rows.map((row) => {
-            const spell = row.spell;
-            const displayList = showListColumn ? row.displayList : '-';
-            const addableLists = activeCharacter ? getAddableAssignmentLists(spell, activeCharacter) : [];
-            const cannotQueue = !row.queued && (!row.eligible || addableLists.length === 0);
-            const disabledReason = !row.eligible && activeCharacter
-              ? 'This spell is outside the active character spell lists.'
-              : addableLists.length === 0
-                ? 'This spell is above every owned list max spell level.'
-              : '';
+                <div className="flex flex-wrap gap-2 text-xs text-text-muted">
+                  <span className="rounded-full border border-border-dark bg-bg px-3 py-1">
+                    {spell.castingTime || 'No casting time'}
+                  </span>
+                  <span className="rounded-full border border-border-dark bg-bg px-3 py-1">
+                    Save: {spell.save || 'None'}
+                  </span>
+                  <span className="rounded-full border border-border-dark bg-bg px-3 py-1">
+                    Range: {spell.rangeArea || 'See details'}
+                  </span>
+                  <p className="basis-full pt-1 text-sm text-text-dim">{presentation.helperText}</p>
+                </div>
 
-            return (
-              <div
-                key={spell.id}
-                className="grid grid-cols-[90px_80px_minmax(200px,1fr)_120px_110px_140px_minmax(160px,1fr)_150px] gap-2 border-b border-border-dark/60 px-3 py-2 text-sm hover:bg-bg-2"
-              >
-                <span>{row.prepared ? 'Yes' : 'No'}</span>
-                <span>{spell.level === 0 ? 'Cantrip' : spell.level}</span>
-                <button
-                  type="button"
-                  className="truncate text-left text-text underline-offset-2 hover:underline"
-                  title={spell.name}
-                  aria-label={`Inspect ${spell.name}`}
-                  onClick={() => setSelectedSpellId(spell.id)}
-                >
-                  {spell.name}
-                </button>
-                <span>{displayList}</span>
-                <span>{spell.save || '-'}</span>
-                <span>{spell.castingTime || '-'}</span>
-                <span className="truncate" title={spell.notes || '-'}>{spell.notes || '-'}</span>
-                <button
-                  type="button"
-                  className={`rounded-lg border px-2 py-1 text-xs ${row.queued ? 'border-gold-soft bg-gold-soft/20' : 'border-border-dark bg-bg'} ${cannotQueue ? 'cursor-not-allowed opacity-55' : ''}`}
-                  disabled={cannotQueue}
-                  title={disabledReason}
-                  aria-label={cannotQueue ? disabledReason : (row.queued ? 'Unqueue spell from next preparation' : 'Queue spell for next preparation')}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    void onQueueToggle(spell.id);
-                  }}
-                >
-                  {row.queued ? 'Queued' : cannotQueue ? 'Unavailable' : 'Queue'}
-                </button>
+                <div className="flex flex-col gap-2">
+                  <button
+                    type="button"
+                    className={`rounded-2xl border px-4 py-3 text-sm transition-colors ${presentation.disabled ? 'cursor-not-allowed border-border-dark bg-bg opacity-55' : row.queued ? 'border-gold-soft bg-gold-soft/20 text-text hover:bg-gold-soft/30' : 'border-moon-border bg-moon-paper text-moon-ink hover:opacity-92'}`}
+                    disabled={presentation.disabled}
+                    title={presentation.helperText}
+                    aria-label={presentation.helperText}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      void onQueueToggle(spell.id);
+                    }}
+                  >
+                    {presentation.actionLabel}
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-2xl border border-border-dark bg-bg px-4 py-2 text-sm text-text-muted transition-colors hover:bg-bg-2 hover:text-text"
+                    onClick={() => setSelectedSpellId(spell.id)}
+                  >
+                    Details
+                  </button>
+                </div>
               </div>
-            );
-          })}
+            </article>
+          );
+        })}
 
-          {!rows.length ? (
-            <p className="p-4 text-sm text-text-muted">{emptyStateMessage}</p>
-          ) : null}
-        </div>
-
-        {!showListColumn ? (
-          <p className="border-t border-border-dark px-3 py-2 text-xs text-text-dim">
-            * List column stays hidden unless this character has multiple available lists.
-          </p>
+        {!rows.length ? (
+          <div className="rounded-[1.45rem] border border-border-dark bg-bg-1/92 px-5 py-8 text-center">
+            <p className="font-display text-3xl text-text">No spells surfaced</p>
+            <p className="mt-2 text-sm text-text-muted">{emptyStateMessage}</p>
+          </div>
         ) : null}
       </section>
 
-      {selectedSpell ? (
-        <div
-          className="fixed inset-0 z-40 bg-black/65 p-4 md:p-8"
-          role="dialog"
-          aria-modal="true"
-          aria-label={`${selectedSpell.name} details`}
-          onClick={() => setSelectedSpellId(null)}
-        >
-          <section
-            className="mx-auto max-h-full max-w-4xl overflow-y-auto rounded-2xl border border-border-dark bg-bg-1/95 p-4"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h2 className="font-display text-2xl">{selectedSpell.name}</h2>
-                <p className="text-sm text-text-muted">Level {selectedSpell.level} · {selectedSpell.school || 'Unspecified school'}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className={`rounded-lg border px-2 py-1 text-xs ${selectedSpellQueued ? 'border-gold-soft bg-gold-soft/20' : 'border-border-dark bg-bg'} ${selectedSpellCannotQueue ? 'cursor-not-allowed opacity-55' : ''}`}
-                  disabled={selectedSpellCannotQueue}
-                  title={selectedSpellDisabledReason}
-                  aria-label={selectedSpellCannotQueue ? selectedSpellDisabledReason : (selectedSpellQueued ? 'Unqueue spell from next preparation' : 'Queue spell for next preparation')}
-                  onClick={() => void onQueueToggle(selectedSpell.id)}
-                >
-                  {selectedSpellQueued ? 'Queued' : selectedSpellCannotQueue ? 'Unavailable' : 'Queue'}
-                </button>
-                <button
-                  type="button"
-                  className="rounded-lg border border-border-dark bg-bg px-2 py-1 text-xs"
-                  onClick={() => setSelectedSpellId(null)}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-
-            <div className="mt-4 grid gap-3 md:grid-cols-2">
-              <p><strong>Lists:</strong> {getSpellLists(selectedSpell).join(', ') || '-'}</p>
-              <p><strong>Assigned List:</strong> {activeCharacter ? (getSpellAssignmentList(selectedSpell, activeCharacter) || '-') : '-'}</p>
-              <p><strong>Save:</strong> {selectedSpell.save || '-'}</p>
-              <p><strong>Action:</strong> {selectedSpell.castingTime || '-'}</p>
-              <p><strong>Range:</strong> {selectedSpell.rangeArea || '-'}</p>
-              <p><strong>Duration:</strong> {selectedSpell.duration || '-'}</p>
-              <p><strong>Components:</strong> {selectedSpell.components || '-'}</p>
-            </div>
-
-            <p className="mt-4 whitespace-pre-wrap text-sm text-text-muted">{selectedSpell.description || selectedSpell.notes || 'No details recorded.'}</p>
-          </section>
-        </div>
-      ) : null}
+      <SpellDetailDialog
+        spell={selectedSpell}
+        activeCharacter={activeCharacter}
+        queued={selectedSpellQueued}
+        cannotQueue={selectedSpellCannotQueue}
+        disabledReason={selectedSpellDisabledReason}
+        onToggleQueue={(spellId) => void onQueueToggle(spellId)}
+        onClose={() => setSelectedSpellId(null)}
+      />
     </div>
   );
 }
