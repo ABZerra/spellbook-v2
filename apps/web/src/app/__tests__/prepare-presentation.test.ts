@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { formatPrepareReviewLabel, formatPrepareRowMeta, getDefaultQueueIntent } from '../pages/preparePresentation';
+import {
+  formatPrepareReviewLabel,
+  formatPrepareRowMeta,
+  getDefaultQueueIntent,
+  groupPrepareReviewItems,
+} from '../pages/preparePresentation';
 
 describe('prepare presentation', () => {
   it('defaults staged spells to replace when there are prepared spells already active', () => {
@@ -21,12 +26,63 @@ describe('prepare presentation', () => {
       spellName: 'Counterspell',
       assignedList: 'Wizard',
       replaceTargetName: 'Shield',
-    })).toBe('Replace Shield [Wizard] with Counterspell [Wizard]');
+    })).toBe('Replace Shield with Counterspell');
 
     expect(formatPrepareReviewLabel({
       intent: 'queue_only',
       spellName: 'Bless',
       assignedList: 'Cleric',
-    })).toBe('Save Bless [Cleric] for later');
+    })).toBe('Save Bless for later');
+  });
+
+  it('groups queued review items by spell list with usage labels', () => {
+    expect(groupPrepareReviewItems(
+      [
+        {
+          key: 'druid-replace',
+          assignedList: 'Druid',
+          label: 'Replace Healing Word with Cure Wounds',
+        },
+        {
+          key: 'druid-add',
+          assignedList: 'Druid',
+          label: 'Prepare Faerie Fire',
+        },
+        {
+          key: 'cleric-save',
+          assignedList: 'Cleric',
+          label: 'Save Bless for later',
+        },
+      ],
+      [
+        { list: 'Cleric', used: 15, limit: 22 },
+        { list: 'Druid', used: 4, limit: 8 },
+      ],
+    )).toEqual([
+      {
+        list: 'Cleric',
+        usageLabel: '15/22',
+        items: [
+          {
+            key: 'cleric-save',
+            label: 'Save Bless for later',
+          },
+        ],
+      },
+      {
+        list: 'Druid',
+        usageLabel: '4/8',
+        items: [
+          {
+            key: 'druid-replace',
+            label: 'Replace Healing Word with Cure Wounds',
+          },
+          {
+            key: 'druid-add',
+            label: 'Prepare Faerie Fire',
+          },
+        ],
+      },
+    ]);
   });
 });
