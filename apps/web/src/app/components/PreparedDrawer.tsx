@@ -47,45 +47,45 @@ export function PreparedDrawer({
   return (
     <div className="fixed inset-0 z-40 bg-black/60" role="dialog" aria-modal="true" aria-label="Current prepared spells">
       <button type="button" className="h-full w-full cursor-default bg-transparent" aria-label="Close current prepared drawer" onClick={onClose} />
-      <aside className="absolute right-0 top-0 h-full w-full max-w-xl border-l border-border-dark bg-bg-1/95 p-4 shadow-panel">
+      <aside className="absolute right-0 top-0 h-full w-full max-w-xl border-l border-moon-border bg-moon-paper p-4 text-moon-ink shadow-panel">
         <div className="flex items-center justify-between gap-3">
           <h2 className="font-display text-2xl">Current Prepared</h2>
           <button
             type="button"
-            className="rounded-lg border border-border-dark bg-bg px-2 py-1 text-xs"
+            className="rounded-xl border border-moon-border bg-moon-paper-2 px-3 py-2 text-xs"
             onClick={onClose}
           >
             Close
           </button>
         </div>
 
-        <p className="mt-1 text-sm text-text-muted">Reference view for explicit replacements. Queue stays unchanged behind this drawer.</p>
+        <p className="mt-1 text-sm text-moon-ink-muted">Reference this list while choosing explicit replacements. The queue stays unchanged behind this drawer.</p>
 
         <div className="mt-4 max-h-[82vh] space-y-4 overflow-y-auto pr-1">
           {groups.map((group) => (
             <section key={group.list} className="space-y-2">
-              <h3 className="text-xs uppercase tracking-wide text-text-dim">{group.list}</h3>
+              <h3 className="text-xs uppercase tracking-wide text-moon-ink-muted">{group.list}</h3>
               {group.spells.map(({ spell, mode }) => (
                 <div
                   key={`${group.list}:${spell.id}:${mode}`}
-                  className={`rounded-xl border px-3 py-2 text-sm ${highlightedSpellIds.has(spell.id) ? 'border-gold-soft bg-gold-soft/15' : 'border-border-dark bg-bg'}`}
+                  className={`rounded-2xl border px-3 py-3 text-sm ${highlightedSpellIds.has(spell.id) ? 'border-gold-soft bg-gold-soft/15' : 'border-moon-border bg-moon-paper-2'}`}
                 >
                   <div className="flex items-center gap-2">
-                    <p className="font-medium text-text">{spell.name}</p>
+                    <p className="font-medium text-moon-ink">{spell.name}</p>
                     {mode === 'always' ? (
-                      <span className="rounded-full border border-gold-soft bg-gold-soft/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-text-muted">
+                      <span className="rounded-full border border-gold-soft bg-gold-soft/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-moon-ink-muted">
                         Always Prepared
                       </span>
                     ) : null}
                   </div>
-                  <p className="text-xs text-text-dim">Save: {spell.save || '-'} · Action: {spell.castingTime || '-'}</p>
+                  <p className="text-xs text-moon-ink-muted">Save: {spell.save || '-'} · Action: {spell.castingTime || '-'}</p>
                 </div>
               ))}
             </section>
           ))}
 
           {!groups.length ? (
-            <p className="text-sm text-text-muted">No prepared spells on this character yet.</p>
+            <p className="text-sm text-moon-ink-muted">No prepared spells on this character yet.</p>
           ) : null}
         </div>
       </aside>

@@ -8,6 +8,7 @@ import {
   removePreparedSpellEntryAtOccurrence,
   reassignPreparedSpellEntryAtOccurrence,
 } from '../domain/character';
+import { getDefaultQueueIntent } from '../pages/preparePresentation';
 import { computeApplyResult } from '../domain/prepareQueue';
 import { buildSpellSyncPayloadV3, publishSpellSyncPayloadV3, waitForSpellSyncPayloadAck } from '../services/extensionSyncV3';
 import type { CharacterProfile, CharacterProfileInput, PreparedSpellEntry, QueueIntent, SpellRecord, SpellSyncPayloadV3 } from '../types';
@@ -197,7 +198,7 @@ export function AppProvider({ children, provider }: AppProviderProps) {
         ? character.nextPreparationQueue
         : [...character.nextPreparationQueue, {
           spellId,
-          intent: 'add' as const,
+          intent: getDefaultQueueIntent(character.preparedSpells.length),
           assignedList: validLists.length === 1 ? validLists[0] : undefined,
         }];
       const existingIdea = character.savedIdeas.find((entry) => entry.spellId === spellId);
