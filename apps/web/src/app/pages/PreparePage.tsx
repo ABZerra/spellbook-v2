@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { buildPreparationUsage, getAddableAssignmentLists, getValidAssignmentLists } from '../domain/character';
-import { buildPlanDiff } from '../domain/plan';
 import { computeApplyResult } from '../domain/prepareQueue';
 import { PreparedDrawer } from '../components/PreparedDrawer';
-import { SpellDetailDialog } from '../components/SpellDetailDialog';
+import { SpellDetailDrawer } from '../components/SpellDetailDrawer';
+import { formatPrepareReviewLabel, formatPrepareRowMeta } from './preparePresentation';
 import { useApp } from '../state/AppContext';
 
 export function PreparePage() {
@@ -82,14 +82,26 @@ export function PreparePage() {
     }));
   }, [activeCharacter, preview.result, spellsById]);
 
-  const diff = useMemo(() => {
-    if (!activeCharacter || !preview.result) return [];
-    return buildPlanDiff(activeCharacter.preparedSpells, preview.result.finalPreparedSpells);
-  }, [activeCharacter, preview.result]);
+  const reviewItems = useMemo(() => (
+    queuedRows.map(({ entry, spell }) => ({
+      key: `${entry.spellId}:${entry.intent}:${entry.assignedList || '-'}:${entry.replaceTarget || '-'}`,
+      label: formatPrepareReviewLabel({
+        intent: entry.intent,
+        spellName: spell.name,
+        assignedList: entry.assignedList,
+        replaceTargetName: entry.replaceTarget ? (spellsById.get(entry.replaceTarget)?.name || entry.replaceTarget) : null,
+      }),
+    }))
+  ), [queuedRows, spellsById]);
 
   const highlightedReplaceTargets = useMemo(() => new Set(queueEntries
     .filter((entry) => entry.intent === 'replace' && entry.replaceTarget)
     .map((entry) => String(entry.replaceTarget))), [queueEntries]);
+
+  const selectedQueuedEntry = useMemo(
+    () => queueEntries.find((entry) => entry.spellId === selectedSpellId) || null,
+    [queueEntries, selectedSpellId],
+  );
 
   const selectedSpell = useMemo(
     () => spells.find((entry) => entry.id === selectedSpellId) || null,
@@ -177,14 +189,6 @@ export function PreparePage() {
             >
               Reset To Current Prepared
             </button>
-            <button
-              type="button"
-              className="rounded-2xl border border-gold-soft bg-gold-soft/20 px-4 py-2 text-sm text-text transition-colors hover:bg-gold-soft/30 disabled:opacity-50"
-              onClick={() => void onApply()}
-              disabled={busy}
-            >
-              {busy ? 'Applying...' : 'Apply Next Preparation'}
-            </button>
           </div>
         </div>
       </section>
@@ -219,75 +223,60 @@ export function PreparePage() {
               </button>
             </div>
 
-            <div className="mt-4 max-h-[36vh] space-y-2 overflow-y-auto pr-1">
-              {search.trim().length === 0 ? (
-                <div className="rounded-2xl border border-border-dark bg-bg px-4 py-4 text-sm text-text-muted">
-                  Search by spell name or notes to stage something new.
-                </div>
-              ) : (
-                <>
+            <div className="mt-4 max-h-[36vh] overflow-y-auto pr-1">
+              {search.trim().length > 0 ? (
+                <div className="divide-y divide-border-dark/80">
                   {filtered.map((spell) => {
                     const validLists = getValidAssignmentLists(spell, activeCharacter);
                     const addableLists = getAddableAssignmentLists(spell, activeCharacter);
-                    const listLabel = addableLists.length === 1
-                      ? addableLists[0]
-                      : addableLists.length > 1
-                        ? 'Choose list after staging'
-                        : validLists.length > 0
-                          ? 'Blocked by max spell level'
-                          : '-';
                     const blocked = validLists.length > 0 && addableLists.length === 0;
+                    const meta = addableLists.length === 1
+                      ? formatPrepareRowMeta({ level: spell.level, list: addableLists[0] })
+                      : addableLists.length > 1
+                        ? `${spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`} · ${addableLists.length} lists`
+                        : validLists.length > 0
+                          ? `${spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`} · Blocked by max spell level`
+                          : `${spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`} · Outside active lists`;
 
                     return (
-                      <div key={spell.id} className="rounded-2xl border border-border-dark bg-bg px-4 py-3 text-sm">
-                        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                          <div>
-                            <p className="font-display text-2xl text-text">{spell.name}</p>
-                            <div className="mt-2 flex flex-wrap gap-2 text-xs text-text-muted">
-                              <span className="rounded-full border border-border-dark bg-bg-2 px-3 py-1">{listLabel}</span>
-                              <span className="rounded-full border border-border-dark bg-bg-2 px-3 py-1">{spell.castingTime || 'No casting time'}</span>
-                              <span className="rounded-full border border-border-dark bg-bg-2 px-3 py-1">Save: {spell.save || 'None'}</span>
-                            </div>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            <button
-                              type="button"
-                              className="rounded-2xl border border-border-dark bg-bg px-4 py-2 text-sm text-text-muted transition-colors hover:bg-bg-2 hover:text-text"
-                              onClick={() => setSelectedSpellId(spell.id)}
-                            >
-                              Details
-                            </button>
-                            <button
-                              type="button"
-                              className={`rounded-2xl border px-4 py-2 text-sm ${blocked ? 'border-border-dark bg-bg opacity-55' : 'border-moon-border bg-moon-paper text-moon-ink'}`}
-                              disabled={blocked}
-                              onClick={() => void onQueueToggle(spell.id)}
-                            >
-                              {blocked ? 'Blocked' : 'Stage Spell'}
-                            </button>
-                          </div>
+                      <div key={spell.id} className="flex flex-col gap-2 py-3 md:flex-row md:items-center md:justify-between md:gap-4">
+                        <div className="min-w-0">
+                          <button
+                            type="button"
+                            className="truncate text-left font-display text-xl text-text transition-colors hover:text-gold-soft"
+                            onClick={() => setSelectedSpellId(spell.id)}
+                          >
+                            {spell.name}
+                          </button>
+                          <p className="mt-1 text-sm text-text-muted">{meta}</p>
                         </div>
+
+                        <button
+                          type="button"
+                          className={`self-start rounded-full border px-4 py-2 text-sm transition-colors md:self-center ${blocked ? 'border-border-dark bg-bg opacity-55' : 'border-moon-border bg-moon-paper text-moon-ink hover:opacity-92'}`}
+                          disabled={blocked}
+                          onClick={() => void onQueueToggle(spell.id)}
+                        >
+                          {blocked ? 'Blocked' : 'Stage Spell'}
+                        </button>
                       </div>
                     );
                   })}
-                  {!filtered.length ? <p className="rounded-2xl border border-border-dark bg-bg px-4 py-4 text-sm text-text-muted">No spells are available to add from this search.</p> : null}
-                </>
-              )}
+                  {!filtered.length ? <p className="py-4 text-sm text-text-muted">No spells are available to add from this search.</p> : null}
+                </div>
+              ) : null}
             </div>
           </section>
 
           <section className="rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-4 md:p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="font-display text-2xl text-text">Next Rest Workbench</h2>
-                <p className="mt-1 text-sm text-text-muted">Replace is the default for newly staged spells. Switch to prepare or save-for-later only when needed.</p>
-              </div>
-              <span className="rounded-full border border-border-dark bg-bg px-4 py-2 text-xs uppercase tracking-[0.24em] text-text-muted">
+              <h2 className="font-display text-2xl text-text">Preparation Queue</h2>
+              <span className="text-[11px] uppercase tracking-[0.24em] text-text-dim">
                 {queuedRows.length} staged
               </span>
             </div>
 
-            <div className="mt-4 space-y-3">
+            <div className="mt-4 divide-y divide-border-dark/80">
               {queuedRows.map(({ entry, spell }) => {
                 const validLists = getValidAssignmentLists(spell, activeCharacter);
                 const addableLists = getAddableAssignmentLists(spell, activeCharacter);
@@ -308,61 +297,55 @@ export function PreparePage() {
                 const listBlocked = Boolean(entry.assignedList) && !addableLists.includes(entry.assignedList);
 
                 return (
-                  <article key={spell.id} className="rounded-2xl border border-border-dark bg-bg px-4 py-4 text-sm">
-                    <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_auto]">
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="font-display text-2xl text-text">{spell.name}</p>
-                          <span className="rounded-full border border-border-dark bg-bg-2 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-text-muted">
-                            {queuedList || 'List not chosen'}
-                          </span>
-                        </div>
-                        <div className="mt-2 flex flex-wrap gap-2 text-xs text-text-muted">
-                          <span className="rounded-full border border-border-dark bg-bg-2 px-3 py-1">{spell.castingTime || 'No casting time'}</span>
-                          <span className="rounded-full border border-border-dark bg-bg-2 px-3 py-1">Save: {spell.save || 'None'}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
+                  <article key={spell.id} className="space-y-3 py-4 text-sm">
+                    <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between md:gap-4">
+                      <div className="min-w-0">
                         <button
                           type="button"
-                          className="rounded-2xl border border-border-dark bg-bg-2 px-4 py-2 text-sm text-text-muted transition-colors hover:bg-bg hover:text-text"
+                          className="truncate text-left font-display text-2xl text-text transition-colors hover:text-gold-soft"
                           onClick={() => setSelectedSpellId(spell.id)}
                         >
-                          Details
+                          {spell.name}
                         </button>
-                        <button
-                          type="button"
-                          className="rounded-2xl border border-border-dark bg-bg-2 px-4 py-2 text-sm text-text-muted transition-colors hover:bg-bg hover:text-text"
-                          onClick={() => void unqueueSpellForNextPreparation(spell.id)}
-                        >
-                          Remove
-                        </button>
+                        <p className="mt-1 text-sm text-text-muted">
+                          {formatPrepareRowMeta({
+                            level: spell.level,
+                            list: queuedList || 'Choose spell list',
+                          })}
+                        </p>
                       </div>
-                    </div>
 
-                    <div className="mt-4 flex flex-wrap gap-2">
                       <button
                         type="button"
-                        className={`rounded-full border px-4 py-2 text-sm ${entry.intent === 'replace' ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
+                        className="self-start text-[11px] uppercase tracking-[0.18em] text-text-dim transition-colors hover:text-blood md:self-center"
+                        onClick={() => void unqueueSpellForNextPreparation(spell.id)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        className={`rounded-full border px-3 py-1.5 text-sm ${entry.intent === 'replace' ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
                         onClick={() => void setQueuedSpellIntent(spell.id, 'replace').catch((nextError) => {
                           setError(nextError instanceof Error ? nextError.message : 'Unable to update queue intent.');
                         })}
                       >
-                        Replace Something
+                        Replace
                       </button>
                       <button
                         type="button"
-                        className={`rounded-full border px-4 py-2 text-sm ${entry.intent === 'add' ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
+                        className={`rounded-full border px-3 py-1.5 text-sm ${entry.intent === 'add' ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
                         onClick={() => void setQueuedSpellIntent(spell.id, 'add').catch((nextError) => {
                           setError(nextError instanceof Error ? nextError.message : 'Unable to update queue intent.');
                         })}
                       >
-                        Prepare It
+                        Prepare
                       </button>
                       <button
                         type="button"
-                        className={`rounded-full border px-4 py-2 text-sm ${entry.intent === 'queue_only' ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
+                        className={`rounded-full border px-3 py-1.5 text-sm ${entry.intent === 'queue_only' ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
                         onClick={() => void setQueuedSpellIntent(spell.id, 'queue_only').catch((nextError) => {
                           setError(nextError instanceof Error ? nextError.message : 'Unable to update queue intent.');
                         })}
@@ -372,8 +355,8 @@ export function PreparePage() {
                     </div>
 
                     {validLists.length > 1 ? (
-                      <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
-                        <label className="text-text-muted" htmlFor={`assigned-list-${spell.id}`}>Spell List</label>
+                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                        <label className="text-text-muted" htmlFor={`assigned-list-${spell.id}`}>List</label>
                         <select
                           id={`assigned-list-${spell.id}`}
                           className={`rounded-xl border bg-bg px-3 py-2 ${(listMissing || listBlocked) ? 'border-gold-soft text-text' : 'border-border-dark text-text'}`}
@@ -389,14 +372,14 @@ export function PreparePage() {
                             <option key={list} value={list}>{list}</option>
                           ))}
                         </select>
-                        {listMissing ? <span className="text-text-dim">Choose the spell list before applying.</span> : null}
-                        {listBlocked ? <span className="text-text-dim">That list now exceeds its allowed max spell level. Choose another one or remove this spell.</span> : null}
+                        {listMissing ? <span className="text-text-dim">Choose a list before applying.</span> : null}
+                        {listBlocked ? <span className="text-text-dim">That list is now above its allowed max spell level.</span> : null}
                       </div>
                     ) : null}
 
                     {entry.intent === 'replace' ? (
-                      <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
-                        <label className="text-text-muted" htmlFor={`replace-target-${spell.id}`}>Replace Target</label>
+                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                        <label className="text-text-muted" htmlFor={`replace-target-${spell.id}`}>Replace</label>
                         <select
                           id={`replace-target-${spell.id}`}
                           className={`rounded-xl border bg-bg px-3 py-2 ${replaceMissing ? (showValidationErrors ? 'border-blood-soft text-blood' : 'border-gold-soft text-text') : 'border-border-dark text-text'}`}
@@ -414,7 +397,7 @@ export function PreparePage() {
                         </select>
                         {replaceMissing ? (
                           <span className={showValidationErrors ? 'text-blood' : 'text-text-dim'}>
-                            {showValidationErrors ? 'Choose a prepared spell before applying.' : 'Pick the prepared spell this should replace.'}
+                            {showValidationErrors ? 'Choose a prepared spell before applying.' : 'Pick what this replaces.'}
                           </span>
                         ) : null}
                       </div>
@@ -422,36 +405,35 @@ export function PreparePage() {
                   </article>
                 );
               })}
-              {!queuedRows.length ? <p className="rounded-2xl border border-border-dark bg-bg px-4 py-5 text-sm text-text-muted">Nothing is staged yet. Queue a spell from Catalog or the search box above.</p> : null}
+              {!queuedRows.length ? <p className="py-5 text-sm text-text-muted">Nothing is staged yet. Queue a spell from Catalog or the search box above.</p> : null}
             </div>
           </section>
         </div>
 
         <aside className="space-y-4 xl:sticky xl:top-6">
           <section className="rounded-[1.55rem] border border-moon-border bg-moon-paper px-5 py-5 text-moon-ink md:px-6">
-            <p className="text-[11px] uppercase tracking-[0.3em] text-moon-ink-muted">Final Decision</p>
-            <h2 className="mt-3 font-display text-3xl">Apply Preview</h2>
-            <p className="mt-2 text-sm text-moon-ink-muted">
-              Review the final diff, list limits, and any warnings in one place before you apply anything.
-            </p>
+            <p className="text-[11px] uppercase tracking-[0.3em] text-moon-ink-muted">Final Check</p>
 
-            <div className="mt-5 grid gap-3">
-              <div className="rounded-2xl border border-moon-border bg-moon-paper-2 px-4 py-3">
-                <p className="text-[11px] uppercase tracking-[0.28em] text-moon-ink-muted">Staged</p>
-                <p className="mt-2 font-display text-3xl">{queuedRows.length}</p>
-              </div>
-              <div className="rounded-2xl border border-moon-border bg-moon-paper-2 px-4 py-3">
-                <p className="text-[11px] uppercase tracking-[0.28em] text-moon-ink-muted">Changes To Apply</p>
-                <p className="mt-2 font-display text-3xl">{diff.length}</p>
+            <div className="mt-4">
+              <h3 className="font-display text-2xl">Queued Changes</h3>
+              <div className="mt-3 space-y-2 text-sm">
+                {reviewItems.map((item) => (
+                  <div key={item.key} className="border-b border-moon-border/70 pb-2 last:border-b-0 last:pb-0">
+                    <p>{item.label}</p>
+                  </div>
+                ))}
+
+                {!reviewItems.length ? <p className="text-moon-ink-muted">No staged actions yet.</p> : null}
               </div>
             </div>
 
-            <div className="mt-5 space-y-2 text-sm">
+            <div className="mt-5">
               <p className="text-[11px] uppercase tracking-[0.28em] text-moon-ink-muted">Preparation Limits</p>
-              <div className="flex flex-wrap gap-2">
+              <div className="mt-2 space-y-2 text-sm">
                 {limitsSummary.map((entry) => (
-                  <div key={entry.list} className="rounded-xl border border-moon-border bg-moon-paper-2 px-3 py-2">
-                    {entry.list}: {entry.used}/{entry.limit}
+                  <div key={entry.list} className="flex items-center justify-between gap-3 border-b border-moon-border/70 pb-2 last:border-b-0 last:pb-0">
+                    <span>{entry.list}</span>
+                    <span className="text-moon-ink-muted">{entry.used}/{entry.limit}</span>
                   </div>
                 ))}
                 {!limitsSummary.length ? <p className="text-sm text-moon-ink-muted">No limits configured.</p> : null}
@@ -479,30 +461,6 @@ export function PreparePage() {
               {busy ? 'Applying...' : 'Apply Next Preparation'}
             </button>
           </section>
-
-          <section className="rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-4 md:p-5">
-            <h3 className="font-display text-2xl text-text">Queued Changes</h3>
-            <div className="mt-4 space-y-2 text-sm">
-              {diff.map((item) => {
-                const fromName = item.from ? (spellsById.get(item.from.spellId)?.name || 'Unknown') : 'Unknown';
-                const toName = item.to ? (spellsById.get(item.to.spellId)?.name || 'Unknown') : 'Unknown';
-
-                const label = item.type === 'replace'
-                  ? `Replace ${fromName} [${item.from?.assignedList || '-'}] with ${toName} [${item.to?.assignedList || '-'}]`
-                  : item.type === 'add'
-                    ? `Prepare ${toName} [${item.to?.assignedList || '-'}]`
-                    : `Unprepare ${fromName} [${item.from?.assignedList || '-'}]`;
-
-                return (
-                  <div key={`diff-${item.index}-${item.type}`} className="rounded-xl border border-border-dark bg-bg px-3 py-3">
-                    <p>{label}</p>
-                  </div>
-                );
-              })}
-
-              {!diff.length ? <p className="rounded-xl border border-border-dark bg-bg px-3 py-3 text-text-muted">No final change has been queued yet.</p> : null}
-            </div>
-          </section>
         </aside>
       </section>
 
@@ -514,9 +472,9 @@ export function PreparePage() {
         highlightedSpellIds={highlightedReplaceTargets}
       />
 
-      <SpellDetailDialog
+      <SpellDetailDrawer
         spell={selectedSpell}
-        activeCharacter={activeCharacter}
+        assignedList={selectedQueuedEntry?.assignedList}
         queued={selectedSpellQueued}
         cannotQueue={selectedSpellCannotQueue}
         disabledReason={selectedSpellDisabledReason}
