@@ -5,6 +5,10 @@ interface SpellDetailDrawerProps {
   spell: SpellRecord | null;
   assignedList?: string;
   mode?: CharacterProfile['preparedSpells'][number]['mode'];
+  queued?: boolean;
+  cannotQueue?: boolean;
+  disabledReason?: string;
+  onToggleQueue?: (spellId: string) => void | Promise<void>;
   onClose: () => void;
 }
 
@@ -17,6 +21,10 @@ export function SpellDetailDrawer({
   spell,
   assignedList,
   mode,
+  queued = false,
+  cannotQueue = false,
+  disabledReason = '',
+  onToggleQueue,
   onClose,
 }: SpellDetailDrawerProps) {
   if (!spell) return null;
@@ -43,13 +51,27 @@ export function SpellDetailDrawer({
             <h2 className="mt-3 break-words font-display text-4xl">{spell.name}</h2>
           </div>
 
-          <button
-            type="button"
-            className="rounded-xl border border-moon-border bg-moon-paper-2 px-3 py-2 text-xs text-moon-ink"
-            onClick={onClose}
-          >
-            Close
-          </button>
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {onToggleQueue ? (
+              <button
+                type="button"
+                className={`rounded-xl border px-3 py-2 text-xs ${cannotQueue ? 'cursor-not-allowed border-moon-border bg-moon-paper-2 text-moon-ink-muted opacity-60' : queued ? 'border-moon-border bg-moon-ink text-moon-paper' : 'border-moon-border bg-moon-paper-2 text-moon-ink'}`}
+                disabled={cannotQueue}
+                title={disabledReason}
+                aria-label={disabledReason || 'Queue spell for next preparation'}
+                onClick={() => void onToggleQueue(spell.id)}
+              >
+                {queued ? 'Remove From Queue' : cannotQueue ? 'Unavailable' : 'Stage For Prepare'}
+              </button>
+            ) : null}
+            <button
+              type="button"
+              className="rounded-xl border border-moon-border bg-moon-paper-2 px-3 py-2 text-xs text-moon-ink"
+              onClick={onClose}
+            >
+              Close
+            </button>
+          </div>
         </div>
 
         <div className="mt-5 grid gap-3 md:grid-cols-2">

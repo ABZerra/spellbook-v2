@@ -1,6 +1,6 @@
 # Spellbook UX Decisions
 
-**Last updated:** 2026-03-18
+**Last updated:** 2026-03-19
 
 This document records the UI and interaction decisions behind the current Spellbook web experience so future changes can preserve the same product intent.
 
@@ -77,9 +77,12 @@ The Character page is a quick verification board.
 The Prepare page is a decision workbench.
 
 - the queue is the main working surface
+- the left queue is grouped by spell level and sorted by spell name within each level
 - `Replace` is the default queued intent when the character already has prepared spells
 - search and queue rows stay compact; spell descriptions open on demand
-- the final review must include preparation limits and warning states so the user can commit confidently
+- the final review stays grouped by spell list because list limits are the real final-check constraint
+- list headers in the final review carry the active `used/limit` context, so limits do not need a second summary block
+- the final review must include warning states so the user can commit confidently
 
 ## Copy decisions
 
