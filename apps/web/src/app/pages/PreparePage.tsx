@@ -3,7 +3,15 @@ import { buildPreparationUsage, getAddableAssignmentLists, getValidAssignmentLis
 import { computeApplyResult } from '../domain/prepareQueue';
 import { PreparedDrawer } from '../components/PreparedDrawer';
 import { SpellDetailDrawer } from '../components/SpellDetailDrawer';
-import { formatPrepareReviewLabel, formatPrepareRowMeta, groupPrepareReviewItems } from './preparePresentation';
+import {
+  formatPrepareReviewLabel,
+  formatPrepareRowMeta,
+  groupQueuedSpellsByLevel,
+  getPrepareQueueListMeta,
+  getPrepareQueueReplaceSummary,
+  getPrepareReplaceMessage,
+  groupPrepareReviewItems,
+} from './preparePresentation';
 import { useApp } from '../state/AppContext';
 
 export function PreparePage() {
@@ -42,6 +50,22 @@ export function PreparePage() {
     }
     return rows;
   }, [queueEntries, spells, spellsById]);
+
+  const queuedRowGroups = useMemo(
+    () => groupQueuedSpellsByLevel(
+      queuedRows.map(({ spell }) => ({
+        key: spell.id,
+        level: spell.level,
+        spellName: spell.name,
+      })),
+    ),
+    [queuedRows],
+  );
+
+  const queuedRowsById = useMemo(
+    () => new Map(queuedRows.map((row) => [row.spell.id, row])),
+    [queuedRows],
+  );
 
   const filtered = useMemo(() => {
     if (!activeCharacter) return [];
@@ -285,147 +309,165 @@ export function PreparePage() {
               </span>
             </div>
 
-            <div className="mt-4 divide-y divide-border-dark/80">
-              {queuedRows.map(({ entry, spell }) => {
-                const validLists = getValidAssignmentLists(spell, activeCharacter);
-                const addableLists = getAddableAssignmentLists(spell, activeCharacter);
-                const queuedList = entry.assignedList || (addableLists.length === 1 ? addableLists[0] : null);
-                const selectableLists = entry.assignedList && !addableLists.includes(entry.assignedList)
-                  ? [entry.assignedList, ...addableLists.filter((list) => list !== entry.assignedList)]
-                  : addableLists;
-                const replaceOptions = activeCharacter.preparedSpells
-                  .filter((preparedEntry) => preparedEntry.assignedList === queuedList)
-                  .map((preparedEntry) => ({
-                    ...preparedEntry,
-                    spell: spellsById.get(preparedEntry.spellId),
-                  }))
-                  .filter((candidate): candidate is typeof candidate & { spell: NonNullable<typeof candidate.spell> } => Boolean(candidate.spell));
+            <div className="mt-5 space-y-5">
+              {queuedRowGroups.map((group) => (
+                <section key={group.level} className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-[11px] uppercase tracking-[0.28em] text-text-dim">{group.label}</h3>
+                    <div className="h-px flex-1 bg-border-dark/80" />
+                  </div>
 
-                const replaceMissing = entry.intent === 'replace' && !entry.replaceTarget;
-                const listMissing = !queuedList && addableLists.length > 1;
-                const listBlocked = Boolean(entry.assignedList) && !addableLists.includes(entry.assignedList);
+                  <div className="divide-y divide-border-dark/80">
+                    {group.itemKeys.map((itemKey) => {
+                      const queuedRow = queuedRowsById.get(itemKey);
+                      if (!queuedRow) return null;
 
-                return (
-                  <article key={spell.id} className="py-4 text-sm xl:grid xl:grid-cols-[minmax(0,1.15fr)_auto_minmax(10rem,0.75fr)_minmax(14rem,0.95fr)_auto] xl:items-center xl:gap-3">
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                        <button
-                          type="button"
-                          className="truncate text-left font-display text-2xl text-text transition-colors hover:text-gold-soft"
-                          onClick={() => setSelectedSpellId(spell.id)}
-                        >
-                          {spell.name}
-                        </button>
-                        <p className="text-sm text-text-muted">
-                          {formatPrepareRowMeta({
-                            level: spell.level,
-                            list: queuedList || 'Choose spell list',
-                          })}
-                        </p>
-                      </div>
-                    </div>
+                      const { entry, spell } = queuedRow;
+                      const validLists = getValidAssignmentLists(spell, activeCharacter);
+                      const addableLists = getAddableAssignmentLists(spell, activeCharacter);
+                      const queuedList = entry.assignedList || (addableLists.length === 1 ? addableLists[0] : null);
+                      const selectableLists = entry.assignedList && !addableLists.includes(entry.assignedList)
+                        ? [entry.assignedList, ...addableLists.filter((list) => list !== entry.assignedList)]
+                        : addableLists;
+                      const replaceOptions = activeCharacter.preparedSpells
+                        .filter((preparedEntry) => preparedEntry.assignedList === queuedList)
+                        .map((preparedEntry) => ({
+                          ...preparedEntry,
+                          spell: spellsById.get(preparedEntry.spellId),
+                        }))
+                        .filter((candidate): candidate is typeof candidate & { spell: NonNullable<typeof candidate.spell> } => Boolean(candidate.spell));
 
-                    <div className="mt-3 flex flex-wrap gap-2 xl:mt-0 xl:justify-start">
-                      <button
-                        type="button"
-                        className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${entry.intent === 'replace' ? 'border-moon-border bg-moon-paper text-moon-ink font-semibold' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
-                        onClick={() => void setQueuedSpellIntent(spell.id, 'replace').catch((nextError) => {
-                          setError(nextError instanceof Error ? nextError.message : 'Unable to update queue intent.');
-                        })}
-                      >
-                        Replace
-                      </button>
-                      <button
-                        type="button"
-                        className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${entry.intent === 'add' ? 'border-gold-soft bg-gold-soft/12 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
-                        onClick={() => void setQueuedSpellIntent(spell.id, 'add').catch((nextError) => {
-                          setError(nextError instanceof Error ? nextError.message : 'Unable to update queue intent.');
-                        })}
-                      >
-                        Prepare
-                      </button>
-                      <button
-                        type="button"
-                        className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${entry.intent === 'queue_only' ? 'border-gold-soft bg-gold-soft/12 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
-                        onClick={() => void setQueuedSpellIntent(spell.id, 'queue_only').catch((nextError) => {
-                          setError(nextError instanceof Error ? nextError.message : 'Unable to update queue intent.');
-                        })}
-                      >
-                        Save Later
-                      </button>
-                    </div>
+                      const replaceMissing = entry.intent === 'replace' && !entry.replaceTarget;
+                      const listMissing = !queuedList && addableLists.length > 1;
+                      const listBlocked = Boolean(entry.assignedList) && !addableLists.includes(entry.assignedList);
+                      const listMeta = getPrepareQueueListMeta({ level: spell.level, list: queuedList });
+                      const replaceMessage = getPrepareReplaceMessage({ replaceMissing, showValidationErrors });
+                      const replaceSummary = getPrepareQueueReplaceSummary(entry.intent);
 
-                    <div className="mt-3 xl:mt-0">
-                      {validLists.length > 1 ? (
-                        <div className="flex flex-wrap items-center gap-2 text-xs">
-                          <label className="text-text-muted" htmlFor={`assigned-list-${spell.id}`}>List</label>
-                          <select
-                            id={`assigned-list-${spell.id}`}
-                            className={`rounded-xl border bg-bg px-3 py-2 ${(listMissing || listBlocked) ? 'border-gold-soft text-text' : 'border-border-dark text-text'}`}
-                            value={entry.assignedList || ''}
-                            onChange={(event) => {
-                              void setQueuedSpellAssignedList(spell.id, event.target.value || null).catch((nextError) => {
-                                setError(nextError instanceof Error ? nextError.message : 'Unable to update spell list.');
-                              });
-                            }}
-                          >
-                            <option value="">Choose spell list</option>
-                            {selectableLists.map((list) => (
-                              <option key={list} value={list}>{list}</option>
-                            ))}
-                          </select>
-                          {listMissing ? <span className="text-text-dim">Choose a list.</span> : null}
-                          {listBlocked ? <span className="text-text-dim">Max spell level exceeded.</span> : null}
-                        </div>
-                      ) : (
-                        <div className="text-xs text-text-muted xl:text-sm">
-                          {queuedList || 'Choose spell list'}
-                        </div>
-                      )}
-                    </div>
+                      return (
+                        <article key={spell.id} className="py-4 text-sm xl:grid xl:grid-cols-[minmax(0,1.7fr)_minmax(9.5rem,0.62fr)_minmax(14rem,0.95fr)_auto] xl:items-start xl:gap-3">
+                          <div className="min-w-0">
+                            <button
+                              type="button"
+                              className="whitespace-normal text-left font-display text-2xl leading-tight text-text transition-colors hover:text-gold-soft"
+                              onClick={() => setSelectedSpellId(spell.id)}
+                            >
+                              {spell.name}
+                            </button>
+                            <div className="mt-2 flex flex-wrap items-center gap-2 xl:pl-8">
+                              <button
+                                type="button"
+                                className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${entry.intent === 'replace' ? 'border-moon-border bg-moon-paper text-moon-ink font-semibold' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
+                                onClick={() => void setQueuedSpellIntent(spell.id, 'replace').catch((nextError) => {
+                                  setError(nextError instanceof Error ? nextError.message : 'Unable to update queue intent.');
+                                })}
+                              >
+                                Replace
+                              </button>
+                              <button
+                                type="button"
+                                className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${entry.intent === 'add' ? 'border-gold-soft bg-gold-soft/12 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
+                                onClick={() => void setQueuedSpellIntent(spell.id, 'add').catch((nextError) => {
+                                  setError(nextError instanceof Error ? nextError.message : 'Unable to update queue intent.');
+                                })}
+                              >
+                                Prepare
+                              </button>
+                              <button
+                                type="button"
+                                className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${entry.intent === 'queue_only' ? 'border-gold-soft bg-gold-soft/12 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
+                                onClick={() => void setQueuedSpellIntent(spell.id, 'queue_only').catch((nextError) => {
+                                  setError(nextError instanceof Error ? nextError.message : 'Unable to update queue intent.');
+                                })}
+                              >
+                                Save Later
+                              </button>
+                            </div>
+                          </div>
 
-                    <div className="mt-3 xl:mt-0">
-                      {entry.intent === 'replace' ? (
-                        <div className="flex flex-wrap items-center gap-2 text-xs">
-                          <label className="text-text-muted" htmlFor={`replace-target-${spell.id}`}>Replace</label>
-                          <select
-                            id={`replace-target-${spell.id}`}
-                            className={`rounded-xl border bg-bg px-3 py-2 ${replaceMissing ? (showValidationErrors ? 'border-blood-soft text-blood' : 'border-gold-soft text-text') : 'border-border-dark text-text'}`}
-                            value={entry.replaceTarget || ''}
-                            onChange={(event) => {
-                              void setQueuedSpellReplaceTarget(spell.id, event.target.value || null).catch((nextError) => {
-                                setError(nextError instanceof Error ? nextError.message : 'Unable to update replace target.');
-                              });
-                            }}
-                          >
-                            <option value="">Select prepared spell</option>
-                            {replaceOptions.map((option) => (
-                              <option key={`${option.assignedList}:${option.spellId}`} value={option.spellId}>{option.spell.name}</option>
-                            ))}
-                          </select>
-                          {replaceMissing ? (
-                            <span className={showValidationErrors ? 'text-blood' : 'text-text-dim'}>
-                              {showValidationErrors ? 'Choose a prepared spell before applying.' : 'Pick what this replaces.'}
-                            </span>
-                          ) : null}
-                        </div>
-                      ) : (
-                        <div className="text-xs text-text-dim xl:text-sm">
-                          {entry.intent === 'add' ? 'Prepare without replacement' : 'Saved for later'}
-                        </div>
-                      )}
-                    </div>
+                          <div className="mt-3 xl:mt-0 xl:pt-3">
+                            {validLists.length > 1 ? (
+                              <div className="space-y-1.5 text-xs">
+                                <label className="block text-text-muted" htmlFor={`assigned-list-${spell.id}`}>List</label>
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <select
+                                    id={`assigned-list-${spell.id}`}
+                                    className={`rounded-xl border bg-bg px-3 py-2 ${(listMissing || listBlocked) ? 'border-gold-soft text-text' : 'border-border-dark text-text'}`}
+                                    value={entry.assignedList || ''}
+                                    onChange={(event) => {
+                                      void setQueuedSpellAssignedList(spell.id, event.target.value || null).catch((nextError) => {
+                                        setError(nextError instanceof Error ? nextError.message : 'Unable to update spell list.');
+                                      });
+                                    }}
+                                  >
+                                    <option value="">Choose spell list</option>
+                                    {selectableLists.map((list) => (
+                                      <option key={list} value={list}>{list}</option>
+                                    ))}
+                                  </select>
+                                  {listBlocked ? <span className="text-text-dim">Max spell level exceeded.</span> : null}
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="space-y-1 text-xs text-text-muted xl:text-sm">
+                                <p className="text-xs text-text-muted">List</p>
+                                <p>{listMeta.listLabel || 'Choose spell list'}</p>
+                              </div>
+                            )}
+                          </div>
 
-                    <button
-                      type="button"
-                      className="mt-3 self-start text-[11px] uppercase tracking-[0.18em] text-text-dim transition-colors hover:text-blood xl:mt-0 xl:justify-self-end xl:self-center"
-                      onClick={() => void unqueueSpellForNextPreparation(spell.id)}
-                    >
-                      Remove
-                    </button>
-                  </article>
-                );
-              })}
+                          <div className="mt-3 xl:mt-0 xl:pt-3">
+                            <div className="space-y-1.5 text-xs">
+                              {entry.intent === 'replace' ? (
+                                <>
+                                  <label className="block text-text-muted" htmlFor={`replace-target-${spell.id}`}>Replace</label>
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <select
+                                      id={`replace-target-${spell.id}`}
+                                      className={`rounded-xl border bg-bg px-3 py-2 ${replaceMissing ? (showValidationErrors ? 'border-blood-soft text-blood' : 'border-gold-soft text-text') : 'border-border-dark text-text'}`}
+                                      value={entry.replaceTarget || ''}
+                                      onChange={(event) => {
+                                        void setQueuedSpellReplaceTarget(spell.id, event.target.value || null).catch((nextError) => {
+                                          setError(nextError instanceof Error ? nextError.message : 'Unable to update replace target.');
+                                        });
+                                      }}
+                                    >
+                                      <option value="">Select prepared spell</option>
+                                      {replaceOptions.map((option) => (
+                                        <option key={`${option.assignedList}:${option.spellId}`} value={option.spellId}>{option.spell.name}</option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                  {replaceMessage ? (
+                                    <p className="text-blood">
+                                      {replaceMessage}
+                                    </p>
+                                  ) : null}
+                                </>
+                              ) : (
+                                <>
+                                  <p className="text-text-muted">Replace</p>
+                                  <p className="text-xs text-text-dim xl:text-sm">{replaceSummary}</p>
+                                </>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="mt-3 self-start xl:mt-0 xl:justify-self-end xl:pt-[2.3rem]">
+                            <button
+                              type="button"
+                              className="text-[11px] uppercase tracking-[0.18em] text-text-dim transition-colors hover:text-blood"
+                              onClick={() => void unqueueSpellForNextPreparation(spell.id)}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </section>
+              ))}
               {!queuedRows.length ? <p className="py-5 text-sm text-text-muted">Nothing is staged yet. Queue a spell from Catalog or the search box above.</p> : null}
             </div>
           </section>
@@ -458,19 +500,6 @@ export function PreparePage() {
                 ))}
 
                 {!reviewGroups.length ? <p className="text-moon-ink-muted">No staged actions yet.</p> : null}
-              </div>
-            </div>
-
-            <div className="mt-5">
-              <p className="text-[11px] uppercase tracking-[0.28em] text-moon-ink-muted">Preparation Limits</p>
-              <div className="mt-2 space-y-2 text-sm">
-                {limitsSummary.map((entry) => (
-                  <div key={entry.list} className="flex items-center justify-between gap-3 border-b border-moon-border/70 pb-2 last:border-b-0 last:pb-0">
-                    <span>{entry.list}</span>
-                    <span className="text-moon-ink-muted">{entry.used}/{entry.limit}</span>
-                  </div>
-                ))}
-                {!limitsSummary.length ? <p className="text-sm text-moon-ink-muted">No limits configured.</p> : null}
               </div>
             </div>
 
