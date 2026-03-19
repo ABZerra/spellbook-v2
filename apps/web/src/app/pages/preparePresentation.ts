@@ -18,13 +18,76 @@ export interface PrepareReviewGroup {
   items: Array<Pick<PrepareReviewItemInput, 'key' | 'label'>>;
 }
 
+export interface PrepareQueueLevelGroup {
+  level: number;
+  label: string;
+  itemKeys: string[];
+}
+
 export function getDefaultQueueIntent(preparedCount: number): QueueIntent {
   return preparedCount > 0 ? 'replace' : 'add';
 }
 
 export function formatPrepareRowMeta(row: { level: number; list: string }): string {
-  const levelLabel = row.level === 0 ? 'Cantrip' : `Level ${row.level}`;
-  return `${levelLabel} · ${row.list}`;
+  return `${formatPrepareLevelLabel(row.level)} · ${row.list}`;
+}
+
+export function formatPrepareLevelLabel(level: number): string {
+  return level === 0 ? 'Cantrip' : `Level ${level}`;
+}
+
+export function getPrepareQueueListMeta(row: { level: number; list?: string | null }): {
+  listLabel: string | null;
+  levelLabel: string;
+} {
+  return {
+    listLabel: row.list || null,
+    levelLabel: formatPrepareLevelLabel(row.level),
+  };
+}
+
+export function getPrepareReplaceMessage(input: {
+  replaceMissing: boolean;
+  showValidationErrors: boolean;
+}): string | null {
+  if (!input.replaceMissing) return null;
+  if (!input.showValidationErrors) return null;
+  return 'Choose a prepared spell before applying.';
+}
+
+export function getPrepareQueueReplaceSummary(intent: QueueIntent): string | null {
+  if (intent === 'replace') return null;
+  if (intent === 'add') return 'Prepare without replacement';
+  return 'Saved for later';
+}
+
+export function groupQueuedSpellsByLevel(items: Array<{
+  key: string;
+  level: number;
+  spellName: string;
+}>): PrepareQueueLevelGroup[] {
+  const sortedItems = [...items].sort((left, right) => {
+    if (left.level !== right.level) return left.level - right.level;
+    return left.spellName.localeCompare(right.spellName);
+  });
+
+  const groups: PrepareQueueLevelGroup[] = [];
+
+  for (const item of sortedItems) {
+    const currentGroup = groups[groups.length - 1];
+    if (!currentGroup || currentGroup.level !== item.level) {
+      groups.push({
+        level: item.level,
+        label: item.level === 0 ? 'Cantrips' : `Level ${item.level}`,
+        itemKeys: [item.key],
+      });
+      continue;
+    }
+
+    currentGroup.itemKeys.push(item.key);
+  }
+
+  return groups;
 }
 
 export function formatPrepareReviewLabel(item: {
@@ -76,5 +139,9 @@ export function groupPrepareReviewItems(
     groups.set(list, group);
   }
 
-  return [...groups.values()].filter((group) => group.items.length > 0);
+  const visibleGroups = [...groups.values()].filter((group) => group.items.length > 0);
+  const namedGroups = visibleGroups.filter((group) => group.list !== 'Unassigned');
+  const unassignedGroup = visibleGroups.find((group) => group.list === 'Unassigned');
+
+  return unassignedGroup ? [...namedGroups, unassignedGroup] : namedGroups;
 }
