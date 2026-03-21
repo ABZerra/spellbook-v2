@@ -6,8 +6,7 @@ function makeProfile(): CharacterProfile {
   return {
     id: 'char-1',
     name: 'Aelric',
-    class: '',
-    subclass: '',
+    classes: [],
     castingAbility: 'INT',
     availableLists: ['WIZARD'],
     preparationLimits: [{ list: 'WIZARD', limit: 6 }],
@@ -96,8 +95,7 @@ describe('computeApplyResult', () => {
       profile: {
         id: 'char-1',
         name: 'Aelric',
-        class: '',
-        subclass: '',
+        classes: [],
         castingAbility: 'INT',
         availableLists: ['WIZARD'],
         preparationLimits: [{ list: 'WIZARD', limit: 1 }],
@@ -123,8 +121,7 @@ describe('computeApplyResult', () => {
       profile: {
         id: 'char-1',
         name: 'Aelric',
-        class: '',
-        subclass: '',
+        classes: [],
         castingAbility: 'INT',
         availableLists: ['WIZARD', 'CLERIC'],
         preparationLimits: [{ list: 'WIZARD', limit: 6 }, { list: 'CLERIC', limit: 6 }],
@@ -165,8 +162,7 @@ describe('computeApplyResult', () => {
       profile: {
         id: 'char-1',
         name: 'Aelric',
-        class: '',
-        subclass: '',
+        classes: [],
         castingAbility: 'INT',
         availableLists: ['WIZARD'],
         preparationLimits: [{ list: 'WIZARD', limit: 1, maxSpellLevel: 9 }],

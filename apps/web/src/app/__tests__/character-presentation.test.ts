@@ -31,7 +31,7 @@ describe('character presentation', () => {
     expect(getCharacterCueMetadata({
       class: 'Wizard',
       subclass: 'Evocation',
-    })).toEqual({
+    } as any)).toEqual({
       classLabel: 'Wizard',
       subclassLabel: 'Evocation',
     });
@@ -39,7 +39,7 @@ describe('character presentation', () => {
     expect(getCharacterCueMetadata({
       class: '',
       subclass: '',
-    })).toEqual({
+    } as any)).toEqual({
       classLabel: 'Unassigned class',
       subclassLabel: undefined,
     });

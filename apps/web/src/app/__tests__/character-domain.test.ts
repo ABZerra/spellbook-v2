@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  formatClassDisplayString,
   getPreparationLimits,
   getSpellLists,
   isSpellEligibleForCharacter,
@@ -8,6 +9,22 @@ import {
   reassignPreparedSpellEntryAtOccurrence,
   removePreparedSpellEntryAtOccurrence,
 } from '../domain/character';
+import type { CharacterProfile } from '../types';
+
+function makeProfile(): CharacterProfile {
+  return {
+    id: 'aelric',
+    name: 'Aelric',
+    classes: [],
+    castingAbility: '',
+    availableLists: [],
+    preparationLimits: [],
+    preparedSpells: [],
+    nextPreparationQueue: [],
+    savedIdeas: [],
+    updatedAt: new Date().toISOString(),
+  };
+}
 
 describe('character domain', () => {
   it('normalizes spell list extraction from availableFor entries', () => {
@@ -45,8 +62,7 @@ describe('character domain', () => {
     const profile = normalizeCharacterProfile({
       id: 'aelric',
       name: 'Aelric',
-      class: '',
-      subclass: '',
+      classes: [],
       castingAbility: '',
       availableLists: ['Wizard'],
       preparationLimits: [{ list: 'Wizard', limit: 8 }],
@@ -68,8 +84,7 @@ describe('character domain', () => {
     const profile = normalizeCharacterProfile({
       id: 'aelric',
       name: 'Aelric',
-      class: '',
-      subclass: '',
+      classes: [],
       castingAbility: '',
       availableLists: ['Wizard'],
       preparationLimits: [{ list: 'Wizard', limit: 8 }],
@@ -88,8 +103,7 @@ describe('character domain', () => {
     const profile = normalizeCharacterProfile({
       id: 'aelric',
       name: 'Aelric',
-      class: '',
-      subclass: '',
+      classes: [],
       castingAbility: '',
       availableLists: ['Wizard'],
       preparationLimits: [{ list: 'Wizard', limit: 8 }],
@@ -151,5 +165,56 @@ describe('character domain', () => {
       { spellId: 'shield', assignedList: 'CLERIC', mode: 'normal' },
       { spellId: 'shield', assignedList: 'CLERIC', mode: 'normal' },
     ]);
+  });
+});
+
+describe('multiclass migration', () => {
+  it('migrates old class/subclass strings to classes array', () => {
+    const oldProfile = {
+      ...makeProfile(),
+      class: 'Wizard',
+      subclass: 'School of Evocation',
+      classes: undefined,
+    } as any;
+    const result = normalizeCharacterProfile(oldProfile);
+    expect(result.classes).toEqual([{ name: 'Wizard', subclass: 'School of Evocation' }]);
+    expect((result as any).class).toBeUndefined();
+    expect((result as any).subclass).toBeUndefined();
+  });
+
+  it('migrates empty class to empty classes array', () => {
+    const oldProfile = {
+      ...makeProfile(),
+      class: '',
+      subclass: '',
+      classes: undefined,
+    } as any;
+    const result = normalizeCharacterProfile(oldProfile);
+    expect(result.classes).toEqual([]);
+  });
+
+  it('preserves existing classes array', () => {
+    const profile = makeProfile();
+    profile.classes = [{ name: 'Cleric', subclass: 'War Domain' }, { name: 'Wizard' }];
+    const result = normalizeCharacterProfile(profile);
+    expect(result.classes).toEqual([{ name: 'Cleric', subclass: 'War Domain' }, { name: 'Wizard' }]);
+  });
+});
+
+describe('formatClassDisplayString', () => {
+  it('returns default for empty classes', () => {
+    expect(formatClassDisplayString([])).toBe('Unassigned class');
+  });
+  it('formats single class', () => {
+    expect(formatClassDisplayString([{ name: 'Wizard' }])).toBe('Wizard');
+  });
+  it('formats class with subclass', () => {
+    expect(formatClassDisplayString([{ name: 'Cleric', subclass: 'War Domain' }])).toBe('Cleric · War Domain');
+  });
+  it('formats multiclass', () => {
+    expect(formatClassDisplayString([
+      { name: 'Cleric', subclass: 'War Domain' },
+      { name: 'Wizard' },
+    ])).toBe('Cleric · War Domain / Wizard');
   });
 });
