@@ -1,5 +1,4 @@
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { CharacterGate } from './components/CharacterGate';
 import { AppShell } from './components/AppShell';
 import { CharacterPage } from './pages/CharacterPage';
 import { CatalogPage } from './pages/CatalogPage';
@@ -7,7 +6,7 @@ import { PreparePage } from './pages/PreparePage';
 import { AppProvider, useApp } from './state/AppContext';
 
 function RouterContent() {
-  const { loading, error, characters } = useApp();
+  const { loading, error } = useApp();
 
   if (loading) {
     return <p className="mx-auto max-w-2xl p-6 text-sm text-text-muted">Loading Spellbook...</p>;
@@ -15,14 +14,6 @@ function RouterContent() {
 
   if (error) {
     return <p className="mx-auto max-w-2xl p-6 text-sm text-blood">{error}</p>;
-  }
-
-  if (!characters.length) {
-    return (
-      <div className="mx-auto max-w-4xl p-6">
-        <CharacterGate />
-      </div>
-    );
   }
 
   return (
