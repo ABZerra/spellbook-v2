@@ -52,11 +52,15 @@ export interface NextPreparationQueueEntry {
   createdAt?: string;
 }
 
+export interface ClassEntry {
+  name: string;
+  subclass?: string;
+}
+
 export interface CharacterProfile {
   id: string;
   name: string;
-  class: string;
-  subclass: string;
+  classes: ClassEntry[];
   castingAbility: string;
   availableLists: string[];
   preparationLimits: PreparationLimit[];
@@ -69,8 +73,7 @@ export interface CharacterProfile {
 export interface CharacterProfileInput {
   id?: string;
   name: string;
-  class?: string;
-  subclass?: string;
+  classes?: ClassEntry[];
   castingAbility?: string;
   availableLists?: string[];
   preparationLimits?: PreparationLimit[];
