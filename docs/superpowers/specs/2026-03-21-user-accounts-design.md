@@ -13,7 +13,7 @@ This feature adds user accounts for a friends & family audience. The admin (repo
 ## Requirements
 
 - Users log in by typing a username. No password, no user list shown.
-- A user can store multiple characters, each with the existing `CharacterProfile` data (class, subclass, casting ability, spell lists, preparation limits, prepared spells, queue, saved ideas).
+- A user can store multiple characters, each with the existing `CharacterProfile` data (multiclass support via `classes: ClassEntry[]`, casting ability, spell lists, preparation limits, prepared spells, queue, saved ideas).
 - A user can add, delete, and edit characters and their information.
 - A user can access the app in different browsers with their account and see the same data.
 - The admin creates user accounts by editing files in the GitHub repo.
@@ -45,7 +45,7 @@ data/
 
 ### characters.json
 
-An array of `CharacterProfile` objects. Same shape as today's IndexedDB data, with an added `userId` field:
+An array of `CharacterProfile` objects. Same shape as today's IndexedDB data, with an added `userId` field. The current data model uses multiclass support (`classes: ClassEntry[]`):
 
 ```json
 [
@@ -53,18 +53,24 @@ An array of `CharacterProfile` objects. Same shape as today's IndexedDB data, wi
     "id": "gandalf",
     "userId": "alice",
     "name": "Gandalf",
-    "class": "Wizard",
-    "subclass": "Diviner",
+    "classes": [
+      { "name": "Wizard", "subclass": "Diviner", "castingAbility": "Intelligence" }
+    ],
     "castingAbility": "Intelligence",
     "availableLists": ["WIZARD"],
-    "preparationLimits": [{ "list": "WIZARD", "limit": 8 }],
-    "preparedSpellIds": ["fireball", "shield"],
+    "preparationLimits": [{ "list": "WIZARD", "limit": 8, "maxSpellLevel": 9 }],
+    "preparedSpells": [
+      { "spellId": "fireball", "list": "WIZARD" },
+      { "spellId": "shield", "list": "WIZARD" }
+    ],
     "nextPreparationQueue": [],
     "savedIdeas": [],
     "updatedAt": "2026-03-21T12:00:00Z"
   }
 ]
 ```
+
+The existing `normalizeCharacterProfile()` function handles migration from legacy single-class format (`class`/`subclass` strings) to the current `classes: ClassEntry[]` array. The server should run normalization on data it reads from GitHub before returning it to the client.
 
 ## API Design
 
@@ -144,19 +150,31 @@ A module that manages background sync:
 - `stopSync()` — on logout.
 - Exposes sync status (idle / syncing / error) for UI indicator.
 
+### New: Provider Implementation
+
+The app already uses a `SpellCatalogProvider` interface (implemented by `LocalSnapshotProvider`). The accounts feature adds a new provider that layers remote sync on top of local storage:
+
+- Implement `SpellCatalogProvider` with the same methods: `listCharacterProfiles`, `getCharacterProfile`, `createCharacterProfile`, `saveCharacterProfile`, `deleteCharacterProfile`, `applyPlan`.
+- Reads/writes go to IndexedDB (local-first). The sync service handles pushing to the API.
+- On login, fetches from API and writes to IndexedDB to hydrate.
+
+This approach means AppContext needs minimal changes — it already delegates to the provider.
+
 ### Modified: AppContext
 
 - On mount: load from IndexedDB first (instant), then reconcile with API data on login.
 - Adds `userId` to context state.
 - Character CRUD operations call `markDirty()` on the sync service.
+- Selects the remote-aware provider when a user is logged in.
 
-### Modified: CharacterPage
+### Modified: AppShell
 
-- Adds a "Log out" action: clears localStorage username, clears IndexedDB, returns to login screen.
+- Adds a "Log out" action to the navbar (near the CharacterDropdown): clears localStorage username, clears IndexedDB, returns to login screen.
+- Adds a sync status indicator (synced / syncing / error).
 
 ### Unchanged
 
-- CatalogPage, PreparePage, all domain logic, extension sync, spell snapshot loading. These work on in-memory character data regardless of source.
+- CatalogPage, PreparePage, CharacterPage, CharacterDropdown, CreateCharacterModal, all domain logic, extension sync, spell snapshot loading. These work on in-memory character data regardless of source.
 
 ## Server Structure
 
