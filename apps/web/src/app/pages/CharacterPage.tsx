@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   buildPreparationUsage,
   getAddableAssignmentLists,
@@ -33,6 +33,7 @@ export function CharacterPage() {
     spells,
     characters,
     activeCharacter,
+    catalogClasses,
     createCharacter,
     saveCharacter,
     deleteCharacter,
@@ -43,39 +44,26 @@ export function CharacterPage() {
   } = useApp();
 
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [showCreateCharacterForm, setShowCreateCharacterForm] = useState(false);
   const [editingRuleList, setEditingRuleList] = useState<string | null>(null);
   const [editingPreparedAssignmentKey, setEditingPreparedAssignmentKey] = useState<string | null>(null);
   const [selectedPreparedKey, setSelectedPreparedKey] = useState<string | null>(null);
 
-  const [createName, setCreateName] = useState('');
-  const [createLists, setCreateLists] = useState('');
-  const [createLimitByList, setCreateLimitByList] = useState<Record<string, number>>({});
   const [alwaysPreparedSearch, setAlwaysPreparedSearch] = useState('');
   const [alwaysPreparedAssignedListBySpell, setAlwaysPreparedAssignedListBySpell] = useState<Record<string, string>>({});
 
   const spellsById = useMemo(() => new Map(spells.map((spell) => [spell.id, spell])), [spells]);
 
-  const parsedCreateLists = useMemo(
-    () => [...new Set(createLists.split(',').map((entry) => entry.trim().toUpperCase()).filter(Boolean))],
-    [createLists],
-  );
-
-  useEffect(() => {
-    setCreateLimitByList((current) => {
-      const next: Record<string, number> = {};
-      for (const list of parsedCreateLists) {
-        next[list] = current[list] || 8;
-      }
-      return JSON.stringify(next) === JSON.stringify(current) ? current : next;
-    });
-  }, [parsedCreateLists]);
-
   const cueMetadata = useMemo(
     () => (activeCharacter ? getCharacterCueMetadata(activeCharacter) : null),
     [activeCharacter],
   );
+
+  const activeClassInfo = useMemo(() => {
+    if (!activeCharacter?.class) return null;
+    return catalogClasses.find(
+      (entry) => entry.name.toLowerCase() === activeCharacter.class.toLowerCase(),
+    ) || null;
+  }, [activeCharacter?.class, catalogClasses]);
 
   const activeCharacterId = activeCharacter?.id ?? null;
 
@@ -158,31 +146,6 @@ export function CharacterPage() {
       .slice(0, 12);
   }, [activeCharacter, alwaysPreparedSearch, spells]);
 
-  async function onCreate(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(null);
-    setBusy(true);
-
-    try {
-      const lists = parsedCreateLists;
-
-      await createCharacter({
-        name: createName,
-        availableLists: lists,
-        preparationLimits: lists.map((list) => ({ list, limit: Math.max(1, createLimitByList[list] || 8), maxSpellLevel: 9 })),
-      });
-
-      setCreateName('');
-      setCreateLists('');
-      setCreateLimitByList({});
-      setShowCreateCharacterForm(false);
-    } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : 'Unable to create character.');
-    } finally {
-      setBusy(false);
-    }
-  }
-
   async function onAddAlwaysPrepared(spellId: string, assignedList: string | null) {
     if (!assignedList) {
       setError('Choose a spell list before adding an always prepared spell.');
@@ -250,70 +213,11 @@ export function CharacterPage() {
                     {pill.label}
                   </button>
                 ))}
-                <button
-                  type="button"
-                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] transition flex-shrink-0 whitespace-nowrap ${showCreateCharacterForm ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
-                  onClick={() => setShowCreateCharacterForm((current) => !current)}
-                >
-                  + New Character
-                </button>
               </div>
             </div>
 
             {!headerPills.length ? (
               <p className="text-sm text-text-muted">Create a character to start building a verification list.</p>
-            ) : null}
-
-            {showCreateCharacterForm ? (
-              <div className="max-w-2xl rounded-2xl border border-border-dark bg-bg px-4 py-4 text-sm">
-                <p className="text-[11px] uppercase tracking-[0.3em] text-text-dim">Create Character</p>
-                <form className="mt-4 space-y-3" onSubmit={(event) => void onCreate(event)}>
-                  <input
-                    className="w-full rounded-2xl border border-border-dark bg-bg-2 px-3 py-2.5 text-sm text-text"
-                    placeholder="Character name"
-                    value={createName}
-                    onChange={(event) => setCreateName(event.target.value)}
-                    required
-                  />
-                  <input
-                    className="w-full rounded-2xl border border-border-dark bg-bg-2 px-3 py-2.5 text-sm text-text"
-                    placeholder="Lists (Wizard, Cleric)"
-                    value={createLists}
-                    onChange={(event) => setCreateLists(event.target.value)}
-                  />
-                  {parsedCreateLists.map((list) => (
-                    <label key={list} className="block rounded-2xl border border-border-dark bg-bg-2 px-3 py-3 text-sm">
-                      <span className="text-text-muted">{list} preparation limit</span>
-                      <input
-                        className="mt-2 w-full rounded-xl border border-border-dark bg-bg px-3 py-2 text-text"
-                        type="number"
-                        min={1}
-                        value={createLimitByList[list] || 8}
-                        onChange={(event) => setCreateLimitByList((current) => ({
-                          ...current,
-                          [list]: Math.max(1, Number(event.target.value) || 1),
-                        }))}
-                      />
-                    </label>
-                  ))}
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="submit"
-                      className="rounded-2xl border border-gold-soft bg-gold-soft/20 px-4 py-3 text-sm text-text transition-colors hover:bg-gold-soft/30"
-                      disabled={busy}
-                    >
-                      {busy ? 'Creating...' : 'Create Character'}
-                    </button>
-                    <button
-                      type="button"
-                      className="rounded-2xl border border-border-dark bg-bg-2 px-4 py-3 text-sm text-text-muted transition-colors hover:bg-bg hover:text-text"
-                      onClick={() => setShowCreateCharacterForm(false)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              </div>
             ) : null}
           </div>
         </div>
@@ -336,19 +240,52 @@ export function CharacterPage() {
                 <div className="min-w-0">
                   <p className="text-[11px] uppercase tracking-[0.3em] text-text-dim">Active Profile</p>
                   <h2 className="mt-1 font-display text-2xl text-text md:text-3xl break-words">{activeCharacter.name}</h2>
-                  <p className="mt-1 text-sm text-text-muted break-words">
-                    {cueMetadata?.classLabel || 'Unassigned class'}{cueMetadata?.subclassLabel ? ` · ${cueMetadata.subclassLabel}` : ''}
-                  </p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <select
+                      className="rounded-xl border border-border-dark bg-bg px-3 py-1.5 text-sm text-text"
+                      value={activeCharacter.class}
+                      onChange={(event) => {
+                        const nextClass = event.target.value;
+                        const nextLists = nextClass
+                          ? [...new Set([normalizeListName(nextClass), ...activeCharacter.availableLists])]
+                          : activeCharacter.availableLists;
+                        void saveCharacter({
+                          ...activeCharacter,
+                          class: nextClass,
+                          subclass: '',
+                          availableLists: nextLists,
+                          preparationLimits: getPreparationLimits({
+                            ...activeCharacter,
+                            availableLists: nextLists,
+                          }),
+                        });
+                      }}
+                    >
+                      <option value="">Select class</option>
+                      {catalogClasses.map((entry) => (
+                        <option key={entry.name} value={entry.name}>{entry.name}</option>
+                      ))}
+                    </select>
+                    <select
+                      className="rounded-xl border border-border-dark bg-bg px-3 py-1.5 text-sm text-text"
+                      value={activeCharacter.subclass}
+                      disabled={!activeClassInfo || activeClassInfo.subclasses.length === 0}
+                      onChange={(event) => {
+                        void saveCharacter({ ...activeCharacter, subclass: event.target.value });
+                      }}
+                    >
+                      <option value="">Subclass (optional)</option>
+                      {(activeClassInfo?.subclasses || []).map((sub) => (
+                        <option key={sub} value={sub}>{sub}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <button
                   type="button"
                   className="rounded-2xl border border-blood-soft bg-blood-soft px-4 py-2 text-sm text-blood flex-shrink-0"
                   onClick={() => {
-                    if (characters.length <= 1) {
-                      setError('At least one character must remain.');
-                      return;
-                    }
                     void deleteCharacter(activeCharacter.id);
                   }}
                 >
