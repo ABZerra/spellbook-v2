@@ -82,7 +82,10 @@ export function getPreparationLimits(input: CharacterProfileInput | CharacterPro
     }
   }
 
-  return [...byList.entries()].map(([list, config]) => ({ list, limit: config.limit, maxSpellLevel: config.maxSpellLevel }));
+  const availableSet = new Set(availableLists);
+  return [...byList.entries()]
+    .filter(([list]) => availableSet.has(list))
+    .map(([list, config]) => ({ list, limit: config.limit, maxSpellLevel: config.maxSpellLevel }));
 }
 
 export function getSpellAssignmentList(
@@ -374,8 +377,9 @@ export function normalizeQueueEntries(values: unknown[]): NextPreparationQueueEn
 }
 
 export function formatClassDisplayString(classes: ClassEntry[]): string {
-  if (!classes.length) return 'Unassigned class';
-  return classes
+  const named = classes.filter((entry) => entry.name);
+  if (!named.length) return 'Unassigned class';
+  return named
     .map((entry) => entry.subclass ? `${entry.name} · ${entry.subclass}` : entry.name)
     .join(' / ');
 }

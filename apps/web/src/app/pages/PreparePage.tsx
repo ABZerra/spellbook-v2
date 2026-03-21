@@ -163,7 +163,16 @@ export function PreparePage() {
   }, [queueEntries]);
 
   if (!activeCharacter) {
-    return <p className="text-sm text-text-muted">Create or choose a character first.</p>;
+    return (
+      <div className="space-y-4">
+        <div className="rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-5">
+          <h2 className="font-display text-3xl text-text">No character selected</h2>
+          <p className="mt-3 max-w-2xl text-sm text-text-muted">
+            No character selected. Create one from the header dropdown.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   async function onApply() {

@@ -220,6 +220,17 @@ export function CharacterPage() {
     void saveCharacter({ ...activeCharacter, classes: nextClasses });
   }
 
+  function onCastingAbilityChange(rowIndex: number, newAbility: string) {
+    if (!activeCharacter) return;
+
+    const nextClasses: ClassEntry[] = activeCharacter.classes.map((entry, i) => {
+      if (i !== rowIndex) return entry;
+      return { ...entry, castingAbility: newAbility || undefined };
+    });
+
+    void saveCharacter({ ...activeCharacter, classes: nextClasses });
+  }
+
   function onAddClassRow() {
     if (!activeCharacter) return;
 
@@ -281,63 +292,6 @@ export function CharacterPage() {
                   {cueMetadata?.classDisplayString ? (
                     <p className="mt-1 text-sm text-text-muted">{cueMetadata.classDisplayString}</p>
                   ) : null}
-
-                  <div className="mt-4 space-y-2">
-                    {(activeCharacter.classes.length > 0 ? activeCharacter.classes : [{ name: '', subclass: undefined }]).map((classEntry, rowIndex) => {
-                      const classInfo = catalogClasses.find((c) => c.name === classEntry.name) || null;
-
-                      return (
-                        <div key={rowIndex} className="flex flex-wrap items-center gap-2">
-                          <select
-                            className="rounded-xl border border-border-dark bg-bg px-3 py-1.5 text-sm text-text"
-                            value={classEntry.name}
-                            onChange={(event) => onClassChange(rowIndex, event.target.value)}
-                          >
-                            <option value="">Select class</option>
-                            {catalogClasses.map((entry) => (
-                              <option
-                                key={entry.name}
-                                value={entry.name}
-                                disabled={entry.name !== classEntry.name && selectedClassNames.has(entry.name)}
-                              >
-                                {entry.name}
-                              </option>
-                            ))}
-                          </select>
-
-                          <select
-                            className="rounded-xl border border-border-dark bg-bg px-3 py-1.5 text-sm text-text"
-                            value={classEntry.subclass || ''}
-                            disabled={!classInfo || classInfo.subclasses.length === 0}
-                            onChange={(event) => onSubclassChange(rowIndex, event.target.value)}
-                          >
-                            <option value="">Subclass (optional)</option>
-                            {(classInfo?.subclasses || []).map((sub) => (
-                              <option key={sub} value={sub}>{sub}</option>
-                            ))}
-                          </select>
-
-                          {activeCharacter.classes.length > 1 ? (
-                            <button
-                              type="button"
-                              className="rounded-xl border border-blood-soft bg-blood-soft/10 px-3 py-1.5 text-xs text-blood hover:bg-blood-soft/20"
-                              onClick={() => onRemoveClassRow(rowIndex)}
-                            >
-                              Remove
-                            </button>
-                          ) : null}
-                        </div>
-                      );
-                    })}
-
-                    <button
-                      type="button"
-                      className="mt-1 rounded-xl border border-border-dark bg-bg-2 px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-text-muted hover:bg-bg hover:text-text"
-                      onClick={onAddClassRow}
-                    >
-                      + Add Class
-                    </button>
-                  </div>
                 </div>
 
                 <button
@@ -538,44 +492,6 @@ export function CharacterPage() {
               </div>
 
               <div className="space-y-3">
-                <details className="rounded-2xl border border-border-dark bg-bg px-4 py-4">
-                  <summary className="cursor-pointer list-none font-display text-xl text-text">Identity</summary>
-                  <p className="mt-2 text-sm text-text-muted">Only adjust when the character itself changes.</p>
-                  <div className="mt-4 grid gap-3">
-                    <label className="space-y-1 text-sm">
-                      <span className="text-text-muted">Casting Ability</span>
-                      <input
-                        className="w-full rounded-2xl border border-border-dark bg-bg px-3 py-2.5 text-text"
-                        value={activeCharacter.castingAbility}
-                        onChange={(event) => {
-                          void saveCharacter({ ...activeCharacter, castingAbility: event.target.value });
-                        }}
-                      />
-                    </label>
-
-                    <label className="space-y-1 text-sm">
-                      <span className="text-text-muted">Available Lists</span>
-                      <input
-                        className="w-full rounded-2xl border border-border-dark bg-bg px-3 py-2.5 text-text"
-                        value={activeCharacter.availableLists.join(', ')}
-                        onChange={(event) => {
-                          const nextLists = event.target.value.split(',').map((entry) => entry.trim()).filter(Boolean);
-                          const nextProfile = {
-                            ...activeCharacter,
-                            availableLists: nextLists,
-                            preparationLimits: getPreparationLimits({
-                              ...activeCharacter,
-                              availableLists: nextLists,
-                            }),
-                          };
-                          void saveCharacter(nextProfile);
-                        }}
-                      />
-                      <span className="text-xs text-text-dim">Auto-managed by class selection. Edit to add extra lists.</span>
-                    </label>
-                  </div>
-                </details>
-
                 <div className="rounded-2xl border border-border-dark bg-bg px-4 py-4">
                   <h4 className="font-display text-xl text-text">Add Always Prepared</h4>
                   <input
@@ -643,6 +559,118 @@ export function CharacterPage() {
                     ) : null}
                   </div>
                 </div>
+
+                <details className="rounded-2xl border border-border-dark bg-bg px-4 py-4">
+                  <summary className="cursor-pointer list-none font-display text-xl text-text">Identity</summary>
+                  <p className="mt-2 text-sm text-text-muted">Only adjust when the character itself changes.</p>
+                  <div className="mt-4 space-y-2">
+                    {(activeCharacter.classes.length > 0 ? activeCharacter.classes : [{ name: '', subclass: undefined }]).map((classEntry, rowIndex) => {
+                      const classInfo = catalogClasses.find((c) => c.name === classEntry.name) || null;
+                      const listName = classEntry.name ? normalizeListName(classEntry.name) : null;
+                      const ruleSummary = listName ? preparationRuleSummaries.find((s) => s.list === listName) : null;
+
+                      return (
+                        <div key={rowIndex} className="flex flex-wrap items-center gap-2 rounded-xl border border-border-dark bg-bg-2 px-3 py-2">
+                          <select
+                            className="rounded-xl border border-border-dark bg-bg px-3 py-1.5 text-sm text-text"
+                            value={classEntry.name}
+                            onChange={(event) => onClassChange(rowIndex, event.target.value)}
+                          >
+                            <option value="">Class</option>
+                            {catalogClasses.map((entry) => (
+                              <option
+                                key={entry.name}
+                                value={entry.name}
+                                disabled={entry.name !== classEntry.name && selectedClassNames.has(entry.name)}
+                              >
+                                {entry.name}
+                              </option>
+                            ))}
+                          </select>
+
+                          <select
+                            className="rounded-xl border border-border-dark bg-bg px-3 py-1.5 text-sm text-text"
+                            value={classEntry.subclass || ''}
+                            disabled={!classInfo || classInfo.subclasses.length === 0}
+                            onChange={(event) => onSubclassChange(rowIndex, event.target.value)}
+                          >
+                            <option value="">Subclass</option>
+                            {(classInfo?.subclasses || []).map((sub) => (
+                              <option key={sub} value={sub}>{sub}</option>
+                            ))}
+                          </select>
+
+                          <select
+                            className="rounded-xl border border-border-dark bg-bg px-3 py-1.5 text-sm text-text"
+                            value={classEntry.castingAbility || ''}
+                            onChange={(event) => onCastingAbilityChange(rowIndex, event.target.value)}
+                          >
+                            <option value="">Ability</option>
+                            {['Intelligence', 'Wisdom', 'Charisma'].map((ability) => (
+                              <option key={ability} value={ability}>{ability}</option>
+                            ))}
+                          </select>
+
+                          {ruleSummary ? (
+                            <>
+                              <label className="flex items-center gap-1 text-xs">
+                                <span className="text-text-dim">Spell limit</span>
+                                <input
+                                  className="w-14 rounded-lg border border-border-dark bg-bg px-2 py-1 text-text"
+                                  type="number"
+                                  min={1}
+                                  value={ruleSummary.limit}
+                                  onChange={(event) => {
+                                    void onUpdatePreparationRule(ruleSummary.list, {
+                                      limit: Number(event.target.value) || 1,
+                                    }).catch((nextError) => {
+                                      setError(nextError instanceof Error ? nextError.message : 'Unable to update preparation rule.');
+                                    });
+                                  }}
+                                />
+                              </label>
+                              <label className="flex items-center gap-1 text-xs">
+                                <span className="text-text-dim">Max lvl</span>
+                                <input
+                                  className="w-14 rounded-lg border border-border-dark bg-bg px-2 py-1 text-text"
+                                  type="number"
+                                  min={0}
+                                  max={9}
+                                  value={ruleSummary.maxSpellLevel}
+                                  onChange={(event) => {
+                                    void onUpdatePreparationRule(ruleSummary.list, {
+                                      maxSpellLevel: Number(event.target.value) || 0,
+                                    }).catch((nextError) => {
+                                      setError(nextError instanceof Error ? nextError.message : 'Unable to update preparation rule.');
+                                    });
+                                  }}
+                                />
+                              </label>
+                            </>
+                          ) : null}
+
+                          {activeCharacter.classes.length > 1 ? (
+                            <button
+                              type="button"
+                              className="rounded-xl border border-blood-soft bg-blood-soft/10 px-3 py-1.5 text-xs text-blood hover:bg-blood-soft/20"
+                              onClick={() => onRemoveClassRow(rowIndex)}
+                            >
+                              Remove
+                            </button>
+                          ) : null}
+                        </div>
+                      );
+                    })}
+
+                    <button
+                      type="button"
+                      className="mt-1 rounded-xl border border-border-dark bg-bg-2 px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-text-muted hover:bg-bg hover:text-text"
+                      onClick={onAddClassRow}
+                    >
+                      + Add Class
+                    </button>
+                  </div>
+                </details>
               </div>
             </section>
 

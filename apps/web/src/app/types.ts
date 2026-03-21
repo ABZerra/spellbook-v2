@@ -55,6 +55,7 @@ export interface NextPreparationQueueEntry {
 export interface ClassEntry {
   name: string;
   subclass?: string;
+  castingAbility?: string;
 }
 
 export interface CharacterProfile {
