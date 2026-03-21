@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { getAddableAssignmentLists, getSpellLists, isSpellEligibleForCharacter } from '../domain/character';
 import { useApp } from '../state/AppContext';
 import { SpellDetailDialog } from '../components/SpellDetailDialog';
@@ -173,12 +172,6 @@ export function CatalogPage() {
             >
               Reset View
             </button>
-            <Link
-              to="/prepare"
-              className={`rounded-2xl border px-4 py-2 text-sm transition-colors ${queuedCount ? 'border-gold-soft bg-gold-soft/20 text-text hover:bg-gold-soft/30' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
-            >
-              {queuedCount ? `Review Queue (${queuedCount})` : 'Open Prepare'}
-            </Link>
           </div>
         </div>
 
@@ -226,32 +219,36 @@ export function CatalogPage() {
             {effectivePreferences.sortDirection === 'asc' ? 'Ascending' : 'Descending'}
           </button>
 
-          <div className="flex flex-wrap gap-2">
-            {[
-              { value: 'all', label: 'All' },
-              { value: 'eligible_first', label: 'Best Fits' },
-              { value: 'eligible_only', label: 'Fits Now' },
-            ].map((option) => {
-              const active = effectivePreferences.viewMode === option.value;
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  className={`rounded-full border px-4 py-2 text-sm transition-colors ${active ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
-                  onClick={() => setPreferences((current) => ({ ...current, viewMode: option.value as CatalogPreferences['viewMode'] }))}
-                >
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
+          {activeCharacter ? (
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: 'all', label: 'All' },
+                { value: 'eligible_first', label: 'Best Fits' },
+                { value: 'eligible_only', label: 'Fits Now' },
+              ].map((option) => {
+                const active = effectivePreferences.viewMode === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`rounded-full border px-4 py-2 text-sm transition-colors ${active ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
+                    onClick={() => setPreferences((current) => ({ ...current, viewMode: option.value as CatalogPreferences['viewMode'] }))}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2 text-xs text-text-muted">
-          <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Search matches: {searchMatchedRows.length}</span>
-          <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Eligible on screen: {eligibleCount}</span>
-          <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Queued: {queuedCount}</span>
-        </div>
+        {activeCharacter ? (
+          <div className="mt-4 flex flex-wrap gap-2 text-xs text-text-muted">
+            <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Search matches: {searchMatchedRows.length}</span>
+            <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Eligible on screen: {eligibleCount}</span>
+            <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Queued: {queuedCount}</span>
+          </div>
+        ) : null}
 
         {error ? <p className="mt-4 rounded-2xl border border-blood-soft bg-blood-soft px-4 py-3 text-sm text-blood">{error}</p> : null}
       </section>
@@ -271,18 +268,20 @@ export function CatalogPage() {
               <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.95fr)_180px] lg:items-center">
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className={`rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.22em] ${
-                      presentation.stateLabel === 'Queued'
-                        ? 'border border-gold-soft bg-gold-soft/20 text-text'
-                        : presentation.stateLabel === 'Prepared'
-                          ? 'border border-accent-soft bg-accent-soft/25 text-text'
-                          : presentation.stateLabel === 'Available'
-                            ? 'border border-border-dark bg-bg-2 text-text-muted'
-                            : 'border border-blood-soft bg-blood-soft text-blood'
-                    }`}
-                    >
-                      {presentation.stateLabel}
-                    </span>
+                    {activeCharacter ? (
+                      <span className={`rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.22em] ${
+                        presentation.stateLabel === 'Queued'
+                          ? 'border border-gold-soft bg-gold-soft/20 text-text'
+                          : presentation.stateLabel === 'Prepared'
+                            ? 'border border-accent-soft bg-accent-soft/25 text-text'
+                            : presentation.stateLabel === 'Available'
+                              ? 'border border-border-dark bg-bg-2 text-text-muted'
+                              : 'border border-blood-soft bg-blood-soft text-blood'
+                      }`}
+                      >
+                        {presentation.stateLabel}
+                      </span>
+                    ) : null}
                     <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-text-muted">
                       {formatSpellLevel(spell.level)}
                     </span>
@@ -315,23 +314,27 @@ export function CatalogPage() {
                   <span className="rounded-full border border-border-dark bg-bg px-3 py-1">
                     Range: {spell.rangeArea || 'See details'}
                   </span>
-                  <p className="basis-full pt-1 text-sm text-text-dim">{presentation.helperText}</p>
+                  {activeCharacter ? (
+                    <p className="basis-full pt-1 text-sm text-text-dim">{presentation.helperText}</p>
+                  ) : null}
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <button
-                    type="button"
-                    className={`rounded-2xl border px-4 py-3 text-sm transition-colors ${presentation.disabled ? 'cursor-not-allowed border-border-dark bg-bg opacity-55' : row.queued ? 'border-gold-soft bg-gold-soft/20 text-text hover:bg-gold-soft/30' : 'border-moon-border bg-moon-paper text-moon-ink hover:opacity-92'}`}
-                    disabled={presentation.disabled}
-                    title={presentation.helperText}
-                    aria-label={presentation.helperText}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      void onQueueToggle(spell.id);
-                    }}
-                  >
-                    {presentation.actionLabel}
-                  </button>
+                  {activeCharacter ? (
+                    <button
+                      type="button"
+                      className={`rounded-2xl border px-4 py-3 text-sm transition-colors ${presentation.disabled ? 'cursor-not-allowed border-border-dark bg-bg opacity-55' : row.queued ? 'border-gold-soft bg-gold-soft/20 text-text hover:bg-gold-soft/30' : 'border-moon-border bg-moon-paper text-moon-ink hover:opacity-92'}`}
+                      disabled={presentation.disabled}
+                      title={presentation.helperText}
+                      aria-label={presentation.helperText}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        void onQueueToggle(spell.id);
+                      }}
+                    >
+                      {presentation.actionLabel}
+                    </button>
+                  ) : null}
                   <button
                     type="button"
                     className="rounded-2xl border border-border-dark bg-bg px-4 py-2 text-sm text-text-muted transition-colors hover:bg-bg-2 hover:text-text"

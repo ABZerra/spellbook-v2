@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   buildPreparationUsage,
   getAddableAssignmentLists,
@@ -10,13 +10,12 @@ import {
 import {
   formatPreparedVerificationRowMeta,
   getCharacterCueMetadata,
-  getCharacterHeaderPills,
   getCharacterPreparationRuleSummaries,
   getGroupedPreparedVerificationRows,
 } from './characterPresentation';
 import { SpellDetailDrawer } from '../components/SpellDetailDrawer';
 import { useApp } from '../state/AppContext';
-import type { SpellRecord } from '../types';
+import type { ClassEntry, SpellRecord } from '../types';
 
 function matchesSpellSearch(spell: SpellRecord, query: string): boolean {
   const normalized = query.trim().toLowerCase();
@@ -31,46 +30,24 @@ function matchesSpellSearch(spell: SpellRecord, query: string): boolean {
 export function CharacterPage() {
   const {
     spells,
-    characters,
     activeCharacter,
-    createCharacter,
+    catalogClasses,
     saveCharacter,
     deleteCharacter,
-    setActiveCharacter,
     addPreparedSpell,
     removePreparedSpell,
     reassignPreparedSpell,
   } = useApp();
 
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [showCreateCharacterForm, setShowCreateCharacterForm] = useState(false);
   const [editingRuleList, setEditingRuleList] = useState<string | null>(null);
   const [editingPreparedAssignmentKey, setEditingPreparedAssignmentKey] = useState<string | null>(null);
   const [selectedPreparedKey, setSelectedPreparedKey] = useState<string | null>(null);
 
-  const [createName, setCreateName] = useState('');
-  const [createLists, setCreateLists] = useState('');
-  const [createLimitByList, setCreateLimitByList] = useState<Record<string, number>>({});
   const [alwaysPreparedSearch, setAlwaysPreparedSearch] = useState('');
   const [alwaysPreparedAssignedListBySpell, setAlwaysPreparedAssignedListBySpell] = useState<Record<string, string>>({});
 
   const spellsById = useMemo(() => new Map(spells.map((spell) => [spell.id, spell])), [spells]);
-
-  const parsedCreateLists = useMemo(
-    () => [...new Set(createLists.split(',').map((entry) => entry.trim().toUpperCase()).filter(Boolean))],
-    [createLists],
-  );
-
-  useEffect(() => {
-    setCreateLimitByList((current) => {
-      const next: Record<string, number> = {};
-      for (const list of parsedCreateLists) {
-        next[list] = current[list] || 8;
-      }
-      return JSON.stringify(next) === JSON.stringify(current) ? current : next;
-    });
-  }, [parsedCreateLists]);
 
   const cueMetadata = useMemo(
     () => (activeCharacter ? getCharacterCueMetadata(activeCharacter) : null),
@@ -82,11 +59,6 @@ export function CharacterPage() {
   useEffect(() => {
     setEditingPreparedAssignmentKey(null);
   }, [activeCharacterId]);
-
-  const headerPills = useMemo(
-    () => getCharacterHeaderPills(characters, activeCharacterId),
-    [characters, activeCharacterId],
-  );
 
   const preparationUsage = useMemo(
     () => buildPreparationUsage(activeCharacter?.preparedSpells || [], spellsById),
@@ -158,31 +130,6 @@ export function CharacterPage() {
       .slice(0, 12);
   }, [activeCharacter, alwaysPreparedSearch, spells]);
 
-  async function onCreate(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(null);
-    setBusy(true);
-
-    try {
-      const lists = parsedCreateLists;
-
-      await createCharacter({
-        name: createName,
-        availableLists: lists,
-        preparationLimits: lists.map((list) => ({ list, limit: Math.max(1, createLimitByList[list] || 8), maxSpellLevel: 9 })),
-      });
-
-      setCreateName('');
-      setCreateLists('');
-      setCreateLimitByList({});
-      setShowCreateCharacterForm(false);
-    } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : 'Unable to create character.');
-    } finally {
-      setBusy(false);
-    }
-  }
-
   async function onAddAlwaysPrepared(spellId: string, assignedList: string | null) {
     if (!assignedList) {
       setError('Choose a spell list before adding an always prepared spell.');
@@ -225,107 +172,113 @@ export function CharacterPage() {
     await saveCharacter({ ...activeCharacter, preparationLimits: nextLimits });
   }
 
+  function onClassChange(rowIndex: number, newClassName: string) {
+    if (!activeCharacter) return;
+
+    const currentClasses = activeCharacter.classes;
+    const oldClassName = currentClasses[rowIndex]?.name || '';
+
+    const nextClasses: ClassEntry[] = currentClasses.map((entry, i) => {
+      if (i !== rowIndex) return entry;
+      return { name: newClassName, subclass: undefined };
+    });
+
+    // Recompute availableLists: keep lists that don't match any class name (manually added),
+    // plus add the new class names
+    const allClassNames = new Set(nextClasses.filter((c) => c.name).map((c) => normalizeListName(c.name)));
+    const oldNormalized = oldClassName ? normalizeListName(oldClassName) : null;
+
+    const manualLists = activeCharacter.availableLists.filter((list) => {
+      const normalized = normalizeListName(list);
+      // Keep if not matching any current class name (it's manually added)
+      // but also remove the old class being replaced
+      if (oldNormalized && normalized === oldNormalized) return false;
+      return !allClassNames.has(normalized) || !currentClasses.some((c) => c.name && normalizeListName(c.name) === normalized);
+    });
+
+    const classLists = nextClasses.filter((c) => c.name).map((c) => normalizeListName(c.name));
+    const nextLists = [...new Set([...classLists, ...manualLists])];
+
+    const nextProfile = {
+      ...activeCharacter,
+      classes: nextClasses,
+      availableLists: nextLists,
+      preparationLimits: getPreparationLimits({ ...activeCharacter, availableLists: nextLists }),
+    };
+
+    void saveCharacter(nextProfile);
+  }
+
+  function onSubclassChange(rowIndex: number, newSubclass: string) {
+    if (!activeCharacter) return;
+
+    const nextClasses: ClassEntry[] = activeCharacter.classes.map((entry, i) => {
+      if (i !== rowIndex) return entry;
+      return { ...entry, subclass: newSubclass || undefined };
+    });
+
+    void saveCharacter({ ...activeCharacter, classes: nextClasses });
+  }
+
+  function onCastingAbilityChange(rowIndex: number, newAbility: string) {
+    if (!activeCharacter) return;
+
+    const nextClasses: ClassEntry[] = activeCharacter.classes.map((entry, i) => {
+      if (i !== rowIndex) return entry;
+      return { ...entry, castingAbility: newAbility || undefined };
+    });
+
+    void saveCharacter({ ...activeCharacter, classes: nextClasses });
+  }
+
+  function onAddClassRow() {
+    if (!activeCharacter) return;
+
+    const nextClasses: ClassEntry[] = [...activeCharacter.classes, { name: '', subclass: undefined }];
+    void saveCharacter({ ...activeCharacter, classes: nextClasses });
+  }
+
+  function onRemoveClassRow(rowIndex: number) {
+    if (!activeCharacter) return;
+
+    const removedClass = activeCharacter.classes[rowIndex];
+    const nextClasses: ClassEntry[] = activeCharacter.classes.filter((_, i) => i !== rowIndex);
+
+    // Remove the list for the removed class (unless it matches a remaining class)
+    const remainingClassNames = new Set(nextClasses.filter((c) => c.name).map((c) => normalizeListName(c.name)));
+    const removedNorm = removedClass?.name ? normalizeListName(removedClass.name) : null;
+
+    const nextLists = activeCharacter.availableLists.filter((list) => {
+      if (!removedNorm) return true;
+      if (normalizeListName(list) === removedNorm && !remainingClassNames.has(removedNorm)) return false;
+      return true;
+    });
+
+    const nextProfile = {
+      ...activeCharacter,
+      classes: nextClasses.length > 0 ? nextClasses : [{ name: '', subclass: undefined }],
+      availableLists: nextLists,
+      preparationLimits: getPreparationLimits({ ...activeCharacter, availableLists: nextLists }),
+    };
+
+    void saveCharacter(nextProfile);
+  }
+
+  // Classes already selected in other rows (for filtering dropdowns)
+  const selectedClassNames = useMemo(
+    () => new Set((activeCharacter?.classes || []).filter((c) => c.name).map((c) => c.name)),
+    [activeCharacter],
+  );
+
   return (
     <div className="space-y-4">
-      <section className="rounded-[1.55rem] border border-border-dark bg-bg-1/92 p-4 md:p-5">
-        <p className="text-[11px] uppercase tracking-[0.34em] text-text-dim">Character</p>
-        <div className="mt-2 flex flex-col gap-4">
-          <div>
-            <h1 className="font-display text-3xl text-text md:text-4xl">Review Current Prepared</h1>
-            <p className="mt-2 max-w-3xl text-sm text-text-muted">
-              Check your limits first, then confirm today&apos;s prepared list.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <div className="overflow-hidden">
-              <div className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 pr-2 arcane-scrollbar md:flex-wrap md:overflow-visible md:pb-0 md:pr-0">
-                {headerPills.map((pill) => (
-                  <button
-                    key={pill.id}
-                    type="button"
-                    className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] transition flex-shrink-0 whitespace-nowrap ${pill.isActive ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
-                    onClick={() => setActiveCharacter(pill.id)}
-                  >
-                    {pill.label}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] transition flex-shrink-0 whitespace-nowrap ${showCreateCharacterForm ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
-                  onClick={() => setShowCreateCharacterForm((current) => !current)}
-                >
-                  + New Character
-                </button>
-              </div>
-            </div>
-
-            {!headerPills.length ? (
-              <p className="text-sm text-text-muted">Create a character to start building a verification list.</p>
-            ) : null}
-
-            {showCreateCharacterForm ? (
-              <div className="max-w-2xl rounded-2xl border border-border-dark bg-bg px-4 py-4 text-sm">
-                <p className="text-[11px] uppercase tracking-[0.3em] text-text-dim">Create Character</p>
-                <form className="mt-4 space-y-3" onSubmit={(event) => void onCreate(event)}>
-                  <input
-                    className="w-full rounded-2xl border border-border-dark bg-bg-2 px-3 py-2.5 text-sm text-text"
-                    placeholder="Character name"
-                    value={createName}
-                    onChange={(event) => setCreateName(event.target.value)}
-                    required
-                  />
-                  <input
-                    className="w-full rounded-2xl border border-border-dark bg-bg-2 px-3 py-2.5 text-sm text-text"
-                    placeholder="Lists (Wizard, Cleric)"
-                    value={createLists}
-                    onChange={(event) => setCreateLists(event.target.value)}
-                  />
-                  {parsedCreateLists.map((list) => (
-                    <label key={list} className="block rounded-2xl border border-border-dark bg-bg-2 px-3 py-3 text-sm">
-                      <span className="text-text-muted">{list} preparation limit</span>
-                      <input
-                        className="mt-2 w-full rounded-xl border border-border-dark bg-bg px-3 py-2 text-text"
-                        type="number"
-                        min={1}
-                        value={createLimitByList[list] || 8}
-                        onChange={(event) => setCreateLimitByList((current) => ({
-                          ...current,
-                          [list]: Math.max(1, Number(event.target.value) || 1),
-                        }))}
-                      />
-                    </label>
-                  ))}
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="submit"
-                      className="rounded-2xl border border-gold-soft bg-gold-soft/20 px-4 py-3 text-sm text-text transition-colors hover:bg-gold-soft/30"
-                      disabled={busy}
-                    >
-                      {busy ? 'Creating...' : 'Create Character'}
-                    </button>
-                    <button
-                      type="button"
-                      className="rounded-2xl border border-border-dark bg-bg-2 px-4 py-3 text-sm text-text-muted transition-colors hover:bg-bg hover:text-text"
-                      onClick={() => setShowCreateCharacterForm(false)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </section>
-
       <section className="space-y-4">
 
         {!activeCharacter ? (
           <div className="rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-5">
-            <h2 className="font-display text-3xl text-text">No active character</h2>
+            <h2 className="font-display text-3xl text-text">No character selected</h2>
             <p className="mt-3 max-w-2xl text-sm text-text-muted">
-              The header controls let you switch between characters or open the Create Character flow to add a new profile before assigning list limits and always-prepared spells.
+              No character selected. Create one from the header dropdown.
             </p>
             {error ? <p className="mt-4 rounded-2xl border border-blood-soft bg-blood-soft px-4 py-3 text-sm text-blood">{error}</p> : null}
           </div>
@@ -333,22 +286,18 @@ export function CharacterPage() {
           <div className="space-y-4">
             <section className="rounded-[1.45rem] border border-border-dark bg-bg-1/92 px-4 py-4 md:px-5">
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="text-[11px] uppercase tracking-[0.3em] text-text-dim">Active Profile</p>
                   <h2 className="mt-1 font-display text-2xl text-text md:text-3xl break-words">{activeCharacter.name}</h2>
-                  <p className="mt-1 text-sm text-text-muted break-words">
-                    {cueMetadata?.classLabel || 'Unassigned class'}{cueMetadata?.subclassLabel ? ` · ${cueMetadata.subclassLabel}` : ''}
-                  </p>
+                  {cueMetadata?.classDisplayString ? (
+                    <p className="mt-1 text-sm text-text-muted">{cueMetadata.classDisplayString}</p>
+                  ) : null}
                 </div>
 
                 <button
                   type="button"
                   className="rounded-2xl border border-blood-soft bg-blood-soft px-4 py-2 text-sm text-blood flex-shrink-0"
                   onClick={() => {
-                    if (characters.length <= 1) {
-                      setError('At least one character must remain.');
-                      return;
-                    }
                     void deleteCharacter(activeCharacter.id);
                   }}
                 >
@@ -543,65 +492,6 @@ export function CharacterPage() {
               </div>
 
               <div className="space-y-3">
-                <details className="rounded-2xl border border-border-dark bg-bg px-4 py-4">
-                  <summary className="cursor-pointer list-none font-display text-xl text-text">Identity</summary>
-                  <p className="mt-2 text-sm text-text-muted">Only adjust when the character itself changes.</p>
-                  <div className="mt-4 grid gap-3">
-                    <label className="space-y-1 text-sm">
-                      <span className="text-text-muted">Class</span>
-                      <input
-                        className="w-full rounded-2xl border border-border-dark bg-bg px-3 py-2.5 text-text"
-                        value={activeCharacter.class}
-                        onChange={(event) => {
-                          void saveCharacter({ ...activeCharacter, class: event.target.value });
-                        }}
-                      />
-                    </label>
-
-                    <label className="space-y-1 text-sm">
-                      <span className="text-text-muted">Subclass</span>
-                      <input
-                        className="w-full rounded-2xl border border-border-dark bg-bg px-3 py-2.5 text-text"
-                        value={activeCharacter.subclass}
-                        onChange={(event) => {
-                          void saveCharacter({ ...activeCharacter, subclass: event.target.value });
-                        }}
-                      />
-                    </label>
-
-                    <label className="space-y-1 text-sm">
-                      <span className="text-text-muted">Casting Ability</span>
-                      <input
-                        className="w-full rounded-2xl border border-border-dark bg-bg px-3 py-2.5 text-text"
-                        value={activeCharacter.castingAbility}
-                        onChange={(event) => {
-                          void saveCharacter({ ...activeCharacter, castingAbility: event.target.value });
-                        }}
-                      />
-                    </label>
-
-                    <label className="space-y-1 text-sm">
-                      <span className="text-text-muted">Available Lists</span>
-                      <input
-                        className="w-full rounded-2xl border border-border-dark bg-bg px-3 py-2.5 text-text"
-                        value={activeCharacter.availableLists.join(', ')}
-                        onChange={(event) => {
-                          const nextLists = event.target.value.split(',').map((entry) => entry.trim()).filter(Boolean);
-                          const nextProfile = {
-                            ...activeCharacter,
-                            availableLists: nextLists,
-                            preparationLimits: getPreparationLimits({
-                              ...activeCharacter,
-                              availableLists: nextLists,
-                            }),
-                          };
-                          void saveCharacter(nextProfile);
-                        }}
-                      />
-                    </label>
-                  </div>
-                </details>
-
                 <div className="rounded-2xl border border-border-dark bg-bg px-4 py-4">
                   <h4 className="font-display text-xl text-text">Add Always Prepared</h4>
                   <input
@@ -669,6 +559,118 @@ export function CharacterPage() {
                     ) : null}
                   </div>
                 </div>
+
+                <details className="rounded-2xl border border-border-dark bg-bg px-4 py-4">
+                  <summary className="cursor-pointer list-none font-display text-xl text-text">Identity</summary>
+                  <p className="mt-2 text-sm text-text-muted">Only adjust when the character itself changes.</p>
+                  <div className="mt-4 space-y-2">
+                    {(activeCharacter.classes.length > 0 ? activeCharacter.classes : [{ name: '', subclass: undefined }]).map((classEntry, rowIndex) => {
+                      const classInfo = catalogClasses.find((c) => c.name === classEntry.name) || null;
+                      const listName = classEntry.name ? normalizeListName(classEntry.name) : null;
+                      const ruleSummary = listName ? preparationRuleSummaries.find((s) => s.list === listName) : null;
+
+                      return (
+                        <div key={rowIndex} className="flex flex-wrap items-center gap-2 rounded-xl border border-border-dark bg-bg-2 px-3 py-2">
+                          <select
+                            className="rounded-xl border border-border-dark bg-bg px-3 py-1.5 text-sm text-text"
+                            value={classEntry.name}
+                            onChange={(event) => onClassChange(rowIndex, event.target.value)}
+                          >
+                            <option value="">Class</option>
+                            {catalogClasses.map((entry) => (
+                              <option
+                                key={entry.name}
+                                value={entry.name}
+                                disabled={entry.name !== classEntry.name && selectedClassNames.has(entry.name)}
+                              >
+                                {entry.name}
+                              </option>
+                            ))}
+                          </select>
+
+                          <select
+                            className="rounded-xl border border-border-dark bg-bg px-3 py-1.5 text-sm text-text"
+                            value={classEntry.subclass || ''}
+                            disabled={!classInfo || classInfo.subclasses.length === 0}
+                            onChange={(event) => onSubclassChange(rowIndex, event.target.value)}
+                          >
+                            <option value="">Subclass</option>
+                            {(classInfo?.subclasses || []).map((sub) => (
+                              <option key={sub} value={sub}>{sub}</option>
+                            ))}
+                          </select>
+
+                          <select
+                            className="rounded-xl border border-border-dark bg-bg px-3 py-1.5 text-sm text-text"
+                            value={classEntry.castingAbility || ''}
+                            onChange={(event) => onCastingAbilityChange(rowIndex, event.target.value)}
+                          >
+                            <option value="">Ability</option>
+                            {['Intelligence', 'Wisdom', 'Charisma'].map((ability) => (
+                              <option key={ability} value={ability}>{ability}</option>
+                            ))}
+                          </select>
+
+                          {ruleSummary ? (
+                            <>
+                              <label className="flex items-center gap-1 text-xs">
+                                <span className="text-text-dim">Spell limit</span>
+                                <input
+                                  className="w-14 rounded-lg border border-border-dark bg-bg px-2 py-1 text-text"
+                                  type="number"
+                                  min={1}
+                                  value={ruleSummary.limit}
+                                  onChange={(event) => {
+                                    void onUpdatePreparationRule(ruleSummary.list, {
+                                      limit: Number(event.target.value) || 1,
+                                    }).catch((nextError) => {
+                                      setError(nextError instanceof Error ? nextError.message : 'Unable to update preparation rule.');
+                                    });
+                                  }}
+                                />
+                              </label>
+                              <label className="flex items-center gap-1 text-xs">
+                                <span className="text-text-dim">Max lvl</span>
+                                <input
+                                  className="w-14 rounded-lg border border-border-dark bg-bg px-2 py-1 text-text"
+                                  type="number"
+                                  min={0}
+                                  max={9}
+                                  value={ruleSummary.maxSpellLevel}
+                                  onChange={(event) => {
+                                    void onUpdatePreparationRule(ruleSummary.list, {
+                                      maxSpellLevel: Number(event.target.value) || 0,
+                                    }).catch((nextError) => {
+                                      setError(nextError instanceof Error ? nextError.message : 'Unable to update preparation rule.');
+                                    });
+                                  }}
+                                />
+                              </label>
+                            </>
+                          ) : null}
+
+                          {activeCharacter.classes.length > 1 ? (
+                            <button
+                              type="button"
+                              className="rounded-xl border border-blood-soft bg-blood-soft/10 px-3 py-1.5 text-xs text-blood hover:bg-blood-soft/20"
+                              onClick={() => onRemoveClassRow(rowIndex)}
+                            >
+                              Remove
+                            </button>
+                          ) : null}
+                        </div>
+                      );
+                    })}
+
+                    <button
+                      type="button"
+                      className="mt-1 rounded-xl border border-border-dark bg-bg-2 px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-text-muted hover:bg-bg hover:text-text"
+                      onClick={onAddClassRow}
+                    >
+                      + Add Class
+                    </button>
+                  </div>
+                </details>
               </div>
             </section>
 

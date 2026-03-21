@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useApp } from '../state/AppContext';
+import { CharacterDropdown } from './CharacterDropdown';
+import { CreateCharacterModal } from './CreateCharacterModal';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -10,7 +13,11 @@ export function AppShell({ children }: AppShellProps) {
     characters,
     activeCharacter,
     setActiveCharacter,
+    catalogClasses,
+    createCharacter,
   } = useApp();
+
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   return (
     <div className="min-h-screen bg-bg text-text">
@@ -53,24 +60,29 @@ export function AppShell({ children }: AppShellProps) {
               </NavLink>
             </nav>
 
-            <label className="flex flex-col gap-1 text-sm">
-              <span className="text-[11px] uppercase tracking-[0.28em] text-text-dim">Active Character</span>
-              <select
-                className="w-full rounded-2xl border border-border-dark bg-bg px-3 py-2.5 text-text"
-                value={activeCharacter?.id || ''}
-                onChange={(event) => setActiveCharacter(event.target.value)}
-                aria-label="Active character"
-              >
-                {characters.map((character) => (
-                  <option key={character.id} value={character.id}>{character.name}</option>
-                ))}
-              </select>
-            </label>
+            <CharacterDropdown
+              characters={characters}
+              activeCharacterId={activeCharacter?.id ?? null}
+              onSelectCharacter={setActiveCharacter}
+              onCreateNew={() => setShowCreateModal(true)}
+            />
           </div>
         </div>
       </header>
 
       <main className="mx-auto w-full max-w-7xl px-4 py-6 md:py-8">{children}</main>
+
+      {showCreateModal ? (
+        <CreateCharacterModal
+          catalogClasses={catalogClasses}
+          onClose={() => setShowCreateModal(false)}
+          onCreate={async (input) => {
+            await createCharacter(input);
+            setShowCreateModal(false);
+          }}
+          busy={false}
+        />
+      ) : null}
     </div>
   );
 }

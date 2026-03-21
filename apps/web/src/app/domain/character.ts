@@ -1,6 +1,7 @@
 import type {
   CharacterProfile,
   CharacterProfileInput,
+  ClassEntry,
   NextPreparationQueueEntry,
   PreparedSpellEntry,
   PreparationLimit,
@@ -81,7 +82,10 @@ export function getPreparationLimits(input: CharacterProfileInput | CharacterPro
     }
   }
 
-  return [...byList.entries()].map(([list, config]) => ({ list, limit: config.limit, maxSpellLevel: config.maxSpellLevel }));
+  const availableSet = new Set(availableLists);
+  return [...byList.entries()]
+    .filter(([list]) => availableSet.has(list))
+    .map(([list, config]) => ({ list, limit: config.limit, maxSpellLevel: config.maxSpellLevel }));
 }
 
 export function getSpellAssignmentList(
@@ -372,6 +376,14 @@ export function normalizeQueueEntries(values: unknown[]): NextPreparationQueueEn
   return output;
 }
 
+export function formatClassDisplayString(classes: ClassEntry[]): string {
+  const named = classes.filter((entry) => entry.name);
+  if (!named.length) return 'Unassigned class';
+  return named
+    .map((entry) => entry.subclass ? `${entry.name} · ${entry.subclass}` : entry.name)
+    .join(' / ');
+}
+
 export function createCharacterProfile(input: CharacterProfileInput): CharacterProfile {
   const now = new Date().toISOString();
   const idSource = String(input.id || input.name || '').trim();
@@ -385,11 +397,12 @@ export function createCharacterProfile(input: CharacterProfileInput): CharacterP
     throw new Error('Character name is required.');
   }
 
+  const classes = Array.isArray(input.classes) ? input.classes : [];
+
   return {
     id,
     name,
-    class: String(input.class || '').trim(),
-    subclass: String(input.subclass || '').trim(),
+    classes,
     castingAbility: String(input.castingAbility || '').trim(),
     availableLists: [...new Set((input.availableLists || [])
       .map((entry) => normalizeListName(entry))
@@ -403,16 +416,11 @@ export function createCharacterProfile(input: CharacterProfileInput): CharacterP
 }
 
 export function normalizeCharacterProfile(input: CharacterProfile): CharacterProfile {
+  const raw = input as any;
   const availableLists = [...new Set((input.availableLists || []).map((entry) => normalizeListName(entry)).filter(Boolean))];
-  const rawQueue = Array.isArray((input as CharacterProfile & { nextPreparationQueue?: unknown[] }).nextPreparationQueue)
-    ? ((input as CharacterProfile & { nextPreparationQueue?: unknown[] }).nextPreparationQueue || [])
-    : [];
-  const rawPreparedSpells = Array.isArray((input as CharacterProfile & { preparedSpells?: unknown[] }).preparedSpells)
-    ? ((input as CharacterProfile & { preparedSpells?: unknown[] }).preparedSpells || [])
-    : [];
-  const legacyPreparedSpellIds = Array.isArray((input as CharacterProfile & { preparedSpellIds?: string[] }).preparedSpellIds)
-    ? ((input as CharacterProfile & { preparedSpellIds?: string[] }).preparedSpellIds || [])
-    : [];
+  const rawQueue = Array.isArray(raw.nextPreparationQueue) ? (raw.nextPreparationQueue || []) : [];
+  const rawPreparedSpells = Array.isArray(raw.preparedSpells) ? (raw.preparedSpells || []) : [];
+  const legacyPreparedSpellIds = Array.isArray(raw.preparedSpellIds) ? (raw.preparedSpellIds || []) : [];
 
   const nextPreparationQueue = normalizeQueueEntries(rawQueue);
   const preparedSpells = normalizePreparedSpells(
@@ -420,10 +428,27 @@ export function normalizeCharacterProfile(input: CharacterProfile): CharacterPro
     { availableLists } as Pick<CharacterProfile, 'availableLists'>,
   );
 
+  // Migrate old class/subclass string fields to classes array
+  let classes: ClassEntry[];
+  if (Array.isArray(raw.classes)) {
+    classes = raw.classes;
+  } else {
+    const oldClass = String(raw.class || '').trim();
+    const oldSubclass = String(raw.subclass || '').trim();
+    if (oldClass) {
+      classes = [{ name: oldClass, ...(oldSubclass ? { subclass: oldSubclass } : {}) }];
+    } else {
+      classes = [];
+    }
+  }
+
+  // Omit old class/subclass fields from spread
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { class: _class, subclass: _subclass, classes: _classes, ...rest } = raw;
+
   return {
-    ...input,
-    class: String(input.class || '').trim(),
-    subclass: String(input.subclass || '').trim(),
+    ...rest,
+    classes,
     castingAbility: String(input.castingAbility || '').trim(),
     availableLists,
     preparationLimits: getPreparationLimits(input),

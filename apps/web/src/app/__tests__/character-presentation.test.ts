@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   getCharacterCueMetadata,
   getCharacterCueStats,
-  getCharacterHeaderPills,
   getGroupedPreparedVerificationRows,
   getCharacterPreparationRuleSummaries,
   formatPreparedVerificationRowMeta,
@@ -29,30 +28,25 @@ describe('character presentation', () => {
 
   it('formats the compact cue metadata', () => {
     expect(getCharacterCueMetadata({
-      class: 'Wizard',
-      subclass: 'Evocation',
-    })).toEqual({
-      classLabel: 'Wizard',
-      subclassLabel: 'Evocation',
+      classes: [{ name: 'Wizard', subclass: 'Evocation' }],
+    } as any)).toEqual({
+      classes: [{ name: 'Wizard', subclass: 'Evocation' }],
+      classDisplayString: 'Wizard · Evocation',
     });
 
     expect(getCharacterCueMetadata({
-      class: '',
-      subclass: '',
-    })).toEqual({
-      classLabel: 'Unassigned class',
-      subclassLabel: undefined,
+      classes: [],
+    } as any)).toEqual({
+      classes: [],
+      classDisplayString: 'Unassigned class',
     });
-  });
 
-  it('builds header pill data from characters', () => {
-    expect(getCharacterHeaderPills([
-      { id: 'one', name: 'Alira' },
-      { id: 'two', name: 'Varric' },
-    ], 'two')).toEqual([
-      { id: 'one', label: 'Alira', isActive: false },
-      { id: 'two', label: 'Varric', isActive: true },
-    ]);
+    expect(getCharacterCueMetadata({
+      classes: [{ name: 'Wizard' }, { name: 'Cleric', subclass: 'Life' }],
+    } as any)).toEqual({
+      classes: [{ name: 'Wizard' }, { name: 'Cleric', subclass: 'Life' }],
+      classDisplayString: 'Wizard / Cleric · Life',
+    });
   });
 
   it('builds top-level preparation rule summaries', () => {

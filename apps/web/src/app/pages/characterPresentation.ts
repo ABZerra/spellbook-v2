@@ -1,4 +1,4 @@
-import { normalizeListName } from '../domain/character';
+import { formatClassDisplayString, normalizeListName } from '../domain/character';
 import type { CharacterProfile } from '../types';
 
 export interface CharacterCueStat {
@@ -7,8 +7,8 @@ export interface CharacterCueStat {
 }
 
 export interface CharacterCueMetadata {
-  classLabel: string;
-  subclassLabel?: string;
+  classes: CharacterProfile['classes'];
+  classDisplayString: string;
 }
 
 export function getCharacterCueStats(
@@ -25,22 +25,11 @@ export function getCharacterCueStats(
   ];
 }
 
-export function getCharacterCueMetadata(
-  profile: Pick<CharacterProfile, 'class' | 'subclass'>,
-): CharacterCueMetadata {
-  const classLabel = profile.class?.trim() || 'Unassigned class';
-  const subclassLabel = profile.subclass?.trim() || undefined;
-
+export function getCharacterCueMetadata(profile: CharacterProfile) {
   return {
-    classLabel,
-    subclassLabel,
+    classes: profile.classes,
+    classDisplayString: formatClassDisplayString(profile.classes),
   };
-}
-
-export interface CharacterHeaderPill {
-  id: string;
-  label: string;
-  isActive: boolean;
 }
 
 export interface CharacterPreparationRuleSummary {
@@ -62,17 +51,6 @@ export interface CharacterPreparedVerificationGroup<Row extends CharacterPrepare
   level: number;
   label: string;
   rows: Row[];
-}
-
-export function getCharacterHeaderPills(
-  characters: Pick<CharacterProfile, 'id' | 'name'>[],
-  activeCharacterId?: string | null,
-): CharacterHeaderPill[] {
-  return characters.map((character) => ({
-    id: character.id,
-    label: character.name,
-    isActive: character.id === activeCharacterId,
-  }));
 }
 
 export function getCharacterPreparationRuleSummaries(

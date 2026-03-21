@@ -8,6 +8,7 @@ import {
   removePreparedSpellEntryAtOccurrence,
   reassignPreparedSpellEntryAtOccurrence,
 } from '../domain/character';
+import { extractClassInfo, extractListNames, type CatalogClassInfo } from '../domain/catalog';
 import { getDefaultQueueIntent } from '../pages/preparePresentation';
 import { computeApplyResult } from '../domain/prepareQueue';
 import { buildSpellSyncPayloadV3, publishSpellSyncPayloadV3, waitForSpellSyncPayloadAck } from '../services/extensionSyncV3';
@@ -38,6 +39,8 @@ interface AppContextValue {
   spells: SpellRecord[];
   characters: CharacterProfile[];
   activeCharacter: CharacterProfile | null;
+  catalogClasses: CatalogClassInfo[];
+  catalogListNames: string[];
 
   refreshAll: () => Promise<void>;
   setActiveCharacter: (characterId: string) => void;
@@ -91,6 +94,8 @@ export function AppProvider({ children, provider }: AppProviderProps) {
   const [activeCharacterId, setActiveCharacterId] = useState<string | null>(getPersistedCharacterId());
 
   const spellsById = useMemo(() => new Map(spells.map((spell) => [spell.id, spell])), [spells]);
+  const catalogClasses = useMemo(() => extractClassInfo(spells), [spells]);
+  const catalogListNames = useMemo(() => extractListNames(spells), [spells]);
 
   const persistCharacter = useCallback(async (profile: CharacterProfile): Promise<CharacterProfile> => {
     const normalized = normalizeCharacterProfile(profile);
@@ -393,6 +398,8 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     spells,
     characters,
     activeCharacter,
+    catalogClasses,
+    catalogListNames,
     refreshAll,
     setActiveCharacter,
     createCharacter,
@@ -415,6 +422,8 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     spells,
     characters,
     activeCharacter,
+    catalogClasses,
+    catalogListNames,
     refreshAll,
     setActiveCharacter,
     createCharacter,
