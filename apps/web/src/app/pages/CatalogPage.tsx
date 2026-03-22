@@ -130,8 +130,14 @@ export function CatalogPage() {
   const queuedCount = activeCharacter?.nextPreparationQueue.length || 0;
   const eligibleCount = rows.filter((row) => row.eligible).length;
 
-  const emptyStateMessage = effectivePreferences.viewMode === 'eligible_only' && searchMatchedRows.length > 0
-    ? 'Nothing in this search fits the active character right now.'
+  useEffect(() => {
+    if (!activeCharacter && preferences.viewMode === 'character_filtered') {
+      setPreferences((current) => ({ ...current, viewMode: 'all' }));
+    }
+  }, [activeCharacter, preferences.viewMode]);
+
+  const emptyStateMessage = effectivePreferences.viewMode === 'character_filtered' && searchMatchedRows.length > 0
+    ? 'No spells match for this character and search.'
     : 'No spells match this search yet.';
 
   async function onQueueToggle(spellId: string) {
@@ -214,25 +220,22 @@ export function CatalogPage() {
           </button>
 
           {activeCharacter ? (
-            <div className="flex flex-wrap gap-2">
-              {[
-                { value: 'all', label: 'All' },
-                { value: 'eligible_first', label: 'Best Fits' },
-                { value: 'eligible_only', label: 'Fits Now' },
-              ].map((option) => {
-                const active = effectivePreferences.viewMode === option.value;
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={`rounded-full border px-4 py-2 text-sm transition-colors ${active ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
-                    onClick={() => setPreferences((current) => ({ ...current, viewMode: option.value as CatalogPreferences['viewMode'] }))}
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
-            </div>
+            <button
+              type="button"
+              className={`rounded-full border px-4 py-2 text-sm transition-colors ${
+                effectivePreferences.viewMode === 'character_filtered'
+                  ? 'border-accent-soft bg-accent-soft/25 text-text'
+                  : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'
+              }`}
+              onClick={() => setPreferences((current) => ({
+                ...current,
+                viewMode: current.viewMode === 'character_filtered' ? 'all' : 'character_filtered',
+              }))}
+            >
+              {effectivePreferences.viewMode === 'character_filtered'
+                ? `${activeCharacter.name} ✕`
+                : activeCharacter.name}
+            </button>
           ) : null}
         </div>
 
