@@ -1,0 +1,92 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
+import { AuthProvider, useAuth } from '../AuthContext';
+import React from 'react';
+
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
+
+const storage: Record<string, string> = {};
+vi.stubGlobal('localStorage', {
+  getItem: (key: string) => storage[key] ?? null,
+  setItem: (key: string, value: string) => { storage[key] = value; },
+  removeItem: (key: string) => { delete storage[key]; },
+});
+
+function wrapper({ children }: { children: React.ReactNode }) {
+  return <AuthProvider>{children}</AuthProvider>;
+}
+
+describe('AuthContext', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    Object.keys(storage).forEach((key) => delete storage[key]);
+  });
+
+  it('starts unauthenticated', () => {
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    expect(result.current.isAuthenticated).toBe(false);
+    expect(result.current.userId).toBeNull();
+  });
+
+  it('login succeeds and stores userId', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ characters: [], sha: null }),
+    });
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    let loginResult: boolean = false;
+    await act(async () => {
+      loginResult = await result.current.login('alice');
+    });
+
+    expect(loginResult).toBe(true);
+    expect(result.current.isAuthenticated).toBe(true);
+    expect(result.current.userId).toBe('alice');
+    expect(storage['spellbook.userId']).toBe('alice');
+  });
+
+  it('login fails for unknown user (404)', async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 404 });
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    let loginResult: boolean = true;
+    await act(async () => {
+      loginResult = await result.current.login('nobody');
+    });
+
+    expect(loginResult).toBe(false);
+    expect(result.current.isAuthenticated).toBe(false);
+  });
+
+  it('logout clears state', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ characters: [], sha: null }),
+    });
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await act(async () => {
+      await result.current.login('alice');
+    });
+    act(() => {
+      result.current.logout();
+    });
+
+    expect(result.current.isAuthenticated).toBe(false);
+    expect(result.current.userId).toBeNull();
+    expect(storage['spellbook.userId']).toBeUndefined();
+  });
+
+  it('restores session from localStorage on mount', () => {
+    storage['spellbook.userId'] = 'bob';
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    expect(result.current.isAuthenticated).toBe(true);
+    expect(result.current.userId).toBe('bob');
+  });
+});

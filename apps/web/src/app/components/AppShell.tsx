@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useApp } from '../state/AppContext';
+import { useAuth } from '../state/AuthContext';
 import { CharacterDropdown } from './CharacterDropdown';
 import { CreateCharacterModal } from './CreateCharacterModal';
+import { LoginModal } from './LoginModal';
+import { SyncIndicator } from './SyncIndicator';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -15,9 +18,21 @@ export function AppShell({ children }: AppShellProps) {
     setActiveCharacter,
     catalogClasses,
     createCharacter,
+    syncStatus,
   } = useApp();
 
+  const { isAuthenticated, logout } = useAuth();
+
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  function handleCreateNew() {
+    if (isAuthenticated) {
+      setShowCreateModal(true);
+    } else {
+      setShowLoginModal(true);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-bg text-text">
@@ -57,13 +72,35 @@ export function AppShell({ children }: AppShellProps) {
               characters={characters}
               activeCharacterId={activeCharacter?.id ?? null}
               onSelectCharacter={setActiveCharacter}
-              onCreateNew={() => setShowCreateModal(true)}
+              onCreateNew={handleCreateNew}
             />
+
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3">
+                <SyncIndicator status={syncStatus} />
+                <button
+                  onClick={logout}
+                  className="text-xs text-text-dim hover:text-text transition-colors"
+                >
+                  Log out
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       </header>
 
       <main className="mx-auto w-full max-w-7xl px-4 py-6 md:py-8">{children}</main>
+
+      {showLoginModal ? (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onSuccess={() => {
+            setShowLoginModal(false);
+            setShowCreateModal(true);
+          }}
+        />
+      ) : null}
 
       {showCreateModal ? (
         <CreateCharacterModal

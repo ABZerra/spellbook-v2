@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
   assertSpellCanBeAddedToList,
   getAddableAssignmentLists,
@@ -15,6 +15,8 @@ import { buildSpellSyncPayloadV3, publishSpellSyncPayloadV3, waitForSpellSyncPay
 import type { CharacterProfile, CharacterProfileInput, PreparedSpellEntry, QueueIntent, SpellRecord, SpellSyncPayloadV3 } from '../types';
 import { LocalSnapshotProvider } from '../providers/localSnapshotProvider';
 import type { SpellCatalogProvider } from '../providers/provider';
+import { useAuth } from './AuthContext';
+import { SyncService, type SyncStatus } from './SyncService';
 
 const ACTIVE_CHARACTER_KEY = 'spellbook.activeCharacter';
 
@@ -36,6 +38,7 @@ interface ApplyPlanOutput {
 interface AppContextValue {
   loading: boolean;
   error: string | null;
+  syncStatus: SyncStatus;
   spells: SpellRecord[];
   characters: CharacterProfile[];
   activeCharacter: CharacterProfile | null;
@@ -86,12 +89,39 @@ interface AppProviderProps {
 
 export function AppProvider({ children, provider }: AppProviderProps) {
   const [resolvedProvider] = useState<SpellCatalogProvider>(() => provider || new LocalSnapshotProvider());
+  const { userId, isAuthenticated } = useAuth();
+
+  const syncServiceRef = useRef(new SyncService());
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [spells, setSpells] = useState<SpellRecord[]>([]);
   const [characters, setCharacters] = useState<CharacterProfile[]>([]);
   const [activeCharacterId, setActiveCharacterId] = useState<string | null>(getPersistedCharacterId());
+
+  useEffect(() => {
+    const service = syncServiceRef.current;
+    const unsubscribe = service.onStatusChange(setSyncStatus);
+
+    if (isAuthenticated && userId) {
+      fetch(`/api/users/${encodeURIComponent(userId)}/characters`)
+        .then((res) => res.ok ? res.json() : null)
+        .then((data) => {
+          if (data?.sha !== undefined) {
+            service.start(userId, data.sha);
+          }
+        })
+        .catch(() => {});
+    } else {
+      service.stop();
+    }
+
+    return () => {
+      unsubscribe();
+      service.stop();
+    };
+  }, [isAuthenticated, userId]);
 
   const spellsById = useMemo(() => new Map(spells.map((spell) => [spell.id, spell])), [spells]);
   const catalogClasses = useMemo(() => extractClassInfo(spells), [spells]);
@@ -100,7 +130,11 @@ export function AppProvider({ children, provider }: AppProviderProps) {
   const persistCharacter = useCallback(async (profile: CharacterProfile): Promise<CharacterProfile> => {
     const normalized = normalizeCharacterProfile(profile);
     const saved = await resolvedProvider.saveCharacterProfile(normalized);
-    setCharacters((current) => current.map((entry) => (entry.id === saved.id ? saved : entry)));
+    setCharacters((current) => {
+      const next = current.map((entry) => (entry.id === saved.id ? saved : entry));
+      syncServiceRef.current.markDirty(next);
+      return next;
+    });
     return saved;
   }, [resolvedProvider]);
 
@@ -151,7 +185,11 @@ export function AppProvider({ children, provider }: AppProviderProps) {
 
   const createCharacter = useCallback(async (input: CharacterProfileInput) => {
     const created = await resolvedProvider.createCharacterProfile(input);
-    setCharacters((current) => [...current, normalizeCharacterProfile(created)].sort((left, right) => left.name.localeCompare(right.name)));
+    setCharacters((current) => {
+      const next = [...current, normalizeCharacterProfile(created)].sort((left, right) => left.name.localeCompare(right.name));
+      syncServiceRef.current.markDirty(next);
+      return next;
+    });
     setActiveCharacter(created.id);
   }, [resolvedProvider, setActiveCharacter]);
 
@@ -171,6 +209,7 @@ export function AppProvider({ children, provider }: AppProviderProps) {
         setActiveCharacterId(replacement);
         localStorage.setItem(ACTIVE_CHARACTER_KEY, replacement);
       }
+      syncServiceRef.current.markDirty(next);
       return next;
     });
   }, [resolvedProvider, activeCharacterId]);
@@ -374,9 +413,13 @@ export function AppProvider({ children, provider }: AppProviderProps) {
       computed.finalPreparedSpells,
       computed.remainingQueue,
     );
-    setCharacters((current) => current.map((entry) => (
-      entry.id === applyResult.profile.id ? normalizeCharacterProfile(applyResult.profile) : entry
-    )));
+    setCharacters((current) => {
+      const next = current.map((entry) => (
+        entry.id === applyResult.profile.id ? normalizeCharacterProfile(applyResult.profile) : entry
+      ));
+      syncServiceRef.current.markDirty(next);
+      return next;
+    });
 
     publishSpellSyncPayloadV3(payload);
     const ack = await ackPromise;
@@ -395,6 +438,7 @@ export function AppProvider({ children, provider }: AppProviderProps) {
   const value = useMemo<AppContextValue>(() => ({
     loading,
     error,
+    syncStatus,
     spells,
     characters,
     activeCharacter,
@@ -419,6 +463,7 @@ export function AppProvider({ children, provider }: AppProviderProps) {
   }), [
     loading,
     error,
+    syncStatus,
     spells,
     characters,
     activeCharacter,

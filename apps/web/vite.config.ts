@@ -2,6 +2,7 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+/// <reference types="vitest" />
 
 const githubRepoName = process.env.GITHUB_REPOSITORY?.split('/')[1];
 const githubPagesBase = githubRepoName ? `/${githubRepoName}/` : '/';
@@ -48,4 +49,10 @@ export default defineConfig({
     },
   },
   assetsInclude: ['**/*.svg', '**/*.csv'],
+  test: {
+    globals: true,
+    environmentMatchGlobs: [
+      ['src/app/state/__tests__/**/*.tsx', 'happy-dom'],
+    ],
+  },
 });
