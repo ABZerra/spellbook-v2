@@ -62,12 +62,12 @@ const activeCharacter = {
 } as any;
 
 describe('catalog view model', () => {
-  it('filters to eligible spells in eligible-only mode', () => {
+  it('filters to character-eligible spells in character_filtered mode', () => {
     const rows = buildCatalogRows({
       spells,
       activeCharacter,
       search: '',
-      preferences: { viewMode: 'eligible_only', sortKey: 'name', sortDirection: 'asc' },
+      preferences: { viewMode: 'character_filtered', sortKey: 'name', sortDirection: 'asc' },
     });
 
     expect(rows.map((row) => row.spell.id)).toEqual([
@@ -77,7 +77,7 @@ describe('catalog view model', () => {
     ]);
   });
 
-  it('returns no rows when eligible-only mode has no eligible matches', () => {
+  it('returns no rows when character_filtered mode has no eligible matches', () => {
     const rows = buildCatalogRows({
       spells,
       activeCharacter: {
@@ -87,26 +87,26 @@ describe('catalog view model', () => {
         nextPreparationQueue: [],
       } as any,
       search: '',
-      preferences: { viewMode: 'eligible_only', sortKey: 'name', sortDirection: 'asc' },
+      preferences: { viewMode: 'character_filtered', sortKey: 'name', sortDirection: 'asc' },
     });
 
     expect(rows).toEqual([]);
   });
 
-  it('ranks eligible spells ahead of ineligible spells in eligible-first mode', () => {
+  it('excludes ineligible spells entirely in character_filtered mode', () => {
     const rows = buildCatalogRows({
       spells,
       activeCharacter,
       search: '',
-      preferences: { viewMode: 'eligible_first', sortKey: 'name', sortDirection: 'asc' },
+      preferences: { viewMode: 'character_filtered', sortKey: 'name', sortDirection: 'asc' },
     });
 
     expect(rows.map((row) => row.spell.id)).toEqual([
       'acid-arrow',
       'magic-missile',
       'shield',
-      'bless',
     ]);
+    expect(rows.find((row) => row.spell.id === 'bless')).toBeUndefined();
   });
 
   it('sorts by level ascending and descending', () => {
@@ -162,11 +162,11 @@ describe('catalog view model', () => {
 
   it('restores valid persisted preferences', () => {
     expect(readCatalogPreferences(JSON.stringify({
-      viewMode: 'eligible_only',
+      viewMode: 'character_filtered',
       sortKey: 'level',
       sortDirection: 'desc',
     }))).toEqual({
-      viewMode: 'eligible_only',
+      viewMode: 'character_filtered',
       sortKey: 'level',
       sortDirection: 'desc',
     });
@@ -177,7 +177,7 @@ describe('catalog view model', () => {
       spells,
       activeCharacter: null,
       search: '',
-      preferences: { viewMode: 'eligible_only', sortKey: 'name', sortDirection: 'asc' },
+      preferences: { viewMode: 'character_filtered', sortKey: 'name', sortDirection: 'asc' },
     });
 
     expect(rows.map((row) => row.spell.id)).toEqual([
@@ -218,13 +218,13 @@ describe('catalog view model', () => {
     });
   });
 
-  it('resets sorting without changing the selected view mode', () => {
+  it('resets sorting and resets viewMode to all', () => {
     expect(resetCatalogSort({
-      viewMode: 'eligible_only',
+      viewMode: 'character_filtered',
       sortKey: 'level',
       sortDirection: 'desc',
     })).toEqual({
-      viewMode: 'eligible_only',
+      viewMode: 'all',
       sortKey: 'name',
       sortDirection: 'asc',
     });
