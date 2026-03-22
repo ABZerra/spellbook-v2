@@ -51,9 +51,8 @@ export default defineConfig({
   assetsInclude: ['**/*.svg', '**/*.csv'],
   test: {
     globals: true,
-    environment: 'jsdom',
     environmentMatchGlobs: [
-      ['src/app/state/__tests__/**', 'jsdom'],
+      ['src/app/state/__tests__/**/*.tsx', 'happy-dom'],
     ],
   },
 });
