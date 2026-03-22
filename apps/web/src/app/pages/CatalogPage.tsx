@@ -306,7 +306,17 @@ export function CatalogPage() {
           return (
             <article
               key={spell.id}
-              className="rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-4 transition-colors hover:border-gold-soft/40 hover:bg-bg-1"
+              role="button"
+              tabIndex={0}
+              aria-label={`View details for ${spell.name}`}
+              className="cursor-pointer rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-4 transition-colors hover:border-gold-soft/40 hover:bg-bg-1"
+              onClick={() => setSelectedSpellId(spell.id)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setSelectedSpellId(spell.id);
+                }
+              }}
             >
               <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.95fr)_180px] lg:items-center">
                 <div className="space-y-3">
@@ -334,15 +344,9 @@ export function CatalogPage() {
                   </div>
 
                   <div>
-                    <button
-                      type="button"
-                      className="text-left font-display text-2xl text-text transition-colors hover:text-gold"
-                      title={spell.name}
-                      aria-label={`Inspect ${spell.name}`}
-                      onClick={() => setSelectedSpellId(spell.id)}
-                    >
+                    <h3 className="text-left font-display text-2xl text-text">
                       {spell.name}
-                    </button>
+                    </h3>
                     <p className="mt-1 max-w-3xl text-sm text-text-muted">{getSpellExcerpt(spell.notes || '', spell.description || '')}</p>
                   </div>
                 </div>
@@ -371,6 +375,7 @@ export function CatalogPage() {
                       title={presentation.helperText}
                       aria-label={presentation.helperText}
                       onClick={(event) => {
+                        event.stopPropagation();
                         event.preventDefault();
                         void onQueueToggle(spell.id);
                       }}
@@ -378,13 +383,6 @@ export function CatalogPage() {
                       {presentation.actionLabel}
                     </button>
                   ) : null}
-                  <button
-                    type="button"
-                    className="rounded-2xl border border-border-dark bg-bg px-4 py-2 text-sm text-text-muted transition-colors hover:bg-bg-2 hover:text-text"
-                    onClick={() => setSelectedSpellId(spell.id)}
-                  >
-                    Details
-                  </button>
                 </div>
               </div>
             </article>
