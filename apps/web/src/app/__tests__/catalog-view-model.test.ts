@@ -67,7 +67,7 @@ describe('catalog view model', () => {
       spells,
       activeCharacter,
       search: '',
-      preferences: { viewMode: 'character_filtered', sortKey: 'name', sortDirection: 'asc' },
+      preferences: { viewMode: 'character_filtered', sorts: [] },
     });
 
     expect(rows.map((row) => row.spell.id)).toEqual([
@@ -87,7 +87,7 @@ describe('catalog view model', () => {
         nextPreparationQueue: [],
       } as any,
       search: '',
-      preferences: { viewMode: 'character_filtered', sortKey: 'name', sortDirection: 'asc' },
+      preferences: { viewMode: 'character_filtered', sorts: [] },
     });
 
     expect(rows).toEqual([]);
@@ -98,7 +98,7 @@ describe('catalog view model', () => {
       spells,
       activeCharacter,
       search: '',
-      preferences: { viewMode: 'character_filtered', sortKey: 'name', sortDirection: 'asc' },
+      preferences: { viewMode: 'character_filtered', sorts: [] },
     });
 
     expect(rows.map((row) => row.spell.id)).toEqual([
@@ -114,13 +114,13 @@ describe('catalog view model', () => {
       spells,
       activeCharacter,
       search: '',
-      preferences: { viewMode: 'all', sortKey: 'level', sortDirection: 'asc' },
+      preferences: { viewMode: 'all', sorts: [{ key: 'level', direction: 'asc' }] },
     });
     const descending = buildCatalogRows({
       spells,
       activeCharacter,
       search: '',
-      preferences: { viewMode: 'all', sortKey: 'level', sortDirection: 'desc' },
+      preferences: { viewMode: 'all', sorts: [{ key: 'level', direction: 'desc' }] },
     });
 
     expect(ascending.map((row) => row.spell.id)).toEqual([
@@ -142,13 +142,13 @@ describe('catalog view model', () => {
       spells,
       activeCharacter,
       search: '',
-      preferences: { viewMode: 'all', sortKey: 'prepared', sortDirection: 'desc' },
+      preferences: { viewMode: 'all', sorts: [{ key: 'prepared', direction: 'desc' }] },
     });
     const queued = buildCatalogRows({
       spells,
       activeCharacter,
       search: '',
-      preferences: { viewMode: 'all', sortKey: 'queued', sortDirection: 'desc' },
+      preferences: { viewMode: 'all', sorts: [{ key: 'queued', direction: 'desc' }] },
     });
 
     expect(prepared[0]?.spell.id).toBe('shield');
@@ -160,15 +160,24 @@ describe('catalog view model', () => {
     expect(readCatalogPreferences('{')).toEqual(getDefaultCatalogPreferences());
   });
 
-  it('restores valid persisted preferences', () => {
+  it('restores valid persisted preferences (new format)', () => {
+    expect(readCatalogPreferences(JSON.stringify({
+      viewMode: 'character_filtered',
+      sorts: [{ key: 'level', direction: 'desc' }],
+    }))).toEqual({
+      viewMode: 'character_filtered',
+      sorts: [{ key: 'level', direction: 'desc' }],
+    });
+  });
+
+  it('migrates old single-sort format to new sorts array', () => {
     expect(readCatalogPreferences(JSON.stringify({
       viewMode: 'character_filtered',
       sortKey: 'level',
       sortDirection: 'desc',
     }))).toEqual({
       viewMode: 'character_filtered',
-      sortKey: 'level',
-      sortDirection: 'desc',
+      sorts: [{ key: 'level', direction: 'desc' }],
     });
   });
 
@@ -177,7 +186,7 @@ describe('catalog view model', () => {
       spells,
       activeCharacter: null,
       search: '',
-      preferences: { viewMode: 'character_filtered', sortKey: 'name', sortDirection: 'asc' },
+      preferences: { viewMode: 'character_filtered', sorts: [] },
     });
 
     expect(rows.map((row) => row.spell.id)).toEqual([
@@ -194,7 +203,7 @@ describe('catalog view model', () => {
       spells,
       activeCharacter,
       search: '',
-      preferences: { viewMode: 'all', sortKey: 'action', sortDirection: 'asc' },
+      preferences: { viewMode: 'all', sorts: [{ key: 'action', direction: 'asc' }] },
     });
 
     expect(rows.map((row) => row.spell.id)).toEqual([
@@ -207,26 +216,51 @@ describe('catalog view model', () => {
 
   it('resets list sorting when the list column is unavailable', () => {
     const next = sanitizeCatalogPreferences(
-      { viewMode: 'all', sortKey: 'list', sortDirection: 'desc' },
+      { viewMode: 'all', sorts: [{ key: 'list', direction: 'desc' }] },
       { allowListSort: false },
     );
 
     expect(next).toEqual({
       viewMode: 'all',
-      sortKey: 'name',
-      sortDirection: 'asc',
+      sorts: [],
     });
   });
 
   it('resets sorting and resets viewMode to all', () => {
     expect(resetCatalogSort({
       viewMode: 'character_filtered',
-      sortKey: 'level',
-      sortDirection: 'desc',
+      sorts: [{ key: 'level', direction: 'desc' }],
     })).toEqual({
       viewMode: 'all',
-      sortKey: 'name',
-      sortDirection: 'asc',
+      sorts: [],
     });
+  });
+
+  it('default preferences returns empty sorts array', () => {
+    expect(getDefaultCatalogPreferences()).toEqual({ viewMode: 'all', sorts: [] });
+  });
+
+  it('sorts by multiple criteria: level asc then name desc within same level', () => {
+    const rows = buildCatalogRows({
+      spells,
+      activeCharacter: null,
+      search: '',
+      preferences: {
+        viewMode: 'all',
+        sorts: [
+          { key: 'level', direction: 'asc' },
+          { key: 'name', direction: 'desc' },
+        ],
+      },
+    });
+
+    // Level 1 spells: Shield, Magic Missile, Bless (name desc within level 1)
+    // Level 2 spell: Acid Arrow
+    expect(rows.map((row) => row.spell.id)).toEqual([
+      'shield',        // level 1, name desc: S > M > B
+      'magic-missile', // level 1
+      'bless',         // level 1
+      'acid-arrow',    // level 2
+    ]);
   });
 });

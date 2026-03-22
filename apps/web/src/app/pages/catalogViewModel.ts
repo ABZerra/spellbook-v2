@@ -13,10 +13,14 @@ export type CatalogSortKey =
   | 'notes'
   | 'queued';
 
+export interface CatalogSortEntry {
+  key: CatalogSortKey;
+  direction: 'asc' | 'desc';
+}
+
 export interface CatalogPreferences {
   viewMode: CatalogViewMode;
-  sortKey: CatalogSortKey;
-  sortDirection: 'asc' | 'desc';
+  sorts: CatalogSortEntry[];
 }
 
 export interface CatalogRow {
@@ -40,31 +44,25 @@ interface SanitizeCatalogPreferencesOptions {
 
 const VALID_VIEW_MODES: CatalogViewMode[] = ['all', 'character_filtered'];
 const VALID_SORT_KEYS: CatalogSortKey[] = ['prepared', 'level', 'name', 'list', 'save', 'action', 'notes', 'queued'];
-const VALID_SORT_DIRECTIONS: CatalogPreferences['sortDirection'][] = ['asc', 'desc'];
+const VALID_SORT_DIRECTIONS: Array<'asc' | 'desc'> = ['asc', 'desc'];
 
 export function getDefaultCatalogPreferences(): CatalogPreferences {
-  return {
-    viewMode: 'all',
-    sortKey: 'name',
-    sortDirection: 'asc',
-  };
+  return { viewMode: 'all', sorts: [] };
 }
 
 export function resetCatalogSort(preferences: CatalogPreferences): CatalogPreferences {
-  return {
-    ...preferences,
-    viewMode: 'all',
-    sortKey: 'name',
-    sortDirection: 'asc',
-  };
+  return { ...preferences, viewMode: 'all', sorts: [] };
 }
 
 export function sanitizeCatalogPreferences(
   preferences: CatalogPreferences,
   options: SanitizeCatalogPreferencesOptions,
 ): CatalogPreferences {
-  if (!options.allowListSort && preferences.sortKey === 'list') {
-    return resetCatalogSort(preferences);
+  if (!options.allowListSort && preferences.sorts.some((s) => s.key === 'list')) {
+    return {
+      ...preferences,
+      sorts: preferences.sorts.filter((s) => s.key !== 'list'),
+    };
   }
 
   return preferences;
@@ -75,16 +73,30 @@ export function readCatalogPreferences(raw: string | null): CatalogPreferences {
   if (!raw) return fallback;
 
   try {
-    const parsed = JSON.parse(raw) as Partial<CatalogPreferences>;
+    const parsed = JSON.parse(raw);
     if (!parsed) return fallback;
     if (!VALID_VIEW_MODES.includes(parsed.viewMode as CatalogViewMode)) return fallback;
-    if (!VALID_SORT_KEYS.includes(parsed.sortKey as CatalogSortKey)) return fallback;
-    if (!VALID_SORT_DIRECTIONS.includes(parsed.sortDirection as CatalogPreferences['sortDirection'])) return fallback;
+
+    // Migrate old single-sort format
+    if ('sortKey' in parsed && !('sorts' in parsed)) {
+      if (!VALID_SORT_KEYS.includes(parsed.sortKey) || !VALID_SORT_DIRECTIONS.includes(parsed.sortDirection)) {
+        return fallback;
+      }
+      return {
+        viewMode: parsed.viewMode as CatalogViewMode,
+        sorts: [{ key: parsed.sortKey as CatalogSortKey, direction: parsed.sortDirection as 'asc' | 'desc' }],
+      };
+    }
+
+    // New format
+    if (!Array.isArray(parsed.sorts)) return fallback;
+    const validSorts = parsed.sorts.filter(
+      (s: any) => s && VALID_SORT_KEYS.includes(s.key) && VALID_SORT_DIRECTIONS.includes(s.direction),
+    );
 
     return {
       viewMode: parsed.viewMode as CatalogViewMode,
-      sortKey: parsed.sortKey as CatalogSortKey,
-      sortDirection: parsed.sortDirection as CatalogPreferences['sortDirection'],
+      sorts: validSorts as CatalogSortEntry[],
     };
   } catch {
     return fallback;
@@ -104,10 +116,6 @@ function matchesSearch(spell: SpellRecord, query: string): boolean {
 
 function compareText(left: string, right: string): number {
   return left.localeCompare(right);
-}
-
-function compareBoolean(left: boolean, right: boolean): number {
-  return Number(left) - Number(right);
 }
 
 function getSortValue(row: CatalogRow, sortKey: CatalogSortKey): string | number {
@@ -134,18 +142,20 @@ function getSortValue(row: CatalogRow, sortKey: CatalogSortKey): string | number
 }
 
 function compareRows(left: CatalogRow, right: CatalogRow, preferences: CatalogPreferences): number {
-  const leftValue = getSortValue(left, preferences.sortKey);
-  const rightValue = getSortValue(right, preferences.sortKey);
+  for (const sort of preferences.sorts) {
+    const leftValue = getSortValue(left, sort.key);
+    const rightValue = getSortValue(right, sort.key);
 
-  let result = 0;
-  if (typeof leftValue === 'number' && typeof rightValue === 'number') {
-    result = leftValue - rightValue;
-  } else {
-    result = compareText(String(leftValue), String(rightValue));
-  }
+    let result = 0;
+    if (typeof leftValue === 'number' && typeof rightValue === 'number') {
+      result = leftValue - rightValue;
+    } else {
+      result = compareText(String(leftValue), String(rightValue));
+    }
 
-  if (result !== 0) {
-    return preferences.sortDirection === 'desc' ? result * -1 : result;
+    if (result !== 0) {
+      return sort.direction === 'desc' ? result * -1 : result;
+    }
   }
 
   return compareText(left.spell.name, right.spell.name);

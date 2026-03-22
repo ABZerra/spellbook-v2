@@ -71,6 +71,7 @@ export function CatalogPage() {
   const [preferences, setPreferences] = useState<CatalogPreferences>(readInitialPreferences);
   const [selectedSpellId, setSelectedSpellId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [nextSortDirection, setNextSortDirection] = useState<'asc' | 'desc'>('asc');
 
   const showListColumn = (activeCharacter?.availableLists || []).length > 1;
   const effectivePreferences = useMemo(
@@ -81,8 +82,7 @@ export function CatalogPage() {
   useEffect(() => {
     if (
       preferences.viewMode !== effectivePreferences.viewMode
-      || preferences.sortKey !== effectivePreferences.sortKey
-      || preferences.sortDirection !== effectivePreferences.sortDirection
+      || JSON.stringify(preferences.sorts) !== JSON.stringify(effectivePreferences.sorts)
     ) {
       setPreferences(effectivePreferences);
     }
@@ -204,12 +204,20 @@ export function CatalogPage() {
 
           <select
             className="w-full rounded-2xl border border-border-dark bg-bg px-4 py-3 text-text"
-            value={effectivePreferences.sortKey}
-            onChange={(event) => setPreferences((current) => ({
-              ...current,
-              sortKey: event.target.value as CatalogSortKey,
-            }))}
+            value=""
+            onChange={(event) => {
+              const newKey = event.target.value as CatalogSortKey;
+              if (!newKey) return;
+              setPreferences((current) => {
+                if (current.sorts.some((s) => s.key === newKey)) return current;
+                return {
+                  ...current,
+                  sorts: [...current.sorts, { key: newKey, direction: nextSortDirection }],
+                };
+              });
+            }}
           >
+            <option value="" disabled>Add sort…</option>
             {SORTABLE_COLUMNS
               .filter((column) => showListColumn || column.key !== 'list')
               .map((column) => (
@@ -220,12 +228,9 @@ export function CatalogPage() {
           <button
             type="button"
             className="w-full rounded-2xl border border-border-dark bg-bg px-4 py-3 text-left text-text transition-colors hover:bg-bg-2"
-            onClick={() => setPreferences((current) => ({
-              ...current,
-              sortDirection: current.sortDirection === 'asc' ? 'desc' : 'asc',
-            }))}
+            onClick={() => setNextSortDirection((d) => d === 'asc' ? 'desc' : 'asc')}
           >
-            {effectivePreferences.sortDirection === 'asc' ? 'Ascending' : 'Descending'}
+            {nextSortDirection === 'asc' ? 'Ascending' : 'Descending'}
           </button>
 
           {activeCharacter ? (
@@ -250,10 +255,7 @@ export function CatalogPage() {
 
         {(() => {
           const isCharFiltered = effectivePreferences.viewMode === 'character_filtered' && activeCharacter;
-          const isNonDefaultSort = effectivePreferences.sortKey !== 'name' || effectivePreferences.sortDirection !== 'asc';
           const hasSearch = search.trim().length > 0;
-          const sortLabel = SORTABLE_COLUMNS.find((c) => c.key === effectivePreferences.sortKey)?.label || effectivePreferences.sortKey;
-          const sortArrow = effectivePreferences.sortDirection === 'asc' ? '↑' : '↓';
 
           return (
             <div className="mt-4 flex flex-wrap gap-2 text-xs text-text-muted">
@@ -273,16 +275,24 @@ export function CatalogPage() {
                   <span className="text-[9px] opacity-50" aria-hidden="true">✕</span>
                 </button>
               ) : null}
-              {isNonDefaultSort ? (
-                <button
-                  type="button"
-                  className="flex items-center gap-1.5 rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-text-muted transition-colors hover:border-blood-soft"
-                  onClick={() => setPreferences((current) => ({ ...current, sortKey: 'name', sortDirection: 'asc' }))}
-                >
-                  Sort: {sortLabel} {sortArrow}
-                  <span className="text-[9px] opacity-50" aria-hidden="true">✕</span>
-                </button>
-              ) : null}
+              {effectivePreferences.sorts.map((sort, index) => {
+                const label = SORTABLE_COLUMNS.find((c) => c.key === sort.key)?.label || sort.key;
+                const arrow = sort.direction === 'asc' ? '↑' : '↓';
+                return (
+                  <button
+                    key={`sort-${sort.key}`}
+                    type="button"
+                    className="flex items-center gap-1.5 rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-text-muted transition-colors hover:border-blood-soft"
+                    onClick={() => setPreferences((current) => ({
+                      ...current,
+                      sorts: current.sorts.filter((_, i) => i !== index),
+                    }))}
+                  >
+                    Sort: {label} {arrow}
+                    <span className="text-[9px] opacity-50" aria-hidden="true">✕</span>
+                  </button>
+                );
+              })}
               {hasSearch ? (
                 <button
                   type="button"
