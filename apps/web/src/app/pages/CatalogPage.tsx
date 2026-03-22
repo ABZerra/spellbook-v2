@@ -3,6 +3,7 @@ import { getAddableAssignmentLists, getSpellLists, isSpellEligibleForCharacter }
 import { useApp } from '../state/AppContext';
 import { SpellDetailDialog } from '../components/SpellDetailDialog';
 import { getCatalogRowPresentation } from './catalogPresentation';
+import type { SpellRecord } from '../types';
 import {
   buildCatalogRows,
   getDefaultCatalogPreferences,
@@ -40,6 +41,14 @@ function readInitialPreferences(): CatalogPreferences {
 function formatSpellLevel(level: number): string {
   if (level === 0) return 'Cantrip';
   return `Level ${level}`;
+}
+
+function isRitualSpell(spell: SpellRecord): boolean {
+  return (spell.castingTime || '').toLowerCase().includes('ritual');
+}
+
+function isConcentrationSpell(spell: SpellRecord): boolean {
+  return (spell.duration || '').toLowerCase().startsWith('concentration');
 }
 
 function getSpellExcerpt(notes: string, description: string): string {
@@ -329,6 +338,18 @@ export function CatalogPage() {
                     <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-text-muted">
                       {listLabel}
                     </span>
+                    {isRitualSpell(spell) ? (
+                      <span className="rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.22em]"
+                        style={{ borderColor: 'rgba(68,170,153,0.5)', background: 'rgba(68,170,153,0.12)', color: '#6cc' }}>
+                        Ritual
+                      </span>
+                    ) : null}
+                    {isConcentrationSpell(spell) ? (
+                      <span className="rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.22em]"
+                        style={{ borderColor: 'rgba(200,160,64,0.5)', background: 'rgba(200,160,64,0.1)', color: '#d4b060' }}>
+                        Concentration
+                      </span>
+                    ) : null}
                   </div>
 
                   <div>
