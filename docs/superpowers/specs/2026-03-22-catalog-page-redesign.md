@@ -105,7 +105,7 @@ Consolidate the state label pill and action button into a single button. The but
 
 Add pill tags for Ritual and Concentration spells in the spell tags row (alongside Level and List pills).
 
-**Detection:** Check `spell.spellTags` array for entries containing "Ritual" or "Concentration" (case-insensitive match).
+**Detection:** Ritual: check `spell.castingTime` for substring "Ritual" (case-insensitive). Concentration: check `spell.duration` starts with "Concentration" (case-insensitive).
 
 **Styling:**
 - **Ritual:** Teal — border `rgba(68,170,153,0.5)`, bg `rgba(68,170,153,0.12)`, text `#6cc`
