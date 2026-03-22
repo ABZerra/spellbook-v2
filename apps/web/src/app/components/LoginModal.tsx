@@ -7,7 +7,7 @@ interface LoginModalProps {
 }
 
 export function LoginModal({ onClose, onSuccess }: LoginModalProps) {
-  const { login, createAccount, clearPendingNewUser, loginError, pendingNewUser } = useAuth();
+  const { login, createAccount, clearPendingNewUser, goOffline, loginError, pendingNewUser, serverAvailable } = useAuth();
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -118,6 +118,16 @@ export function LoginModal({ onClose, onSuccess }: LoginModalProps) {
                 {loading ? 'Checking...' : 'Continue'}
               </button>
             </div>
+
+            {serverAvailable === false ? (
+              <button
+                type="button"
+                onClick={() => { goOffline(); onSuccess(); }}
+                className="w-full text-xs text-text-dim transition-colors hover:text-text-muted"
+              >
+                Continue offline (data stays in this browser)
+              </button>
+            ) : null}
           </form>
         )}
       </div>

@@ -6,7 +6,7 @@ interface LoginScreenProps {
 }
 
 export function LoginScreen({ onSuccess }: LoginScreenProps) {
-  const { login, createAccount, clearPendingNewUser, loginError, pendingNewUser } = useAuth();
+  const { login, createAccount, clearPendingNewUser, goOffline, loginError, pendingNewUser, serverAvailable } = useAuth();
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -37,6 +37,11 @@ export function LoginScreen({ onSuccess }: LoginScreenProps) {
 
   function handleBack() {
     clearPendingNewUser();
+  }
+
+  function handleOffline() {
+    goOffline();
+    onSuccess?.();
   }
 
   if (pendingNewUser) {
@@ -106,6 +111,16 @@ export function LoginScreen({ onSuccess }: LoginScreenProps) {
         >
           {loading ? 'Checking...' : 'Continue'}
         </button>
+
+        {serverAvailable === false ? (
+          <button
+            type="button"
+            onClick={handleOffline}
+            className="w-full text-xs text-text-dim transition-colors hover:text-text-muted"
+          >
+            Continue offline (data stays in this browser)
+          </button>
+        ) : null}
       </form>
     </div>
   );

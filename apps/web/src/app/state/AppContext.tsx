@@ -89,7 +89,7 @@ interface AppProviderProps {
 
 export function AppProvider({ children, provider }: AppProviderProps) {
   const [resolvedProvider] = useState<SpellCatalogProvider>(() => provider || new LocalSnapshotProvider());
-  const { userId, isAuthenticated } = useAuth();
+  const { userId, isAuthenticated, isOffline } = useAuth();
 
   const syncServiceRef = useRef(new SyncService());
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
@@ -104,7 +104,7 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     const service = syncServiceRef.current;
     const unsubscribe = service.onStatusChange(setSyncStatus);
 
-    if (isAuthenticated && userId) {
+    if (isAuthenticated && userId && !isOffline) {
       fetch(`/api/users/${encodeURIComponent(userId)}/characters`)
         .then((res) => res.ok ? res.json() : null)
         .then((data) => {

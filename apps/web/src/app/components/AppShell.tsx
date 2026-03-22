@@ -21,7 +21,7 @@ export function AppShell({ children }: AppShellProps) {
     syncStatus,
   } = useApp();
 
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, isOffline, logout } = useAuth();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -77,7 +77,11 @@ export function AppShell({ children }: AppShellProps) {
 
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
-                <SyncIndicator status={syncStatus} />
+                {isOffline ? (
+                  <span className="text-[11px] text-text-dim">Offline</span>
+                ) : (
+                  <SyncIndicator status={syncStatus} />
+                )}
                 <button
                   onClick={logout}
                   className="text-xs text-text-dim hover:text-text transition-colors"
