@@ -25,7 +25,10 @@ app.use(express.json());
 app.use('/api', createApiRouter(github));
 
 // Static files (built frontend)
-const staticPath = path.resolve(__dirname, config.staticDir);
+const staticPath = path.resolve(process.cwd(), 'apps/web/dist');
+console.log('__dirname:', __dirname);
+console.log('cwd:', process.cwd());
+console.log('Static path:', staticPath);
 app.use(express.static(staticPath));
 
 // SPA fallback — serve index.html for all non-API, non-static routes
