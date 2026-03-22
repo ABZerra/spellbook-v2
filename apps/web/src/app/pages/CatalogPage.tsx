@@ -263,8 +263,12 @@ export function CatalogPage() {
                 Showing {rows.length} of {spells.length}
               </span>
               <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Search matches: {searchMatchedRows.length}</span>
-              <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Eligible on screen: {eligibleCount}</span>
-              <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Queued: {queuedCount}</span>
+              {activeCharacter ? (
+                <>
+                  <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Eligible on screen: {eligibleCount}</span>
+                  <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Queued: {queuedCount}</span>
+                </>
+              ) : null}
               {isCharFiltered ? (
                 <button
                   type="button"
