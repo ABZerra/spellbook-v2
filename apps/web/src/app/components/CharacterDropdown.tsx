@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { CharacterProfile } from '../types';
 import { formatClassDisplayString } from '../domain/character';
+import type { SyncStatus } from '../state/SyncService';
+import { SyncIndicator } from './SyncIndicator';
 
 interface CharacterDropdownProps {
   characters: CharacterProfile[];
   activeCharacterId: string | null;
   onSelectCharacter: (id: string) => void;
   onCreateNew: () => void;
+  isAuthenticated?: boolean;
+  isOffline?: boolean;
+  syncStatus?: SyncStatus;
+  onLogout?: () => void;
 }
 
 export function CharacterDropdown({
@@ -14,6 +20,10 @@ export function CharacterDropdown({
   activeCharacterId,
   onSelectCharacter,
   onCreateNew,
+  isAuthenticated,
+  isOffline,
+  syncStatus,
+  onLogout,
 }: CharacterDropdownProps) {
   const [open, setOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
@@ -193,6 +203,26 @@ export function CharacterDropdown({
               + New Character
             </span>
           </div>
+
+          {isAuthenticated ? (
+            <div className="flex items-center justify-between px-3 py-2 border-t border-border-dark">
+              {isOffline ? (
+                <span className="text-[11px] text-text-dim">Offline</span>
+              ) : syncStatus ? (
+                <SyncIndicator status={syncStatus} />
+              ) : null}
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  onLogout?.();
+                }}
+                className="text-[11px] text-text-dim hover:text-text transition-colors"
+              >
+                Log out
+              </button>
+            </div>
+          ) : null}
         </div>
       )}
     </div>

@@ -5,7 +5,6 @@ import { useAuth } from '../state/AuthContext';
 import { CharacterDropdown } from './CharacterDropdown';
 import { CreateCharacterModal } from './CreateCharacterModal';
 import { LoginModal } from './LoginModal';
-import { SyncIndicator } from './SyncIndicator';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -73,23 +72,11 @@ export function AppShell({ children }: AppShellProps) {
               activeCharacterId={activeCharacter?.id ?? null}
               onSelectCharacter={setActiveCharacter}
               onCreateNew={handleCreateNew}
+              isAuthenticated={isAuthenticated}
+              isOffline={isOffline}
+              syncStatus={syncStatus}
+              onLogout={logout}
             />
-
-            {isAuthenticated ? (
-              <div className="flex items-center gap-3">
-                {isOffline ? (
-                  <span className="text-[11px] text-text-dim">Offline</span>
-                ) : (
-                  <SyncIndicator status={syncStatus} />
-                )}
-                <button
-                  onClick={logout}
-                  className="text-xs text-text-dim hover:text-text transition-colors"
-                >
-                  Log out
-                </button>
-              </div>
-            ) : null}
           </div>
         </div>
       </header>
