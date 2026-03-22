@@ -239,13 +239,59 @@ export function CatalogPage() {
           ) : null}
         </div>
 
-        {activeCharacter ? (
-          <div className="mt-4 flex flex-wrap gap-2 text-xs text-text-muted">
-            <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Search matches: {searchMatchedRows.length}</span>
-            <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Eligible on screen: {eligibleCount}</span>
-            <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Queued: {queuedCount}</span>
-          </div>
-        ) : null}
+        <div className="mt-4 flex flex-wrap gap-2 text-xs text-text-muted">
+          <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-text-muted">
+            Showing {rows.length} of {spells.length}
+          </span>
+          <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Search matches: {searchMatchedRows.length}</span>
+          <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Eligible on screen: {eligibleCount}</span>
+          <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Queued: {queuedCount}</span>
+        </div>
+
+        {(() => {
+          const isCharFiltered = effectivePreferences.viewMode === 'character_filtered' && activeCharacter;
+          const isNonDefaultSort = effectivePreferences.sortKey !== 'name' || effectivePreferences.sortDirection !== 'asc';
+          const hasSearch = search.trim().length > 0;
+          if (!isCharFiltered && !isNonDefaultSort && !hasSearch) return null;
+
+          const sortLabel = SORTABLE_COLUMNS.find((c) => c.key === effectivePreferences.sortKey)?.label || effectivePreferences.sortKey;
+          const sortArrow = effectivePreferences.sortDirection === 'asc' ? '↑' : '↓';
+
+          return (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {isCharFiltered ? (
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 rounded-full border border-accent-soft bg-accent-soft/25 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-text transition-colors hover:border-blood-soft"
+                  onClick={() => setPreferences((current) => ({ ...current, viewMode: 'all' }))}
+                >
+                  Character: {activeCharacter.name}
+                  <span className="text-[9px] opacity-50" aria-hidden="true">✕</span>
+                </button>
+              ) : null}
+              {isNonDefaultSort ? (
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-text-muted transition-colors hover:border-blood-soft"
+                  onClick={() => setPreferences((current) => ({ ...current, sortKey: 'name', sortDirection: 'asc' }))}
+                >
+                  Sort: {sortLabel} {sortArrow}
+                  <span className="text-[9px] opacity-50" aria-hidden="true">✕</span>
+                </button>
+              ) : null}
+              {hasSearch ? (
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-text-muted transition-colors hover:border-blood-soft"
+                  onClick={() => setSearch('')}
+                >
+                  Search: &ldquo;{search}&rdquo;
+                  <span className="text-[9px] opacity-50" aria-hidden="true">✕</span>
+                </button>
+              ) : null}
+            </div>
+          );
+        })()}
 
         {error ? <p className="mt-4 rounded-2xl border border-blood-soft bg-blood-soft px-4 py-3 text-sm text-blood">{error}</p> : null}
       </section>
