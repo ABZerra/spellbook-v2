@@ -13,7 +13,7 @@ export function createApiRouter(github: GitHubClient): Router {
 
   router.get('/users/:userId/characters', async (req: Request, res: Response) => {
     try {
-      const { userId } = req.params;
+      const userId = req.params.userId as string;
       const isValid = await validateUser(userId);
       if (!isValid) {
         res.status(404).json({ error: 'User not found' });
@@ -35,7 +35,7 @@ export function createApiRouter(github: GitHubClient): Router {
 
   router.put('/users/:userId/characters', async (req: Request, res: Response) => {
     try {
-      const { userId } = req.params;
+      const userId = req.params.userId as string;
       const { characters, sha } = req.body;
 
       if (!Array.isArray(characters)) {
