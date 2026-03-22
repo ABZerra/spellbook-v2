@@ -107,8 +107,29 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     if (isAuthenticated && userId && !isOffline) {
       fetch(`/api/users/${encodeURIComponent(userId)}/characters`)
         .then((res) => res.ok ? res.json() : null)
-        .then((data) => {
-          if (data?.sha !== undefined) {
+        .then(async (data) => {
+          if (!data) return;
+          // Hydrate local state and IndexedDB with remote characters
+          const remoteCharacters = (Array.isArray(data.characters) ? data.characters : [])
+            .map((c: CharacterProfile) => normalizeCharacterProfile(c));
+          // Write each remote character to local provider (IndexedDB)
+          const localCharacters = await resolvedProvider.listCharacterProfiles();
+          const localIds = new Set(localCharacters.map((c) => c.id));
+          for (const remote of remoteCharacters) {
+            if (localIds.has(remote.id)) {
+              await resolvedProvider.saveCharacterProfile(remote);
+            } else {
+              await resolvedProvider.createCharacterProfile(remote);
+            }
+          }
+          // Update React state with remote data
+          setCharacters(remoteCharacters.sort((a: CharacterProfile, b: CharacterProfile) => a.name.localeCompare(b.name)));
+          if (remoteCharacters.length > 0 && !activeCharacterId) {
+            const firstId = remoteCharacters[0].id;
+            setActiveCharacterId(firstId);
+            localStorage.setItem(ACTIVE_CHARACTER_KEY, firstId);
+          }
+          if (data.sha !== undefined) {
             service.start(userId, data.sha);
           }
         })
