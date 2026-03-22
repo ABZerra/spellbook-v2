@@ -4,6 +4,7 @@ import { useApp } from '../state/AppContext';
 import { useAuth } from '../state/AuthContext';
 import { CharacterDropdown } from './CharacterDropdown';
 import { CreateCharacterModal } from './CreateCharacterModal';
+import { LoginModal } from './LoginModal';
 import { SyncIndicator } from './SyncIndicator';
 
 interface AppShellProps {
@@ -23,6 +24,15 @@ export function AppShell({ children }: AppShellProps) {
   const { isAuthenticated, logout } = useAuth();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  function handleCreateNew() {
+    if (isAuthenticated) {
+      setShowCreateModal(true);
+    } else {
+      setShowLoginModal(true);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-bg text-text">
@@ -62,7 +72,7 @@ export function AppShell({ children }: AppShellProps) {
               characters={characters}
               activeCharacterId={activeCharacter?.id ?? null}
               onSelectCharacter={setActiveCharacter}
-              onCreateNew={() => setShowCreateModal(true)}
+              onCreateNew={handleCreateNew}
             />
 
             {isAuthenticated ? (
@@ -81,6 +91,16 @@ export function AppShell({ children }: AppShellProps) {
       </header>
 
       <main className="mx-auto w-full max-w-7xl px-4 py-6 md:py-8">{children}</main>
+
+      {showLoginModal ? (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onSuccess={() => {
+            setShowLoginModal(false);
+            setShowCreateModal(true);
+          }}
+        />
+      ) : null}
 
       {showCreateModal ? (
         <CreateCharacterModal
