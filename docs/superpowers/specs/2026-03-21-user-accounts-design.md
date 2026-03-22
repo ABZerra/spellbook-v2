@@ -39,10 +39,12 @@ data/
 
 ```json
 [
-  { "id": "alice", "username": "alice", "createdAt": "2026-03-21T00:00:00Z" },
-  { "id": "bob", "username": "bob", "createdAt": "2026-03-21T00:00:00Z" }
+  { "id": "alice", "username": "alice", "role": "admin", "createdAt": "2026-03-21T00:00:00Z" },
+  { "id": "bob", "username": "bob", "role": "user", "createdAt": "2026-03-21T00:00:00Z" }
 ]
 ```
+
+The `role` field (`"admin"` or `"user"`) is included from the start to support future superadmin features. For now, the server does not enforce role-based access — all users have the same permissions.
 
 ### characters.json
 
@@ -243,3 +245,20 @@ This can be done via GitHub's web UI, Claude Code, or any git workflow.
 - Conflict resolution beyond last-write-wins.
 - User registration (self-service sign-up).
 - Data encryption.
+- Per-user spell customization and superadmin spell editing (see Future Considerations).
+
+## Future Considerations
+
+These features are not in scope but influence architectural decisions. The current design should not block them.
+
+### Per-User Spell Customization
+
+Users will eventually be able to edit certain fields on spells — personal notes, homebrew tweaks, etc. These edits are scoped to the user and don't affect the canonical catalog or other users.
+
+**Architectural implication:** User-scoped spell data should live alongside character data in `data/users/{username}/`, not in the shared spell snapshot. A likely shape is a `spell-overrides.json` file per user that layers on top of the canonical catalog at read time. The API already supports per-user file reads/writes, so this slots in naturally.
+
+### Superadmin Spell Catalog Editing
+
+A superadmin role (the repo owner) will be able to edit any field on any spell in the canonical `spells.snapshot.json` through the app's UI. Changes apply to all users.
+
+**Architectural implication:** The `users.json` registry should include a `role` field (e.g., `"role": "user"` or `"role": "admin"`). The API needs an additional endpoint for writing to `data/spells.snapshot.json` (gated by role). The frontend needs to show edit controls on spell details when the logged-in user is an admin. The current design accommodates this — the server already proxies GitHub writes, and adding a role check + a new endpoint is straightforward.
