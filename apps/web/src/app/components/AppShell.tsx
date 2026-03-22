@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useApp } from '../state/AppContext';
+import { useAuth } from '../state/AuthContext';
 import { CharacterDropdown } from './CharacterDropdown';
 import { CreateCharacterModal } from './CreateCharacterModal';
+import { SyncIndicator } from './SyncIndicator';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -15,7 +17,10 @@ export function AppShell({ children }: AppShellProps) {
     setActiveCharacter,
     catalogClasses,
     createCharacter,
+    syncStatus,
   } = useApp();
+
+  const { isAuthenticated, logout } = useAuth();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -59,6 +64,18 @@ export function AppShell({ children }: AppShellProps) {
               onSelectCharacter={setActiveCharacter}
               onCreateNew={() => setShowCreateModal(true)}
             />
+
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3">
+                <SyncIndicator status={syncStatus} />
+                <button
+                  onClick={logout}
+                  className="text-xs text-text-dim hover:text-text transition-colors"
+                >
+                  Log out
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       </header>
