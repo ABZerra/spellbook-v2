@@ -248,26 +248,21 @@ export function CatalogPage() {
           ) : null}
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2 text-xs text-text-muted">
-          <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-text-muted">
-            Showing {rows.length} of {spells.length}
-          </span>
-          <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Search matches: {searchMatchedRows.length}</span>
-          <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Eligible on screen: {eligibleCount}</span>
-          <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Queued: {queuedCount}</span>
-        </div>
-
         {(() => {
           const isCharFiltered = effectivePreferences.viewMode === 'character_filtered' && activeCharacter;
           const isNonDefaultSort = effectivePreferences.sortKey !== 'name' || effectivePreferences.sortDirection !== 'asc';
           const hasSearch = search.trim().length > 0;
-          if (!isCharFiltered && !isNonDefaultSort && !hasSearch) return null;
-
           const sortLabel = SORTABLE_COLUMNS.find((c) => c.key === effectivePreferences.sortKey)?.label || effectivePreferences.sortKey;
           const sortArrow = effectivePreferences.sortDirection === 'asc' ? '↑' : '↓';
 
           return (
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-4 flex flex-wrap gap-2 text-xs text-text-muted">
+              <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-text-muted">
+                Showing {rows.length} of {spells.length}
+              </span>
+              <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Search matches: {searchMatchedRows.length}</span>
+              <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Eligible on screen: {eligibleCount}</span>
+              <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Queued: {queuedCount}</span>
               {isCharFiltered ? (
                 <button
                   type="button"
@@ -318,9 +313,7 @@ export function CatalogPage() {
               role="button"
               tabIndex={0}
               aria-label={`View details for ${spell.name}`}
-              className={`cursor-pointer rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-4 transition-colors hover:border-gold-soft/40 hover:bg-bg-1 ${
-                presentation.disabled ? 'opacity-60' : ''
-              }`}
+              className="cursor-pointer rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-4 transition-colors hover:border-gold-soft/40 hover:bg-bg-1"
               onClick={() => setSelectedSpellId(spell.id)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
