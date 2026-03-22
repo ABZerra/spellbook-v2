@@ -19,7 +19,7 @@ export function getCatalogRowPresentation({
   if (row.queued) {
     return {
       stateLabel: 'Queued',
-      actionLabel: 'Remove',
+      actionLabel: 'Queued ✓',
       disabled: false,
       helperText: 'Already staged for the next preparation.',
     };
@@ -28,7 +28,7 @@ export function getCatalogRowPresentation({
   if (!row.eligible) {
     return {
       stateLabel: 'Off-list',
-      actionLabel: 'Unavailable',
+      actionLabel: 'Off-list',
       disabled: true,
       helperText: 'This spell is outside your active spell lists.',
     };
@@ -37,7 +37,7 @@ export function getCatalogRowPresentation({
   if (addableLists.length === 0) {
     return {
       stateLabel: 'Too High',
-      actionLabel: 'Blocked',
+      actionLabel: 'Too High',
       disabled: true,
       helperText: 'This spell is above every owned list max spell level.',
     };
@@ -46,7 +46,7 @@ export function getCatalogRowPresentation({
   if (row.prepared) {
     return {
       stateLabel: 'Prepared',
-      actionLabel: 'Queue',
+      actionLabel: 'Prepared · Queue',
       disabled: false,
       helperText: 'Prepared now. You can still stage a change for the next rest.',
     };
