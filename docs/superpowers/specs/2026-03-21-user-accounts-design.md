@@ -12,6 +12,7 @@ This feature adds user accounts for a friends & family audience. The admin (repo
 
 ## Requirements
 
+- The spell catalog is browsable without logging in. Login is only prompted when accessing character-dependent flows (prepare, character management, queuing spells).
 - Users log in by typing a username. No password, no user list shown.
 - A user can store multiple characters, each with the existing `CharacterProfile` data (multiclass support via `classes: ClassEntry[]`, casting ability, spell lists, preparation limits, prepared spells, queue, saved ideas).
 - A user can add, delete, and edit characters and their information.
@@ -133,13 +134,25 @@ Writes the updated characters array to GitHub via an auto-merge PR flow:
 
 ## Frontend Changes
 
+### Auth Model: Lazy Login
+
+The spell catalog is accessible without logging in. Login is only prompted when the user tries to do something that requires a character:
+
+- **No login required:** Browsing the catalog, viewing spell details, searching/filtering.
+- **Login required:** Preparing spells, managing characters, queuing spells, anything that reads or writes character data.
+
+When a non-logged-in user navigates to a character-dependent flow (Prepare page, Character page) or triggers a character-dependent action on the Catalog page (e.g., queue a spell), the app prompts login instead of proceeding.
+
+The CharacterDropdown in the navbar shows a "Log in" button when no user is authenticated. The CharacterGate component (or equivalent) intercepts character-dependent routes/actions and redirects to login.
+
 ### New: Login Screen
 
-- Shown when no username in localStorage.
+- Shown when a character-dependent flow is accessed without a logged-in user.
 - Single text input: "Enter your username."
 - On submit: call GET endpoint.
-  - Success → store username in localStorage, load app.
+  - Success → store username in localStorage, load characters, return to intended destination.
   - 404 → show error: "Username not found."
+- After login, the user is redirected back to wherever they were trying to go.
 
 ### New: Sync Service
 
