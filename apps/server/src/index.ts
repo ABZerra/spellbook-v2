@@ -7,7 +7,9 @@ import { createApiRouter } from './routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+console.log('Starting server... PORT env:', process.env.PORT);
 const config = loadConfig();
+console.log('Config loaded, port:', config.port);
 
 const github = new GitHubClient({
   pat: config.githubPat,

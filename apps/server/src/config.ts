@@ -18,7 +18,7 @@ export function loadConfig(): ServerConfig {
   }
 
   return {
-    port: parseInt(process.env.PORT || '3001', 10),
+    port: Number(process.env.PORT) || 3001,
     githubPat,
     githubRepo,
     githubBranch: process.env.GITHUB_BRANCH || 'main',
