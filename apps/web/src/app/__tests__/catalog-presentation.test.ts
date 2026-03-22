@@ -22,7 +22,7 @@ describe('catalog presentation', () => {
     });
 
     expect(result.stateLabel).toBe('Queued');
-    expect(result.actionLabel).toBe('Remove');
+    expect(result.actionLabel).toBe('Queued ✓');
     expect(result.disabled).toBe(false);
     expect(result.helperText).toBe('Already staged for the next preparation.');
   });
@@ -47,7 +47,7 @@ describe('catalog presentation', () => {
     });
 
     expect(result.stateLabel).toBe('Off-list');
-    expect(result.actionLabel).toBe('Unavailable');
+    expect(result.actionLabel).toBe('Off-list');
     expect(result.disabled).toBe(true);
     expect(result.helperText).toMatch(/outside your active spell lists/i);
   });
@@ -72,8 +72,40 @@ describe('catalog presentation', () => {
     });
 
     expect(result.stateLabel).toBe('Too High');
-    expect(result.actionLabel).toBe('Blocked');
+    expect(result.actionLabel).toBe('Too High');
     expect(result.disabled).toBe(true);
     expect(result.helperText).toMatch(/max spell level/i);
+  });
+
+  it('shows prepared spells as queueable with distinct label', () => {
+    const result = getCatalogRowPresentation({
+      row: {
+        spell: { id: 'shield', name: 'Shield', level: 1, save: '', castingTime: '1 Reaction', notes: '' } as any,
+        eligible: true,
+        prepared: true,
+        queued: false,
+        displayList: 'WIZARD',
+      },
+      addableLists: ['WIZARD'],
+    });
+
+    expect(result.actionLabel).toBe('Prepared · Queue');
+    expect(result.disabled).toBe(false);
+  });
+
+  it('shows queued label when spell is both prepared and queued', () => {
+    const result = getCatalogRowPresentation({
+      row: {
+        spell: { id: 'shield', name: 'Shield', level: 1, save: '', castingTime: '1 Reaction', notes: '' } as any,
+        eligible: true,
+        prepared: true,
+        queued: true,
+        displayList: 'WIZARD',
+      },
+      addableLists: ['WIZARD'],
+    });
+
+    expect(result.actionLabel).toBe('Queued ✓');
+    expect(result.disabled).toBe(false);
   });
 });

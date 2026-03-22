@@ -3,6 +3,7 @@ import { getAddableAssignmentLists, getSpellLists, isSpellEligibleForCharacter }
 import { useApp } from '../state/AppContext';
 import { SpellDetailDialog } from '../components/SpellDetailDialog';
 import { getCatalogRowPresentation } from './catalogPresentation';
+import type { SpellRecord } from '../types';
 import {
   buildCatalogRows,
   getDefaultCatalogPreferences,
@@ -40,6 +41,14 @@ function readInitialPreferences(): CatalogPreferences {
 function formatSpellLevel(level: number): string {
   if (level === 0) return 'Cantrip';
   return `Level ${level}`;
+}
+
+function isRitualSpell(spell: SpellRecord): boolean {
+  return (spell.castingTime || '').toLowerCase().includes('ritual');
+}
+
+function isConcentrationSpell(spell: SpellRecord): boolean {
+  return (spell.duration || '').toLowerCase().startsWith('concentration');
 }
 
 function getSpellExcerpt(notes: string, description: string): string {
@@ -130,8 +139,14 @@ export function CatalogPage() {
   const queuedCount = activeCharacter?.nextPreparationQueue.length || 0;
   const eligibleCount = rows.filter((row) => row.eligible).length;
 
-  const emptyStateMessage = effectivePreferences.viewMode === 'eligible_only' && searchMatchedRows.length > 0
-    ? 'Nothing in this search fits the active character right now.'
+  useEffect(() => {
+    if (!activeCharacter && preferences.viewMode === 'character_filtered') {
+      setPreferences((current) => ({ ...current, viewMode: 'all' }));
+    }
+  }, [activeCharacter, preferences.viewMode]);
+
+  const emptyStateMessage = effectivePreferences.viewMode === 'character_filtered' && searchMatchedRows.length > 0
+    ? 'No spells match for this character and search.'
     : 'No spells match this search yet.';
 
   async function onQueueToggle(spellId: string) {
@@ -152,12 +167,6 @@ export function CatalogPage() {
       <section className="rounded-[1.55rem] border border-border-dark bg-bg-1/92 p-4 md:p-5">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-3">
-              <p className="text-[11px] uppercase tracking-[0.34em] text-text-dim">Catalog</p>
-              <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-text-muted">
-                Showing {rows.length} of {spells.length}
-              </span>
-            </div>
             <h1 className="font-display text-3xl text-text md:text-4xl">Browse The Spell Shelf</h1>
           </div>
 
@@ -220,35 +229,73 @@ export function CatalogPage() {
           </button>
 
           {activeCharacter ? (
-            <div className="flex flex-wrap gap-2">
-              {[
-                { value: 'all', label: 'All' },
-                { value: 'eligible_first', label: 'Best Fits' },
-                { value: 'eligible_only', label: 'Fits Now' },
-              ].map((option) => {
-                const active = effectivePreferences.viewMode === option.value;
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={`rounded-full border px-4 py-2 text-sm transition-colors ${active ? 'border-gold-soft bg-gold-soft/20 text-text' : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'}`}
-                    onClick={() => setPreferences((current) => ({ ...current, viewMode: option.value as CatalogPreferences['viewMode'] }))}
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
-            </div>
+            <button
+              type="button"
+              className={`rounded-full border px-4 py-2 text-sm transition-colors ${
+                effectivePreferences.viewMode === 'character_filtered'
+                  ? 'border-accent-soft bg-accent-soft/25 text-text'
+                  : 'border-border-dark bg-bg text-text-muted hover:bg-bg-2 hover:text-text'
+              }`}
+              onClick={() => setPreferences((current) => ({
+                ...current,
+                viewMode: current.viewMode === 'character_filtered' ? 'all' : 'character_filtered',
+              }))}
+            >
+              {effectivePreferences.viewMode === 'character_filtered'
+                ? `${activeCharacter.name} ✕`
+                : activeCharacter.name}
+            </button>
           ) : null}
         </div>
 
-        {activeCharacter ? (
-          <div className="mt-4 flex flex-wrap gap-2 text-xs text-text-muted">
-            <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Search matches: {searchMatchedRows.length}</span>
-            <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Eligible on screen: {eligibleCount}</span>
-            <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Queued: {queuedCount}</span>
-          </div>
-        ) : null}
+        {(() => {
+          const isCharFiltered = effectivePreferences.viewMode === 'character_filtered' && activeCharacter;
+          const isNonDefaultSort = effectivePreferences.sortKey !== 'name' || effectivePreferences.sortDirection !== 'asc';
+          const hasSearch = search.trim().length > 0;
+          const sortLabel = SORTABLE_COLUMNS.find((c) => c.key === effectivePreferences.sortKey)?.label || effectivePreferences.sortKey;
+          const sortArrow = effectivePreferences.sortDirection === 'asc' ? '↑' : '↓';
+
+          return (
+            <div className="mt-4 flex flex-wrap gap-2 text-xs text-text-muted">
+              <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-text-muted">
+                Showing {rows.length} of {spells.length}
+              </span>
+              <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Search matches: {searchMatchedRows.length}</span>
+              <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Eligible on screen: {eligibleCount}</span>
+              <span className="rounded-full border border-border-dark bg-bg px-3 py-1">Queued: {queuedCount}</span>
+              {isCharFiltered ? (
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 rounded-full border border-accent-soft bg-accent-soft/25 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-text transition-colors hover:border-blood-soft"
+                  onClick={() => setPreferences((current) => ({ ...current, viewMode: 'all' }))}
+                >
+                  Character: {activeCharacter.name}
+                  <span className="text-[9px] opacity-50" aria-hidden="true">✕</span>
+                </button>
+              ) : null}
+              {isNonDefaultSort ? (
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-text-muted transition-colors hover:border-blood-soft"
+                  onClick={() => setPreferences((current) => ({ ...current, sortKey: 'name', sortDirection: 'asc' }))}
+                >
+                  Sort: {sortLabel} {sortArrow}
+                  <span className="text-[9px] opacity-50" aria-hidden="true">✕</span>
+                </button>
+              ) : null}
+              {hasSearch ? (
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-text-muted transition-colors hover:border-blood-soft"
+                  onClick={() => setSearch('')}
+                >
+                  Search: &ldquo;{search}&rdquo;
+                  <span className="text-[9px] opacity-50" aria-hidden="true">✕</span>
+                </button>
+              ) : null}
+            </div>
+          );
+        })()}
 
         {error ? <p className="mt-4 rounded-2xl border border-blood-soft bg-blood-soft px-4 py-3 text-sm text-blood">{error}</p> : null}
       </section>
@@ -263,43 +310,45 @@ export function CatalogPage() {
           return (
             <article
               key={spell.id}
-              className="rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-4 transition-colors hover:border-gold-soft/40 hover:bg-bg-1"
+              role="button"
+              tabIndex={0}
+              aria-label={`View details for ${spell.name}`}
+              className="cursor-pointer rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-4 transition-colors hover:border-gold-soft/40 hover:bg-bg-1"
+              onClick={() => setSelectedSpellId(spell.id)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setSelectedSpellId(spell.id);
+                }
+              }}
             >
               <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.95fr)_180px] lg:items-center">
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    {activeCharacter ? (
-                      <span className={`rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.22em] ${
-                        presentation.stateLabel === 'Queued'
-                          ? 'border border-gold-soft bg-gold-soft/20 text-text'
-                          : presentation.stateLabel === 'Prepared'
-                            ? 'border border-accent-soft bg-accent-soft/25 text-text'
-                            : presentation.stateLabel === 'Available'
-                              ? 'border border-border-dark bg-bg-2 text-text-muted'
-                              : 'border border-blood-soft bg-blood-soft text-blood'
-                      }`}
-                      >
-                        {presentation.stateLabel}
-                      </span>
-                    ) : null}
                     <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-text-muted">
                       {formatSpellLevel(spell.level)}
                     </span>
                     <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-text-muted">
                       {listLabel}
                     </span>
+                    {isRitualSpell(spell) ? (
+                      <span className="rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.22em]"
+                        style={{ borderColor: 'rgba(68,170,153,0.5)', background: 'rgba(68,170,153,0.12)', color: '#6cc' }}>
+                        Ritual
+                      </span>
+                    ) : null}
+                    {isConcentrationSpell(spell) ? (
+                      <span className="rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.22em]"
+                        style={{ borderColor: 'rgba(200,160,64,0.5)', background: 'rgba(200,160,64,0.1)', color: '#d4b060' }}>
+                        Concentration
+                      </span>
+                    ) : null}
                   </div>
 
                   <div>
-                    <button
-                      type="button"
-                      className="text-left font-display text-2xl text-text transition-colors hover:text-gold"
-                      title={spell.name}
-                      aria-label={`Inspect ${spell.name}`}
-                      onClick={() => setSelectedSpellId(spell.id)}
-                    >
+                    <h3 className="text-left font-display text-2xl text-text">
                       {spell.name}
-                    </button>
+                    </h3>
                     <p className="mt-1 max-w-3xl text-sm text-text-muted">{getSpellExcerpt(spell.notes || '', spell.description || '')}</p>
                   </div>
                 </div>
@@ -323,11 +372,20 @@ export function CatalogPage() {
                   {activeCharacter ? (
                     <button
                       type="button"
-                      className={`rounded-2xl border px-4 py-3 text-sm transition-colors ${presentation.disabled ? 'cursor-not-allowed border-border-dark bg-bg opacity-55' : row.queued ? 'border-gold-soft bg-gold-soft/20 text-text hover:bg-gold-soft/30' : 'border-moon-border bg-moon-paper text-moon-ink hover:opacity-92'}`}
+                      className={`rounded-2xl border px-4 py-3 text-sm transition-colors ${
+                        presentation.disabled
+                          ? 'cursor-not-allowed border-border-dark bg-bg text-text-dim opacity-55'
+                          : presentation.stateLabel === 'Queued'
+                            ? 'border-gold-soft bg-gold-soft/20 text-text hover:bg-gold-soft/30'
+                            : presentation.stateLabel === 'Prepared'
+                              ? 'border-accent-soft bg-accent-soft/25 text-text hover:bg-accent-soft/35'
+                              : 'border-moon-border bg-moon-paper text-moon-ink hover:opacity-92'
+                      }`}
                       disabled={presentation.disabled}
                       title={presentation.helperText}
                       aria-label={presentation.helperText}
                       onClick={(event) => {
+                        event.stopPropagation();
                         event.preventDefault();
                         void onQueueToggle(spell.id);
                       }}
@@ -335,13 +393,6 @@ export function CatalogPage() {
                       {presentation.actionLabel}
                     </button>
                   ) : null}
-                  <button
-                    type="button"
-                    className="rounded-2xl border border-border-dark bg-bg px-4 py-2 text-sm text-text-muted transition-colors hover:bg-bg-2 hover:text-text"
-                    onClick={() => setSelectedSpellId(spell.id)}
-                  >
-                    Details
-                  </button>
                 </div>
               </div>
             </article>

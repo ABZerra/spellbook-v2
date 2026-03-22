@@ -1,7 +1,7 @@
-import { getSpellAssignmentList, getSpellLists, isSpellEligibleForCharacter } from '../domain/character';
+import { getAddableAssignmentLists, getSpellAssignmentList, getSpellLists, isSpellEligibleForCharacter } from '../domain/character';
 import type { CharacterProfile, SpellRecord } from '../types';
 
-export type CatalogViewMode = 'all' | 'eligible_first' | 'eligible_only';
+export type CatalogViewMode = 'all' | 'character_filtered';
 
 export type CatalogSortKey =
   | 'prepared'
@@ -38,13 +38,13 @@ interface SanitizeCatalogPreferencesOptions {
   allowListSort: boolean;
 }
 
-const VALID_VIEW_MODES: CatalogViewMode[] = ['all', 'eligible_first', 'eligible_only'];
+const VALID_VIEW_MODES: CatalogViewMode[] = ['all', 'character_filtered'];
 const VALID_SORT_KEYS: CatalogSortKey[] = ['prepared', 'level', 'name', 'list', 'save', 'action', 'notes', 'queued'];
 const VALID_SORT_DIRECTIONS: CatalogPreferences['sortDirection'][] = ['asc', 'desc'];
 
 export function getDefaultCatalogPreferences(): CatalogPreferences {
   return {
-    viewMode: 'eligible_first',
+    viewMode: 'all',
     sortKey: 'name',
     sortDirection: 'asc',
   };
@@ -53,6 +53,7 @@ export function getDefaultCatalogPreferences(): CatalogPreferences {
 export function resetCatalogSort(preferences: CatalogPreferences): CatalogPreferences {
   return {
     ...preferences,
+    viewMode: 'all',
     sortKey: 'name',
     sortDirection: 'asc',
   };
@@ -133,10 +134,6 @@ function getSortValue(row: CatalogRow, sortKey: CatalogSortKey): string | number
 }
 
 function compareRows(left: CatalogRow, right: CatalogRow, preferences: CatalogPreferences): number {
-  if (preferences.viewMode === 'eligible_first' && left.eligible !== right.eligible) {
-    return Number(right.eligible) - Number(left.eligible);
-  }
-
   const leftValue = getSortValue(left, preferences.sortKey);
   const rightValue = getSortValue(right, preferences.sortKey);
 
@@ -178,8 +175,12 @@ export function buildCatalogRows(input: BuildCatalogRowsInput): CatalogRow[] {
       };
     });
 
-  const filteredRows = input.preferences.viewMode === 'eligible_only'
-    ? rows.filter((row) => row.eligible)
+  const filteredRows = input.preferences.viewMode === 'character_filtered' && input.activeCharacter
+    ? rows.filter((row) => {
+        if (!row.eligible) return false;
+        const addable = getAddableAssignmentLists(row.spell, input.activeCharacter!);
+        return addable.length > 0;
+      })
     : rows;
 
   return [...filteredRows].sort((left, right) => compareRows(left, right, input.preferences));

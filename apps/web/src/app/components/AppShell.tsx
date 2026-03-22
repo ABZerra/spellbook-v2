@@ -26,14 +26,7 @@ export function AppShell({ children }: AppShellProps) {
           <div className="flex flex-col gap-4 xl:grid xl:grid-cols-[minmax(0,1.3fr)_auto_280px] xl:items-center">
             <div className="space-y-2">
               <p className="text-[11px] uppercase tracking-[0.34em] text-text-dim">Spellbook</p>
-              <div className="flex flex-wrap items-end gap-3">
-                <p className="font-display text-3xl leading-none md:text-4xl">Plan Your Next Rest</p>
-                {activeCharacter ? (
-                  <span className="rounded-full border border-gold-soft bg-gold-soft/12 px-3 py-1 text-xs uppercase tracking-[0.2em] text-text-muted">
-                    {activeCharacter.name}
-                  </span>
-                ) : null}
-              </div>
+              <p className="font-display text-3xl leading-none md:text-4xl">Plan Your Next Rest</p>
               <p className="max-w-2xl text-sm text-text-muted">
                 Browse spells, stage swaps, and lock in a preparation plan without losing track of what is already active.
               </p>
@@ -44,7 +37,7 @@ export function AppShell({ children }: AppShellProps) {
                 to="/catalog"
                 className={({ isActive }) => `rounded-xl px-4 py-2 text-sm transition-colors ${isActive ? 'bg-moon-paper text-moon-ink shadow-insetPaper' : 'text-text-muted hover:bg-bg-2 hover:text-text'}`}
               >
-                Browse
+                Catalog
               </NavLink>
               <NavLink
                 to="/prepare"
