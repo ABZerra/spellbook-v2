@@ -23,10 +23,10 @@ Improve the Browse (now Catalog) page UI by consolidating controls, making spell
 
 - Navigation button label: "Browse" → "Catalog"
 - Route stays `/catalog` (unchanged)
-- Remove the "CATALOG" uppercase label text from the header section (line 157 of CatalogPage)
+- Remove the `<p>` element with `text-[11px] uppercase tracking-[0.34em]` styling showing "Catalog", and its parent `<div className="flex flex-wrap items-center gap-3">` wrapper (both children — the label and the "Showing" pill — are being relocated or removed).
 - Page title "Browse The Spell Shelf" stays as-is
 
-**Files:** `AppShell.tsx` (nav label)
+**Files:** `AppShell.tsx` (nav label), `CatalogPage.tsx` (header label removal)
 
 ### 2. Character filter toggle
 
@@ -37,6 +37,7 @@ Replace the three-button group ("All" / "Best Fits" / "Fits Now") with a single 
 - **Toggle OFF:** Show all spells (equivalent to "All" mode today).
 - Button displays character name (e.g., "Sazel Testing") with an accent/purple style when active, neutral style when inactive.
 - Clicking the ✕ on the pill or clicking the button again toggles it off.
+- When no character is active (`activeCharacter` is null), the toggle is hidden and `viewMode` is forced to `'all'`.
 
 **Data flow:**
 - `viewMode` preference simplifies from `'all' | 'eligible_first' | 'eligible_only'` to `'all' | 'character_filtered'`.
@@ -64,6 +65,10 @@ Add a row of pills below the info row showing all active criteria. Each pill is 
 
 **When no active filters/sorts exist beyond defaults, the row is hidden.**
 
+**"Reset View" behavior:** Clears search, resets sort to default (Spell Name, Ascending), and turns off the character filter (sets `viewMode` to `'all'`). The existing `resetCatalogSort` function must be expanded to also reset `viewMode`.
+
+**Empty state:** When `character_filtered` is active and no results match, show: "No spells match for this character and search."
+
 **Files:** `CatalogPage.tsx`
 
 ### 5. Clickable spell cards
@@ -74,6 +79,7 @@ Add a row of pills below the info row showing all active criteria. Each pill is 
 - Add `cursor: pointer` to the card.
 - Hover state already exists (`hover:border-gold-soft/40 hover:bg-bg-1`) — keep it.
 - Remove the current `<button>` wrapper around the spell name (it's no longer the click target — the card is).
+- Add `role="button"`, `tabIndex={0}`, and an `onKeyDown` handler (Enter/Space) to the `<article>` for keyboard accessibility.
 
 **Files:** `CatalogPage.tsx`
 
@@ -84,8 +90,8 @@ Consolidate the state label pill and action button into a single button. The but
 | State | Condition | Button Label | Style | Clickable | Action |
 |-------|-----------|-------------|-------|-----------|--------|
 | Available | Eligible + level OK + not queued + not prepared | `Queue` | Cream (moon-paper/moon-ink) | Yes | Queue spell |
-| Queued | In `nextPreparationQueue` | `Queued ✓` | Gold border + gold bg | Yes | Remove from queue |
-| Prepared | In `preparedSpellIds` + not queued | `Prepared · Queue` | Purple accent border + bg | Yes | Queue spell |
+| Queued | In `nextPreparationQueue` (checked first — takes priority over Prepared) | `Queued ✓` | Gold border + gold bg | Yes | Remove from queue |
+| Prepared | `row.prepared` is true + not queued | `Prepared · Queue` | Purple accent border + bg | Yes | Queue spell |
 | Off-list | Not on character's `availableLists` | `Off-list` | Dimmed, dark bg | No | — |
 | Too High | On list but `getAddableAssignmentLists` empty | `Too High` | Dimmed, dark bg | No | — |
 
@@ -122,4 +128,10 @@ Add pill tags for Ritual and Concentration spells in the spell tags row (alongsi
 
 No changes to `SpellRecord`, `CharacterProfile`, or persistence. All changes are presentation-layer only.
 
-`CatalogPreferences.viewMode` changes from `'all' | 'eligible_first' | 'eligible_only'` to `'all' | 'character_filtered'`. Existing persisted preferences with old values should fall back to `'all'` via `sanitizeCatalogPreferences`.
+`CatalogPreferences.viewMode` changes from `'all' | 'eligible_first' | 'eligible_only'` to `'all' | 'character_filtered'`.
+
+**Migration:**
+- Update `VALID_VIEW_MODES` in `readCatalogPreferences` to `['all', 'character_filtered']`. Old persisted values like `'eligible_first'` will cause the entire preferences object to fall back to defaults.
+- Update `getDefaultCatalogPreferences` to return `viewMode: 'all'` (currently returns `'eligible_first'` which is being removed).
+- Update `resetCatalogSort` to also reset `viewMode` to `'all'` (currently only resets sort fields).
+- Update any tests referencing `'eligible_first'` or `'eligible_only'`.
