@@ -60,7 +60,7 @@ export function createApiRouter(github: GitHubClient): Router {
 
   router.get('/users/:userId/characters', async (req: Request, res: Response) => {
     try {
-      const userId = req.params.userId as string;
+      const userId = (req.params.userId as string).toLowerCase();
       if (!VALID_USER_ID.test(userId)) {
         res.status(400).json({ error: 'Invalid user ID format' });
         return;
@@ -86,7 +86,7 @@ export function createApiRouter(github: GitHubClient): Router {
 
   router.put('/users/:userId/characters', async (req: Request, res: Response) => {
     try {
-      const userId = req.params.userId as string;
+      const userId = (req.params.userId as string).toLowerCase();
       if (!VALID_USER_ID.test(userId)) {
         res.status(400).json({ error: 'Invalid user ID format' });
         return;
