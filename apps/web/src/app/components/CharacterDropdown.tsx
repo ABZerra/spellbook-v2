@@ -97,6 +97,18 @@ export function CharacterDropdown({
     }
   }
 
+  if (characters.length === 0) {
+    return (
+      <button
+        type="button"
+        className="w-full rounded-2xl border border-border-dark bg-bg px-3 py-2.5 text-sm text-gold-soft font-semibold tracking-wide uppercase transition-colors hover:bg-bg-2"
+        onClick={onCreateNew}
+      >
+        + Create Character
+      </button>
+    );
+  }
+
   return (
     <div ref={dropdownRef} className="relative">
       <button
