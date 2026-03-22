@@ -22,6 +22,6 @@ export function loadConfig(): ServerConfig {
     githubPat,
     githubRepo,
     githubBranch: process.env.GITHUB_BRANCH || 'main',
-    staticDir: process.env.STATIC_DIR || '../web/dist',
+    staticDir: process.env.STATIC_DIR || '../../web/dist',
   };
 }
