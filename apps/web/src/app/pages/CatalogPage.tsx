@@ -309,7 +309,9 @@ export function CatalogPage() {
               role="button"
               tabIndex={0}
               aria-label={`View details for ${spell.name}`}
-              className="cursor-pointer rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-4 transition-colors hover:border-gold-soft/40 hover:bg-bg-1"
+              className={`cursor-pointer rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-4 transition-colors hover:border-gold-soft/40 hover:bg-bg-1 ${
+                presentation.disabled ? 'opacity-60' : ''
+              }`}
               onClick={() => setSelectedSpellId(spell.id)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
@@ -321,20 +323,6 @@ export function CatalogPage() {
               <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.95fr)_180px] lg:items-center">
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    {activeCharacter ? (
-                      <span className={`rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.22em] ${
-                        presentation.stateLabel === 'Queued'
-                          ? 'border border-gold-soft bg-gold-soft/20 text-text'
-                          : presentation.stateLabel === 'Prepared'
-                            ? 'border border-accent-soft bg-accent-soft/25 text-text'
-                            : presentation.stateLabel === 'Available'
-                              ? 'border border-border-dark bg-bg-2 text-text-muted'
-                              : 'border border-blood-soft bg-blood-soft text-blood'
-                      }`}
-                      >
-                        {presentation.stateLabel}
-                      </span>
-                    ) : null}
                     <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-text-muted">
                       {formatSpellLevel(spell.level)}
                     </span>
@@ -370,7 +358,15 @@ export function CatalogPage() {
                   {activeCharacter ? (
                     <button
                       type="button"
-                      className={`rounded-2xl border px-4 py-3 text-sm transition-colors ${presentation.disabled ? 'cursor-not-allowed border-border-dark bg-bg opacity-55' : row.queued ? 'border-gold-soft bg-gold-soft/20 text-text hover:bg-gold-soft/30' : 'border-moon-border bg-moon-paper text-moon-ink hover:opacity-92'}`}
+                      className={`rounded-2xl border px-4 py-3 text-sm transition-colors ${
+                        presentation.disabled
+                          ? 'cursor-not-allowed border-border-dark bg-bg text-text-dim opacity-55'
+                          : presentation.stateLabel === 'Queued'
+                            ? 'border-gold-soft bg-gold-soft/20 text-text hover:bg-gold-soft/30'
+                            : presentation.stateLabel === 'Prepared'
+                              ? 'border-accent-soft bg-accent-soft/25 text-text hover:bg-accent-soft/35'
+                              : 'border-moon-border bg-moon-paper text-moon-ink hover:opacity-92'
+                      }`}
                       disabled={presentation.disabled}
                       title={presentation.helperText}
                       aria-label={presentation.helperText}
