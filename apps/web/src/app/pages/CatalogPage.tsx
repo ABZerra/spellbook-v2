@@ -152,12 +152,6 @@ export function CatalogPage() {
       <section className="rounded-[1.55rem] border border-border-dark bg-bg-1/92 p-4 md:p-5">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-3">
-              <p className="text-[11px] uppercase tracking-[0.34em] text-text-dim">Catalog</p>
-              <span className="rounded-full border border-border-dark bg-bg px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-text-muted">
-                Showing {rows.length} of {spells.length}
-              </span>
-            </div>
             <h1 className="font-display text-3xl text-text md:text-4xl">Browse The Spell Shelf</h1>
           </div>
 

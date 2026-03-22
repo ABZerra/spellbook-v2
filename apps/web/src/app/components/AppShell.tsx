@@ -44,7 +44,7 @@ export function AppShell({ children }: AppShellProps) {
                 to="/catalog"
                 className={({ isActive }) => `rounded-xl px-4 py-2 text-sm transition-colors ${isActive ? 'bg-moon-paper text-moon-ink shadow-insetPaper' : 'text-text-muted hover:bg-bg-2 hover:text-text'}`}
               >
-                Browse
+                Catalog
               </NavLink>
               <NavLink
                 to="/prepare"
