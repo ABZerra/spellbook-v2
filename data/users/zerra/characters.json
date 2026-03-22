@@ -1,1 +1,36 @@
-[]
+[
+  {
+    "id": "sazed",
+    "name": "Sazed",
+    "castingAbility": "",
+    "availableLists": [
+      "CLERIC",
+      "DRUID"
+    ],
+    "preparationLimits": [
+      {
+        "list": "CLERIC",
+        "limit": 22,
+        "maxSpellLevel": 9
+      },
+      {
+        "list": "DRUID",
+        "limit": 8,
+        "maxSpellLevel": 1
+      }
+    ],
+    "preparedSpells": [],
+    "nextPreparationQueue": [],
+    "savedIdeas": [],
+    "updatedAt": "2026-03-22T14:37:37.199Z",
+    "classes": [
+      {
+        "name": "Cleric",
+        "subclass": "Peace Domain"
+      },
+      {
+        "name": "Druid"
+      }
+    ]
+  }
+]
