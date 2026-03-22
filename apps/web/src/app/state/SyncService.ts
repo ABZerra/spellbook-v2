@@ -12,6 +12,7 @@ export class SyncService {
   private status: SyncStatus = 'idle';
   private intervalId: ReturnType<typeof setInterval> | null = null;
   private listeners: Set<StatusListener> = new Set();
+  private handleBeforeUnload: (() => void) | null = null;
 
   getStatus(): SyncStatus {
     return this.status;
@@ -38,9 +39,29 @@ export class SyncService {
     this.intervalId = setInterval(() => {
       void this.flush();
     }, SYNC_INTERVAL_MS);
+
+    if (typeof window !== 'undefined') {
+      this.handleBeforeUnload = () => {
+        if (!this.dirty || !this.userId || !this.pendingCharacters) return;
+        const body = JSON.stringify({ characters: this.pendingCharacters, sha: this.sha });
+        fetch(`/api/users/${encodeURIComponent(this.userId)}/characters`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body,
+          keepalive: true,
+        }).catch(() => {});
+      };
+      window.addEventListener('beforeunload', this.handleBeforeUnload);
+    }
   }
 
   stop() {
+    if (this.handleBeforeUnload && typeof window !== 'undefined') {
+      window.removeEventListener('beforeunload', this.handleBeforeUnload);
+      this.handleBeforeUnload = null;
+    }
+    // Fire-and-forget flush of any pending data
+    void this.flush();
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
@@ -86,6 +107,8 @@ export class SyncService {
 
       this.setStatus('idle');
     } catch {
+      this.dirty = true;
+      this.pendingCharacters = characters;
       this.setStatus('error');
     }
   }

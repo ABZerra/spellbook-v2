@@ -4,6 +4,8 @@ import type { GitHubClient } from './github.js';
 export function createApiRouter(github: GitHubClient): Router {
   const router = Router();
 
+  const VALID_USER_ID = /^[a-zA-Z0-9_-]+$/;
+
   async function validateUser(userId: string): Promise<boolean> {
     const result = await github.readJsonFile('data/users/users.json');
     if (!result) return false;
@@ -14,6 +16,10 @@ export function createApiRouter(github: GitHubClient): Router {
   router.get('/users/:userId/characters', async (req: Request, res: Response) => {
     try {
       const userId = req.params.userId as string;
+      if (!VALID_USER_ID.test(userId)) {
+        res.status(400).json({ error: 'Invalid user ID format' });
+        return;
+      }
       const isValid = await validateUser(userId);
       if (!isValid) {
         res.status(404).json({ error: 'User not found' });
@@ -36,6 +42,10 @@ export function createApiRouter(github: GitHubClient): Router {
   router.put('/users/:userId/characters', async (req: Request, res: Response) => {
     try {
       const userId = req.params.userId as string;
+      if (!VALID_USER_ID.test(userId)) {
+        res.status(400).json({ error: 'Invalid user ID format' });
+        return;
+      }
       const { characters, sha } = req.body;
 
       if (!Array.isArray(characters)) {
