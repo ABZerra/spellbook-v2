@@ -13,6 +13,51 @@ export function createApiRouter(github: GitHubClient): Router {
     return users.some((u) => u.id === userId);
   }
 
+  router.post('/users', async (req: Request, res: Response) => {
+    try {
+      const { username } = req.body;
+      if (!username || typeof username !== 'string') {
+        res.status(400).json({ error: 'username is required' });
+        return;
+      }
+
+      const id = username.toLowerCase();
+      if (!VALID_USER_ID.test(id)) {
+        res.status(400).json({ error: 'Invalid username format' });
+        return;
+      }
+
+      const result = await github.readJsonFile('data/users/users.json');
+      const users = (result?.content as Array<{ id: string }>) || [];
+      const usersSha = result?.sha || '';
+
+      if (users.some((u) => u.id === id)) {
+        res.status(409).json({ error: 'Username already exists' });
+        return;
+      }
+
+      const newUser = {
+        id,
+        username,
+        role: 'user' as const,
+        createdAt: new Date().toISOString(),
+      };
+
+      await github.writeMultipleFilesViaPR(
+        [
+          { path: 'data/users/users.json', content: [...users, newUser], sha: usersSha },
+          { path: `data/users/${id}/characters.json`, content: [], sha: null },
+        ],
+        id,
+      );
+
+      res.status(201).json(newUser);
+    } catch (error) {
+      console.error('POST users error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
   router.get('/users/:userId/characters', async (req: Request, res: Response) => {
     try {
       const userId = req.params.userId as string;

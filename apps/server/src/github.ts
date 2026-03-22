@@ -123,4 +123,73 @@ export class GitHubClient {
       throw error;
     }
   }
+
+  async writeMultipleFilesViaPR(
+    files: Array<{ path: string; content: unknown; sha: string | null }>,
+    label: string,
+  ): Promise<void> {
+    const branchName = `data/${label}-${Date.now()}`;
+
+    const mainRef = await this.octokit.git.getRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `heads/${this.branch}`,
+    });
+    const baseSha = mainRef.data.object.sha;
+
+    await this.octokit.git.createRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `refs/heads/${branchName}`,
+      sha: baseSha,
+    });
+
+    try {
+      for (const file of files) {
+        const encoded = Buffer.from(JSON.stringify(file.content, null, 2)).toString('base64');
+        await this.octokit.repos.createOrUpdateFileContents({
+          owner: this.owner,
+          repo: this.repo,
+          path: file.path,
+          message: `Add ${file.path}`,
+          content: encoded,
+          ...(file.sha ? { sha: file.sha } : {}),
+          branch: branchName,
+        });
+      }
+
+      const pr = await this.octokit.pulls.create({
+        owner: this.owner,
+        repo: this.repo,
+        title: `Create user: ${label}`,
+        head: branchName,
+        base: this.branch,
+        body: `Automated account creation for **${label}**.`,
+      });
+
+      await this.octokit.pulls.merge({
+        owner: this.owner,
+        repo: this.repo,
+        pull_number: pr.data.number,
+        merge_method: 'squash',
+      });
+
+      await this.octokit.git.deleteRef({
+        owner: this.owner,
+        repo: this.repo,
+        ref: `heads/${branchName}`,
+      });
+    } catch (error) {
+      try {
+        await this.octokit.git.deleteRef({
+          owner: this.owner,
+          repo: this.repo,
+          ref: `heads/${branchName}`,
+        });
+      } catch {
+        // Ignore cleanup errors
+      }
+      throw error;
+    }
+  }
 }

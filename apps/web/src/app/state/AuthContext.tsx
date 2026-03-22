@@ -6,7 +6,10 @@ interface AuthContextValue {
   userId: string | null;
   isAuthenticated: boolean;
   loginError: string | null;
+  pendingNewUser: string | null;
   login: (username: string) => Promise<boolean>;
+  createAccount: (username: string) => Promise<boolean>;
+  clearPendingNewUser: () => void;
   logout: () => void;
 }
 
@@ -32,21 +35,23 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [userId, setUserId] = useState<string | null>(getPersistedUserId);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [pendingNewUser, setPendingNewUser] = useState<string | null>(null);
 
   const login = useCallback(async (username: string): Promise<boolean> => {
     setLoginError(null);
+    setPendingNewUser(null);
     try {
-      const res = await fetch(`/api/users/${encodeURIComponent(username)}/characters`);
+      const res = await fetch(`/api/users/${encodeURIComponent(username.toLowerCase())}/characters`);
       if (!res.ok) {
         if (res.status === 404) {
-          setLoginError('Username not found.');
+          setPendingNewUser(username);
         } else {
           setLoginError('Login failed. Try again.');
         }
         return false;
       }
-      localStorage.setItem(USER_ID_KEY, username);
-      setUserId(username);
+      localStorage.setItem(USER_ID_KEY, username.toLowerCase());
+      setUserId(username.toLowerCase());
       return true;
     } catch {
       setLoginError('Could not connect to server.');
@@ -54,20 +59,56 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
+  const createAccount = useCallback(async (username: string): Promise<boolean> => {
+    setLoginError(null);
+    try {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+      });
+      if (!res.ok) {
+        if (res.status === 409) {
+          setLoginError('Username already exists.');
+        } else {
+          setLoginError('Account creation failed. Try again.');
+        }
+        return false;
+      }
+      setPendingNewUser(null);
+      const id = username.toLowerCase();
+      localStorage.setItem(USER_ID_KEY, id);
+      setUserId(id);
+      return true;
+    } catch {
+      setLoginError('Could not connect to server.');
+      return false;
+    }
+  }, []);
+
+  const clearPendingNewUser = useCallback(() => {
+    setPendingNewUser(null);
+    setLoginError(null);
+  }, []);
+
   const logout = useCallback(() => {
     localStorage.removeItem(USER_ID_KEY);
     localStorage.removeItem('spellbook.activeCharacter');
     setUserId(null);
     setLoginError(null);
+    setPendingNewUser(null);
   }, []);
 
   const value = useMemo<AuthContextValue>(() => ({
     userId,
     isAuthenticated: userId !== null,
     loginError,
+    pendingNewUser,
     login,
+    createAccount,
+    clearPendingNewUser,
     logout,
-  }), [userId, loginError, login, logout]);
+  }), [userId, loginError, pendingNewUser, login, createAccount, clearPendingNewUser, logout]);
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }
