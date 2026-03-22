@@ -20,7 +20,6 @@
     "build": "npm run build:web && npm run build:server",
     "build:web": "npm run build --prefix apps/web",
     "build:server": "npm run build --prefix apps/server",
-    "build:pages": "node scripts/build-pages.mjs",
     "snapshot:import": "node scripts/import-spells-csv.mjs"
   },
   "engines": {
