@@ -27,7 +27,7 @@ const staticPath = path.resolve(__dirname, config.staticDir);
 app.use(express.static(staticPath));
 
 // SPA fallback — serve index.html for all non-API, non-static routes
-app.get('*', (_req, res) => {
+app.get('{*path}', (_req, res) => {
   res.sendFile(path.join(staticPath, 'index.html'));
 });
 
