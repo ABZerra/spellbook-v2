@@ -1,5 +1,26 @@
 [
-  { "id": "superadmin", "username": "superadmin", "role": "admin", "createdAt": "2026-03-22T00:00:00Z" },
-  { "id": "tester", "username": "Tester", "role": "user", "createdAt": "2026-03-22T00:00:00Z" },
-  { "id": "zerra", "username": "Zerra", "role": "user", "createdAt": "2026-03-22T00:00:00Z" }
+  {
+    "id": "superadmin",
+    "username": "superadmin",
+    "role": "admin",
+    "createdAt": "2026-03-22T00:00:00Z"
+  },
+  {
+    "id": "tester",
+    "username": "Tester",
+    "role": "user",
+    "createdAt": "2026-03-22T00:00:00Z"
+  },
+  {
+    "id": "zerra",
+    "username": "Zerra",
+    "role": "user",
+    "createdAt": "2026-03-22T00:00:00Z"
+  },
+  {
+    "id": "pepe",
+    "username": "pepe",
+    "role": "user",
+    "createdAt": "2026-03-23T10:09:34.645Z"
+  }
 ]
