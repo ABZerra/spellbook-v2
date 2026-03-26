@@ -22,5 +22,11 @@
     "username": "pepe",
     "role": "user",
     "createdAt": "2026-03-23T10:10:56.172Z"
+  },
+  {
+    "id": "demo",
+    "username": "Demo",
+    "role": "user",
+    "createdAt": "2026-03-26T17:38:43.785Z"
   }
 ]
