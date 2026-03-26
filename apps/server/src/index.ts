@@ -14,12 +14,17 @@ console.log('Config loaded, port:', config.port);
 const github = new GitHubClient({
   pat: config.githubPat,
   repo: config.githubRepo,
-  branch: config.githubBranch,
+  branch: config.githubDataBranch,
 });
 
 const app = express();
 
 app.use(express.json());
+
+// Health check for keep-alive pings
+app.get('/health', (_req, res) => {
+  res.json({ ok: true });
+});
 
 // API routes
 app.use('/api', createApiRouter(github));

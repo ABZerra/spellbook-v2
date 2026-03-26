@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { fetchWithRetry } from './fetchWithRetry.js';
 
 const USER_ID_KEY = 'spellbook.userId';
 
@@ -48,7 +49,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Check if API server is reachable on mount
   useEffect(() => {
     if (isOffline) return;
-    fetch('/api/users/__ping__/characters', { method: 'GET' })
+    fetchWithRetry('/api/users/__ping__/characters', { method: 'GET' })
       .then((res) => {
         // 404 = server is up (user just doesn't exist). 500 = proxy error (server down).
         setServerAvailable(res.status !== 500);
@@ -62,7 +63,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setLoginError(null);
     setPendingNewUser(null);
     try {
-      const res = await fetch(`/api/users/${encodeURIComponent(username.toLowerCase())}/characters`);
+      const res = await fetchWithRetry(`/api/users/${encodeURIComponent(username.toLowerCase())}/characters`);
       if (!res.ok) {
         if (res.status === 404) {
           setPendingNewUser(username);
@@ -83,7 +84,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const createAccount = useCallback(async (username: string): Promise<boolean> => {
     setLoginError(null);
     try {
-      const res = await fetch('/api/users', {
+      const res = await fetchWithRetry('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username }),

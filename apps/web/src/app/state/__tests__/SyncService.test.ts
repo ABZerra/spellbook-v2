@@ -50,14 +50,19 @@ describe('SyncService', () => {
     expect(service.getStatus()).toBe('idle');
   });
 
-  it('sets error status on sync failure', async () => {
-    mockFetch.mockRejectedValueOnce(new Error('Network error'));
+  it('sets error status on sync failure after retries', async () => {
+    // fetchWithRetry retries up to 2 times (3 total attempts)
+    mockFetch.mockRejectedValue(new Error('Network error'));
 
     service.start('alice', 'sha-1');
     service.markDirty([]);
 
+    // Advance past sync interval + retry delays
     await vi.advanceTimersByTimeAsync(35000);
+    await vi.advanceTimersByTimeAsync(1000);
+    await vi.advanceTimersByTimeAsync(2000);
 
     expect(service.getStatus()).toBe('error');
+    mockFetch.mockReset();
   });
 });

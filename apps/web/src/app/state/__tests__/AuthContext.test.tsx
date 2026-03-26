@@ -101,14 +101,26 @@ describe('AuthContext', () => {
     expect(result.current.userId).toBe('bob');
   });
 
-  it('detects server unavailable when ping fails', async () => {
-    mockFetch.mockRejectedValueOnce(new Error('Network error'));
+  it('detects server unavailable when ping fails after retries', async () => {
+    vi.useFakeTimers();
+    // fetchWithRetry retries up to 2 times (3 total attempts)
+    mockFetch.mockRejectedValue(new Error('Network error'));
 
     const { result } = renderHook(() => useAuth(), { wrapper });
 
-    // Wait for the ping effect to settle
-    await act(async () => {});
+    // Advance through retry delays (1s + 2s)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000);
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2000);
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
 
     expect(result.current.serverAvailable).toBe(false);
+    mockFetch.mockReset();
+    vi.useRealTimers();
   });
 });
