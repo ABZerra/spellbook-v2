@@ -136,6 +136,8 @@ export function AppProvider({ children, provider }: AppProviderProps) {
         .catch(() => {});
     } else {
       service.stop();
+      setCharacters([]);
+      setActiveCharacterId(null);
     }
 
     return () => {
