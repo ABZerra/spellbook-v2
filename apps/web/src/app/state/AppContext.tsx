@@ -166,31 +166,34 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     setError(null);
 
     try {
-      const [nextSpells, nextCharacters] = await Promise.all([
-        resolvedProvider.listSpells(),
-        resolvedProvider.listCharacterProfiles(),
-      ]);
-
+      const nextSpells = await resolvedProvider.listSpells();
       setSpells(nextSpells);
-      setCharacters(nextCharacters.map((entry) => normalizeCharacterProfile(entry)));
 
-      if (!nextCharacters.length) {
+      if (!isAuthenticated) {
+        setCharacters([]);
         setActiveCharacterId(null);
       } else {
-        const persisted = getPersistedCharacterId();
-        const preferred = persisted && nextCharacters.some((entry) => entry.id === persisted)
-          ? persisted
-          : nextCharacters[0].id;
+        const nextCharacters = await resolvedProvider.listCharacterProfiles();
+        setCharacters(nextCharacters.map((entry) => normalizeCharacterProfile(entry)));
 
-        setActiveCharacterId(preferred);
-        localStorage.setItem(ACTIVE_CHARACTER_KEY, preferred);
+        if (!nextCharacters.length) {
+          setActiveCharacterId(null);
+        } else {
+          const persisted = getPersistedCharacterId();
+          const preferred = persisted && nextCharacters.some((entry) => entry.id === persisted)
+            ? persisted
+            : nextCharacters[0].id;
+
+          setActiveCharacterId(preferred);
+          localStorage.setItem(ACTIVE_CHARACTER_KEY, preferred);
+        }
       }
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : 'Failed to load state.');
     } finally {
       setLoading(false);
     }
-  }, [resolvedProvider]);
+  }, [resolvedProvider, isAuthenticated]);
 
   useEffect(() => {
     void hydrate();
