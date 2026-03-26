@@ -58,7 +58,7 @@ export class GitHubClient {
     fileSha: string,
     userId: string,
   ): Promise<{ newSha: string }> {
-    const branchName = `data/${userId}-${Date.now()}`;
+    const branchName = `sync/${userId}-${Date.now()}`;
     const encoded = Buffer.from(JSON.stringify(content, null, 2)).toString('base64');
 
     const mainRef = await this.octokit.git.getRef({
