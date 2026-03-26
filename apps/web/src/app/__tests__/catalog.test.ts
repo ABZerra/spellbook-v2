@@ -69,7 +69,7 @@ describe('extractClassInfo', () => {
   it('returns subclasses sorted alphabetically within each class', () => {
     const result = extractClassInfo([]);
     for (const entry of result) {
-      expect(entry.subclasses).toEqual([...entry.subclasses].sort());
+      expect(entry.subclasses).toEqual([...entry.subclasses].sort((a, b) => a.localeCompare(b)));
     }
   });
 });

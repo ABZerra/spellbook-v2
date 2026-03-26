@@ -1,4 +1,5 @@
 import type { SpellRecord } from '../types';
+import { CLASS_REGISTRY } from './classRegistry';
 
 export interface CatalogClassInfo {
   name: string;
@@ -31,6 +32,14 @@ export function extractClassInfo(spells: Pick<SpellRecord, 'availableFor'>[]): C
   const displayNames = new Map<string, string>();
   const subclassesMap = new Map<string, Set<string>>();
 
+  // Seed from registry
+  for (const entry of CLASS_REGISTRY) {
+    const key = entry.name.toLowerCase();
+    displayNames.set(key, entry.name);
+    subclassesMap.set(key, new Set(entry.subclasses));
+  }
+
+  // Merge from spell data
   for (const spell of spells) {
     for (const entry of spell.availableFor || []) {
       const parsed = parseAvailableForEntry(entry);
@@ -64,6 +73,12 @@ export function extractClassInfo(spells: Pick<SpellRecord, 'availableFor'>[]): C
 export function extractListNames(spells: Pick<SpellRecord, 'availableFor'>[]): string[] {
   const names = new Set<string>();
 
+  // Seed from registry
+  for (const entry of CLASS_REGISTRY) {
+    names.add(entry.name.toUpperCase());
+  }
+
+  // Merge from spell data
   for (const spell of spells) {
     for (const entry of spell.availableFor || []) {
       const parsed = parseAvailableForEntry(entry);
