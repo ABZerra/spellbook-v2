@@ -1,3 +1,5 @@
+import { fetchWithRetry } from './fetchWithRetry.js';
+
 export type SyncStatus = 'idle' | 'syncing' | 'error';
 
 type StatusListener = (status: SyncStatus) => void;
@@ -90,7 +92,7 @@ export class SyncService {
 
     this.setStatus('syncing');
     try {
-      const res = await fetch(`/api/users/${encodeURIComponent(this.userId)}/characters`, {
+      const res = await fetchWithRetry(`/api/users/${encodeURIComponent(this.userId)}/characters`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ characters, sha: this.sha }),
