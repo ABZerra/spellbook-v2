@@ -128,7 +128,7 @@ export class GitHubClient {
     files: Array<{ path: string; content: unknown; sha: string | null }>,
     label: string,
   ): Promise<void> {
-    const branchName = `data/${label}-${Date.now()}`;
+    const branchName = `sync/${label}-${Date.now()}`;
 
     const mainRef = await this.octokit.git.getRef({
       owner: this.owner,
