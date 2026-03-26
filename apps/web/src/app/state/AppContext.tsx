@@ -109,28 +109,34 @@ export function AppProvider({ children, provider }: AppProviderProps) {
         .then((res) => res.ok ? res.json() : null)
         .then(async (data) => {
           if (!data) return;
-          // Merge remote and local characters — keep local-only characters
+          // Server is the source of truth for which characters belong to this user
           const remoteCharacters = (Array.isArray(data.characters) ? data.characters : [])
             .map((c: CharacterProfile) => normalizeCharacterProfile(c));
-          const localCharacters = await resolvedProvider.listCharacterProfiles();
           const remoteIds = new Set(remoteCharacters.map((c) => c.id));
-          const localIds = new Set(localCharacters.map((c) => c.id));
 
-          // Write remote characters to IndexedDB
-          for (const remote of remoteCharacters) {
-            if (localIds.has(remote.id)) {
-              await resolvedProvider.saveCharacterProfile(remote);
-            } else {
-              await resolvedProvider.createCharacterProfile(remote);
+          // Keep characters created this session that haven't synced yet
+          const unsyncedLocal = characters.filter((c) => !remoteIds.has(c.id));
+          const merged = [...remoteCharacters, ...unsyncedLocal]
+            .sort((a: CharacterProfile, b: CharacterProfile) => a.name.localeCompare(b.name));
+
+          // Sync IndexedDB to match this user's characters only
+          const localCharacters = await resolvedProvider.listCharacterProfiles();
+          const localIds = new Set(localCharacters.map((c) => c.id));
+          const mergedIds = new Set(merged.map((c) => c.id));
+          // Remove characters that don't belong to this user
+          for (const local of localCharacters) {
+            if (!mergedIds.has(local.id)) {
+              await resolvedProvider.deleteCharacterProfile(local.id);
             }
           }
-
-          // Merge: remote wins for shared IDs, keep local-only characters
-          const localOnly = localCharacters
-            .filter((c) => !remoteIds.has(c.id))
-            .map((c) => normalizeCharacterProfile(c));
-          const merged = [...remoteCharacters, ...localOnly]
-            .sort((a: CharacterProfile, b: CharacterProfile) => a.name.localeCompare(b.name));
+          // Write this user's characters to IndexedDB
+          for (const character of merged) {
+            if (localIds.has(character.id)) {
+              await resolvedProvider.saveCharacterProfile(character);
+            } else {
+              await resolvedProvider.createCharacterProfile(character);
+            }
+          }
 
           setCharacters(merged);
           if (merged.length > 0 && !activeCharacterId) {
@@ -140,8 +146,8 @@ export function AppProvider({ children, provider }: AppProviderProps) {
           }
           if (data.sha !== undefined) {
             service.start(userId, data.sha);
-            // Sync local-only characters up to the server
-            if (localOnly.length > 0) {
+            // Sync unsynced local characters up to the server
+            if (unsyncedLocal.length > 0) {
               service.markDirty(merged);
             }
           }
