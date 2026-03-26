@@ -1,7 +1,7 @@
 # Class/Subclass Registry — Design Spec
 
 **Date:** 2026-03-26
-**Status:** Approved
+**Status:** In Review
 
 ## Problem
 
@@ -15,20 +15,21 @@ Subclasses are dynamically extracted from spell `availableFor` data. Classes who
 
 ### In Scope
 - New static registry file with all official 2014 classes/subclasses (including expansion books)
-- Modify `extractClassInfo()` to merge registry with spell-data-derived subclasses
+- Modify `extractClassInfo()` and `extractListNames()` to use the registry as the canonical source
 - Clean spell data: remove non-Legacy entries, remove homebrew, normalize names
 - Fighter (Eldritch Knight) and Rogue (Arcane Trickster) included as spellcasting subclasses
 
 ### Out of Scope
 - Changes to spell filtering or preparation logic
-- UI changes to CreateCharacterModal or CharacterPage (they already consume `catalogClasses`)
+- UI changes to CreateCharacterModal, CharacterPage, or AppShell (they already consume `catalogClasses`)
 - Changes to how `availableFor` is used for spell eligibility
+- Spell list mapping for Fighter/Rogue (Eldritch Knight uses Wizard list, Arcane Trickster uses Wizard list) — this is a separate feature; for now these classes appear in the dropdown for character identity but users manage spell lists manually via the existing "Add Class" mechanism
 
 ## Design
 
 ### 1. New File: `apps/web/src/app/data/classRegistry.ts`
 
-Static registry of all official 2014 D&D 5e spellcasting classes and their subclasses.
+Static registry of all official 2014 D&D 5e spellcasting classes and their subclasses. Names must match the post-`cleanName()` output from spell data (no parentheticals like "(Legacy)" or "(XGtE)").
 
 ```typescript
 export interface ClassRegistryEntry {
@@ -57,9 +58,9 @@ export const CLASS_REGISTRY: ClassRegistryEntry[] = [/* ... */];
 
 ### 2. Modify: `apps/web/src/app/domain/catalog.ts`
 
-`extractClassInfo()` changes:
+**`extractClassInfo()` changes:**
 1. Start from `CLASS_REGISTRY` as the base list of classes and subclasses
-2. Merge in any additional subclass entries found in spell `availableFor` data (preserves spell-data-derived subclass info)
+2. Merge in any additional subclass entries found in spell `availableFor` data — this is a defensive measure to catch any official subclass-specific spells the registry might have missed. After spell data cleanup, no new entries should appear from this merge, but it keeps the system resilient.
 3. Match on cleaned/normalized names (the existing `cleanName()` function already strips parentheticals like "(Legacy)")
 
 ```typescript
@@ -73,6 +74,19 @@ export function extractClassInfo(
 ```
 
 The `CatalogClassInfo` interface remains unchanged.
+
+**`extractListNames()` changes:**
+This function currently derives available spell list names from `availableFor` data. It must also be updated to seed from `CLASS_REGISTRY` so that all registry classes (including Fighter and Rogue, which have no `availableFor` entries) appear in `catalogListNames`.
+
+```typescript
+export function extractListNames(
+  spells: Pick<SpellRecord, 'availableFor'>[],
+): string[] {
+  // 1. Seed with CLASS_REGISTRY names (uppercased)
+  // 2. Merge in any additional names from spell availableFor
+  // 3. Return sorted
+}
+```
 
 ### 3. Clean: `data/spells.snapshot.json`
 
@@ -91,7 +105,7 @@ No changes needed to this function.
 
 ### 5. No UI Changes Required
 
-Both `CreateCharacterModal.tsx` and `CharacterPage.tsx` already:
+`CreateCharacterModal.tsx`, `CharacterPage.tsx`, and `AppShell.tsx` (which passes `catalogClasses` to the modal) already:
 - Receive `catalogClasses: CatalogClassInfo[]`
 - Render class dropdowns from `catalogClasses`
 - Render subclass dropdowns from `classInfo.subclasses`
@@ -101,22 +115,41 @@ They will automatically show the complete subclass lists once the registry is in
 
 ### 6. `AppContext.tsx`
 
-No interface changes. The `catalogClasses` memo stays the same:
+No interface changes. The `catalogClasses` and `catalogListNames` memos stay the same:
 ```typescript
 const catalogClasses = useMemo(() => extractClassInfo(spells), [spells]);
+const catalogListNames = useMemo(() => extractListNames(spells), [spells]);
 ```
+
+### 7. Backward Compatibility
+
+Existing characters may have stored class/subclass names from homebrew or 2024 content that no longer appears in the registry. Behavior:
+- The stored `classes[].name` and `classes[].subclass` values remain in the `CharacterProfile` — they are not deleted
+- In the UI, `CharacterPage.tsx` line 568 does `catalogClasses.find((c) => c.name === classEntry.name)`. If the class is not found, the subclass dropdown is disabled and shows blank
+- This is acceptable degradation — the user can manually update their character's class/subclass to an official one
+- No automated migration is needed since this is a hobby app with a small user base
 
 ## Testing Strategy
 
-- Unit tests for the updated `extractClassInfo()`: verify registry classes always appear, verify spell-data subclasses merge correctly
-- Verify no homebrew or 2024 entries remain in spell data
-- Manual verification that character creation shows all subclasses for every class
+### Unit Tests (new file: `apps/web/src/app/__tests__/catalog.test.ts`)
+1. `extractClassInfo()` with empty spell array returns all 11 registry classes with correct subclasses
+2. `extractClassInfo()` with spell data that adds a subclass already in the registry produces no duplicates
+3. `extractClassInfo()` with spell data that adds a new subclass to an existing class merges correctly
+4. `extractListNames()` with empty spell array returns all 11 registry class names (uppercased)
+5. Result count equals 11 classes; subclass counts match expected per class
+
+### Data Validation (script or test)
+- Parse `spells.snapshot.json` and assert no blacklisted homebrew or non-Legacy `availableFor` entries remain
+
+### Manual Verification
+- Character creation shows all subclasses for every class
+- Existing characters with official subclasses still display correctly
 
 ## Files Changed
 
 | File | Change |
 |------|--------|
 | `apps/web/src/app/data/classRegistry.ts` | **New** — static registry |
-| `apps/web/src/app/domain/catalog.ts` | Modify `extractClassInfo()` to use registry as base |
+| `apps/web/src/app/domain/catalog.ts` | Modify `extractClassInfo()` and `extractListNames()` to use registry as base |
 | `data/spells.snapshot.json` | Remove non-Legacy and homebrew `availableFor` entries |
-| `apps/web/src/app/__tests__/character-domain.test.ts` | Update tests |
+| `apps/web/src/app/__tests__/catalog.test.ts` | **New** — unit tests for catalog domain |
