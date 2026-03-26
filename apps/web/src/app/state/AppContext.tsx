@@ -109,12 +109,14 @@ export function AppProvider({ children, provider }: AppProviderProps) {
         .then((res) => res.ok ? res.json() : null)
         .then(async (data) => {
           if (!data) return;
-          // Hydrate local state and IndexedDB with remote characters
+          // Merge remote and local characters — keep local-only characters
           const remoteCharacters = (Array.isArray(data.characters) ? data.characters : [])
             .map((c: CharacterProfile) => normalizeCharacterProfile(c));
-          // Write each remote character to local provider (IndexedDB)
           const localCharacters = await resolvedProvider.listCharacterProfiles();
+          const remoteIds = new Set(remoteCharacters.map((c) => c.id));
           const localIds = new Set(localCharacters.map((c) => c.id));
+
+          // Write remote characters to IndexedDB
           for (const remote of remoteCharacters) {
             if (localIds.has(remote.id)) {
               await resolvedProvider.saveCharacterProfile(remote);
@@ -122,15 +124,26 @@ export function AppProvider({ children, provider }: AppProviderProps) {
               await resolvedProvider.createCharacterProfile(remote);
             }
           }
-          // Update React state with remote data
-          setCharacters(remoteCharacters.sort((a: CharacterProfile, b: CharacterProfile) => a.name.localeCompare(b.name)));
-          if (remoteCharacters.length > 0 && !activeCharacterId) {
-            const firstId = remoteCharacters[0].id;
+
+          // Merge: remote wins for shared IDs, keep local-only characters
+          const localOnly = localCharacters
+            .filter((c) => !remoteIds.has(c.id))
+            .map((c) => normalizeCharacterProfile(c));
+          const merged = [...remoteCharacters, ...localOnly]
+            .sort((a: CharacterProfile, b: CharacterProfile) => a.name.localeCompare(b.name));
+
+          setCharacters(merged);
+          if (merged.length > 0 && !activeCharacterId) {
+            const firstId = merged[0].id;
             setActiveCharacterId(firstId);
             localStorage.setItem(ACTIVE_CHARACTER_KEY, firstId);
           }
           if (data.sha !== undefined) {
             service.start(userId, data.sha);
+            // Sync local-only characters up to the server
+            if (localOnly.length > 0) {
+              service.markDirty(merged);
+            }
           }
         })
         .catch(() => {});
