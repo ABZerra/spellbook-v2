@@ -1,1 +1,27 @@
-[]
+[
+  {
+    "id": "demonic-nature",
+    "name": "Demonic Nature",
+    "castingAbility": "",
+    "availableLists": [
+      "WARLOCK"
+    ],
+    "preparationLimits": [
+      {
+        "list": "WARLOCK",
+        "limit": 6,
+        "maxSpellLevel": 6
+      }
+    ],
+    "preparedSpells": [],
+    "nextPreparationQueue": [],
+    "savedIdeas": [],
+    "updatedAt": "2026-03-27T08:26:57.610Z",
+    "classes": [
+      {
+        "name": "Warlock",
+        "subclass": "The Archfey"
+      }
+    ]
+  }
+]
