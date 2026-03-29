@@ -89,6 +89,43 @@
       {
         "spellId": "mending",
         "intent": "replace"
+      },
+      {
+        "spellId": "resistance",
+        "intent": "replace"
+      },
+      {
+        "spellId": "thaumaturgy",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "thorn-whip",
+        "intent": "replace",
+        "assignedList": "DRUID"
+      },
+      {
+        "spellId": "toll-the-dead",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "absorb-elements",
+        "intent": "replace",
+        "assignedList": "DRUID"
+      },
+      {
+        "spellId": "command",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "detect-magic",
+        "intent": "replace"
+      },
+      {
+        "spellId": "faerie-fire",
+        "intent": "replace"
       }
     ],
     "savedIdeas": [
@@ -107,9 +144,41 @@
       {
         "spellId": "mending",
         "createdAt": "2026-03-29T18:51:59.891Z"
+      },
+      {
+        "spellId": "resistance",
+        "createdAt": "2026-03-29T18:52:04.629Z"
+      },
+      {
+        "spellId": "thaumaturgy",
+        "createdAt": "2026-03-29T18:52:07.354Z"
+      },
+      {
+        "spellId": "thorn-whip",
+        "createdAt": "2026-03-29T18:52:16.267Z"
+      },
+      {
+        "spellId": "toll-the-dead",
+        "createdAt": "2026-03-29T18:52:17.060Z"
+      },
+      {
+        "spellId": "absorb-elements",
+        "createdAt": "2026-03-29T18:52:22.828Z"
+      },
+      {
+        "spellId": "command",
+        "createdAt": "2026-03-29T18:52:26.280Z"
+      },
+      {
+        "spellId": "detect-magic",
+        "createdAt": "2026-03-29T18:52:29.927Z"
+      },
+      {
+        "spellId": "faerie-fire",
+        "createdAt": "2026-03-29T18:52:33.546Z"
       }
     ],
-    "updatedAt": "2026-03-29T18:51:59.911Z",
+    "updatedAt": "2026-03-29T18:52:33.568Z",
     "classes": [
       {
         "name": "Cleric",
