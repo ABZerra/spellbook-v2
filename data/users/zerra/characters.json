@@ -140,6 +140,19 @@
       {
         "spellId": "healing-word",
         "intent": "replace"
+      },
+      {
+        "spellId": "protection-from-evil-and-good",
+        "intent": "replace"
+      },
+      {
+        "spellId": "thunderwave",
+        "intent": "replace"
+      },
+      {
+        "spellId": "blindness-deafness",
+        "intent": "replace",
+        "assignedList": "CLERIC"
       }
     ],
     "savedIdeas": [
@@ -202,9 +215,21 @@
       {
         "spellId": "healing-word",
         "createdAt": "2026-03-29T18:52:43.068Z"
+      },
+      {
+        "spellId": "protection-from-evil-and-good",
+        "createdAt": "2026-03-29T18:53:13.448Z"
+      },
+      {
+        "spellId": "thunderwave",
+        "createdAt": "2026-03-29T18:53:25.920Z"
+      },
+      {
+        "spellId": "blindness-deafness",
+        "createdAt": "2026-03-29T18:53:32.777Z"
       }
     ],
-    "updatedAt": "2026-03-29T18:52:43.089Z",
+    "updatedAt": "2026-03-29T18:53:32.785Z",
     "classes": [
       {
         "name": "Cleric",
