@@ -69,195 +69,194 @@
         "spellId": "rarys-telepathic-bond",
         "assignedList": "CLERIC",
         "mode": "always"
-      }
-    ],
-    "nextPreparationQueue": [
+      },
       {
         "spellId": "frostbite",
-        "intent": "add",
-        "assignedList": "DRUID"
+        "assignedList": "DRUID",
+        "mode": "normal"
       },
       {
         "spellId": "guidance",
-        "intent": "add",
-        "assignedList": "DRUID"
+        "assignedList": "DRUID",
+        "mode": "normal"
       },
       {
         "spellId": "light",
-        "intent": "add",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "mending",
-        "intent": "add",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "resistance",
-        "intent": "add",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "thaumaturgy",
-        "intent": "add",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "thorn-whip",
-        "intent": "add",
-        "assignedList": "DRUID"
+        "assignedList": "DRUID",
+        "mode": "normal"
       },
       {
         "spellId": "toll-the-dead",
-        "intent": "add",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "absorb-elements",
-        "intent": "add",
-        "assignedList": "DRUID"
+        "assignedList": "DRUID",
+        "mode": "normal"
       },
       {
         "spellId": "command",
-        "intent": "add",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "detect-magic",
-        "intent": "add",
-        "assignedList": "DRUID"
+        "assignedList": "DRUID",
+        "mode": "normal"
       },
       {
         "spellId": "faerie-fire",
-        "intent": "add",
-        "assignedList": "DRUID"
+        "assignedList": "DRUID",
+        "mode": "normal"
       },
       {
         "spellId": "goodberry",
-        "intent": "add",
-        "assignedList": "DRUID"
+        "assignedList": "DRUID",
+        "mode": "normal"
       },
       {
         "spellId": "guiding-bolt",
-        "intent": "add",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "healing-word",
-        "intent": "add",
-        "assignedList": "DRUID"
+        "assignedList": "DRUID",
+        "mode": "normal"
       },
       {
         "spellId": "protection-from-evil-and-good",
-        "intent": "add",
-        "assignedList": "DRUID"
+        "assignedList": "DRUID",
+        "mode": "normal"
       },
       {
         "spellId": "thunderwave",
-        "intent": "add",
-        "assignedList": "DRUID"
+        "assignedList": "DRUID",
+        "mode": "normal"
       },
       {
         "spellId": "blindness-deafness",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "hold-person",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "spiritual-weapon",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "aura-of-vitality",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "dispel-magic",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "life-transference",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "revivify",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "speak-with-dead",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "spirit-guardians",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "banishment",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "death-ward",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "dispel-evil-and-good",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "legend-lore",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "mass-cure-wounds",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "scrying",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "heal",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "word-of-recall",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "conjure-celestial",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "antimagic-field",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       },
       {
         "spellId": "holy-aura",
-        "intent": "replace",
-        "assignedList": "CLERIC"
+        "assignedList": "CLERIC",
+        "mode": "normal"
       }
     ],
+    "nextPreparationQueue": [],
     "savedIdeas": [
       {
         "spellId": "frostbite",
@@ -408,7 +407,7 @@
         "createdAt": "2026-03-29T18:56:08.920Z"
       }
     ],
-    "updatedAt": "2026-03-29T18:57:30.069Z",
+    "updatedAt": "2026-03-29T18:58:03.053Z",
     "classes": [
       {
         "name": "Cleric",
