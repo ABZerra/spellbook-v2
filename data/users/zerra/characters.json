@@ -15,14 +15,14 @@
       },
       {
         "list": "DRUID",
-        "limit": 8,
+        "limit": 7,
         "maxSpellLevel": 1
       }
     ],
     "preparedSpells": [],
     "nextPreparationQueue": [],
     "savedIdeas": [],
-    "updatedAt": "2026-03-22T14:37:37.199Z",
+    "updatedAt": "2026-03-29T18:48:46.068Z",
     "classes": [
       {
         "name": "Cleric",
