@@ -178,6 +178,31 @@
         "spellId": "life-transference",
         "intent": "replace",
         "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "revivify",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "speak-with-dead",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "spirit-guardians",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "banishment",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "death-ward",
+        "intent": "replace",
+        "assignedList": "CLERIC"
       }
     ],
     "savedIdeas": [
@@ -272,9 +297,29 @@
       {
         "spellId": "life-transference",
         "createdAt": "2026-03-29T18:54:03.440Z"
+      },
+      {
+        "spellId": "revivify",
+        "createdAt": "2026-03-29T18:54:07.458Z"
+      },
+      {
+        "spellId": "speak-with-dead",
+        "createdAt": "2026-03-29T18:54:12.587Z"
+      },
+      {
+        "spellId": "spirit-guardians",
+        "createdAt": "2026-03-29T18:54:15.180Z"
+      },
+      {
+        "spellId": "banishment",
+        "createdAt": "2026-03-29T18:54:23.645Z"
+      },
+      {
+        "spellId": "death-ward",
+        "createdAt": "2026-03-29T18:54:26.220Z"
       }
     ],
-    "updatedAt": "2026-03-29T18:54:03.461Z",
+    "updatedAt": "2026-03-29T18:54:26.233Z",
     "classes": [
       {
         "name": "Cleric",
