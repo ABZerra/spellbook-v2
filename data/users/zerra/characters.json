@@ -54,11 +54,26 @@
         "spellId": "aura-of-purity",
         "assignedList": "CLERIC",
         "mode": "always"
+      },
+      {
+        "spellId": "otilukes-resilient-sphere",
+        "assignedList": "CLERIC",
+        "mode": "always"
+      },
+      {
+        "spellId": "greater-restoration",
+        "assignedList": "CLERIC",
+        "mode": "always"
+      },
+      {
+        "spellId": "rarys-telepathic-bond",
+        "assignedList": "CLERIC",
+        "mode": "always"
       }
     ],
     "nextPreparationQueue": [],
     "savedIdeas": [],
-    "updatedAt": "2026-03-29T18:50:21.742Z",
+    "updatedAt": "2026-03-29T18:51:03.479Z",
     "classes": [
       {
         "name": "Cleric",
