@@ -39,11 +39,26 @@
         "spellId": "warding-bond",
         "assignedList": "CLERIC",
         "mode": "always"
+      },
+      {
+        "spellId": "beacon-of-hope",
+        "assignedList": "CLERIC",
+        "mode": "always"
+      },
+      {
+        "spellId": "sending",
+        "assignedList": "CLERIC",
+        "mode": "always"
+      },
+      {
+        "spellId": "aura-of-purity",
+        "assignedList": "CLERIC",
+        "mode": "always"
       }
     ],
     "nextPreparationQueue": [],
     "savedIdeas": [],
-    "updatedAt": "2026-03-29T18:49:59.654Z",
+    "updatedAt": "2026-03-29T18:50:21.742Z",
     "classes": [
       {
         "name": "Cleric",
