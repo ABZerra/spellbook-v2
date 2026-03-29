@@ -203,6 +203,26 @@
         "spellId": "death-ward",
         "intent": "replace",
         "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "dispel-evil-and-good",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "legend-lore",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "mass-cure-wounds",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "scrying",
+        "intent": "replace",
+        "assignedList": "CLERIC"
       }
     ],
     "savedIdeas": [
@@ -317,9 +337,25 @@
       {
         "spellId": "death-ward",
         "createdAt": "2026-03-29T18:54:26.220Z"
+      },
+      {
+        "spellId": "dispel-evil-and-good",
+        "createdAt": "2026-03-29T18:54:40.621Z"
+      },
+      {
+        "spellId": "legend-lore",
+        "createdAt": "2026-03-29T18:54:45.625Z"
+      },
+      {
+        "spellId": "mass-cure-wounds",
+        "createdAt": "2026-03-29T18:54:57.342Z"
+      },
+      {
+        "spellId": "scrying",
+        "createdAt": "2026-03-29T18:55:03.587Z"
       }
     ],
-    "updatedAt": "2026-03-29T18:54:26.233Z",
+    "updatedAt": "2026-03-29T18:55:03.605Z",
     "classes": [
       {
         "name": "Cleric",
