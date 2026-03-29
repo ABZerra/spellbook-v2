@@ -71,9 +71,45 @@
         "mode": "always"
       }
     ],
-    "nextPreparationQueue": [],
-    "savedIdeas": [],
-    "updatedAt": "2026-03-29T18:51:03.479Z",
+    "nextPreparationQueue": [
+      {
+        "spellId": "frostbite",
+        "intent": "replace",
+        "assignedList": "DRUID"
+      },
+      {
+        "spellId": "guidance",
+        "intent": "replace"
+      },
+      {
+        "spellId": "light",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "mending",
+        "intent": "replace"
+      }
+    ],
+    "savedIdeas": [
+      {
+        "spellId": "frostbite",
+        "createdAt": "2026-03-29T18:51:52.441Z"
+      },
+      {
+        "spellId": "guidance",
+        "createdAt": "2026-03-29T18:51:55.650Z"
+      },
+      {
+        "spellId": "light",
+        "createdAt": "2026-03-29T18:51:57.689Z"
+      },
+      {
+        "spellId": "mending",
+        "createdAt": "2026-03-29T18:51:59.891Z"
+      }
+    ],
+    "updatedAt": "2026-03-29T18:51:59.911Z",
     "classes": [
       {
         "name": "Cleric",
