@@ -126,6 +126,20 @@
       {
         "spellId": "faerie-fire",
         "intent": "replace"
+      },
+      {
+        "spellId": "goodberry",
+        "intent": "replace",
+        "assignedList": "DRUID"
+      },
+      {
+        "spellId": "guiding-bolt",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "healing-word",
+        "intent": "replace"
       }
     ],
     "savedIdeas": [
@@ -176,9 +190,21 @@
       {
         "spellId": "faerie-fire",
         "createdAt": "2026-03-29T18:52:33.546Z"
+      },
+      {
+        "spellId": "goodberry",
+        "createdAt": "2026-03-29T18:52:36.612Z"
+      },
+      {
+        "spellId": "guiding-bolt",
+        "createdAt": "2026-03-29T18:52:38.668Z"
+      },
+      {
+        "spellId": "healing-word",
+        "createdAt": "2026-03-29T18:52:43.068Z"
       }
     ],
-    "updatedAt": "2026-03-29T18:52:33.568Z",
+    "updatedAt": "2026-03-29T18:52:43.089Z",
     "classes": [
       {
         "name": "Cleric",
