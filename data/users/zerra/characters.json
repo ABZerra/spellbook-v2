@@ -80,7 +80,7 @@
       {
         "spellId": "guidance",
         "intent": "add",
-        "assignedList": "CLERIC"
+        "assignedList": "DRUID"
       },
       {
         "spellId": "light",
@@ -94,36 +94,37 @@
       },
       {
         "spellId": "resistance",
-        "intent": "add"
+        "intent": "add",
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "thaumaturgy",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "thorn-whip",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "DRUID"
       },
       {
         "spellId": "toll-the-dead",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "absorb-elements",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "DRUID"
       },
       {
         "spellId": "command",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "detect-magic",
-        "intent": "replace"
+        "intent": "add"
       },
       {
         "spellId": "faerie-fire",
@@ -402,7 +403,7 @@
         "createdAt": "2026-03-29T18:56:08.920Z"
       }
     ],
-    "updatedAt": "2026-03-29T18:56:32.417Z",
+    "updatedAt": "2026-03-29T18:57:02.305Z",
     "classes": [
       {
         "name": "Cleric",
