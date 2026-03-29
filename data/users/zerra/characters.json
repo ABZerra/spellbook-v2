@@ -223,6 +223,11 @@
         "spellId": "scrying",
         "intent": "replace",
         "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "heal",
+        "intent": "replace",
+        "assignedList": "CLERIC"
       }
     ],
     "savedIdeas": [
@@ -353,9 +358,13 @@
       {
         "spellId": "scrying",
         "createdAt": "2026-03-29T18:55:03.587Z"
+      },
+      {
+        "spellId": "heal",
+        "createdAt": "2026-03-29T18:55:08.880Z"
       }
     ],
-    "updatedAt": "2026-03-29T18:55:03.605Z",
+    "updatedAt": "2026-03-29T18:55:08.889Z",
     "classes": [
       {
         "name": "Cleric",
