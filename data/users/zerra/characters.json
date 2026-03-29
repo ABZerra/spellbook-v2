@@ -228,6 +228,16 @@
         "spellId": "heal",
         "intent": "replace",
         "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "word-of-recall",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "conjure-celestial",
+        "intent": "replace",
+        "assignedList": "CLERIC"
       }
     ],
     "savedIdeas": [
@@ -362,9 +372,17 @@
       {
         "spellId": "heal",
         "createdAt": "2026-03-29T18:55:08.880Z"
+      },
+      {
+        "spellId": "word-of-recall",
+        "createdAt": "2026-03-29T18:55:47.767Z"
+      },
+      {
+        "spellId": "conjure-celestial",
+        "createdAt": "2026-03-29T18:56:00.022Z"
       }
     ],
-    "updatedAt": "2026-03-29T18:55:08.889Z",
+    "updatedAt": "2026-03-29T18:56:00.034Z",
     "classes": [
       {
         "name": "Cleric",
