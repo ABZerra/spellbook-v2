@@ -62,8 +62,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = useCallback(async (username: string): Promise<boolean> => {
     setLoginError(null);
     setPendingNewUser(null);
+    const id = username.toLowerCase();
     try {
-      const res = await fetchWithRetry(`/api/users/${encodeURIComponent(username.toLowerCase())}/characters`);
+      const res = await fetchWithRetry(`/api/users/${encodeURIComponent(id)}/characters`);
       if (!res.ok) {
         if (res.status === 404) {
           setPendingNewUser(username);
@@ -72,10 +73,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
         return false;
       }
-      localStorage.setItem(USER_ID_KEY, username.toLowerCase());
-      setUserId(username.toLowerCase());
+      localStorage.setItem(USER_ID_KEY, id);
+      setUserId(id);
       return true;
     } catch {
+      // API unreachable — try static user data (GitHub Pages only)
+      if (!__STATIC_FALLBACK__) {
+        setLoginError('Could not connect to server.');
+        return false;
+      }
+      try {
+        const staticRes = await fetch(`${import.meta.env.BASE_URL}data/users/users.json`);
+        if (staticRes.ok) {
+          const users = await staticRes.json() as Array<{ id: string }>;
+          if (users.some((u) => u.id === id)) {
+            localStorage.setItem(USER_ID_KEY, id);
+            setUserId(id);
+            setIsOffline(true);
+            return true;
+          }
+          setPendingNewUser(username);
+          return false;
+        }
+      } catch { /* static fallback unavailable */ }
       setLoginError('Could not connect to server.');
       return false;
     }

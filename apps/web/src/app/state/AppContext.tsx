@@ -107,6 +107,7 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     if (isAuthenticated && userId && !isOffline) {
       fetch(`/api/users/${encodeURIComponent(userId)}/characters`)
         .then((res) => res.ok ? res.json() : null)
+        .catch(() => null)
         .then(async (data) => {
           if (!data) return;
           // Server is the source of truth for which characters belong to this user
@@ -150,6 +151,34 @@ export function AppProvider({ children, provider }: AppProviderProps) {
             if (unsyncedLocal.length > 0) {
               service.markDirty(merged);
             }
+          }
+        })
+        .catch(() => {});
+    } else if (isAuthenticated && userId && isOffline && __STATIC_FALLBACK__) {
+      // Static fallback: load characters from bundled JSON (GitHub Pages only)
+      fetch(`${import.meta.env.BASE_URL}data/users/${encodeURIComponent(userId)}/characters.json`)
+        .then((res) => res.ok ? res.json() : null)
+        .catch(() => null)
+        .then(async (staticChars) => {
+          const loaded = (Array.isArray(staticChars) ? staticChars : [])
+            .map((c: CharacterProfile) => normalizeCharacterProfile(c));
+
+          // Write to IndexedDB so local edits work
+          const localCharacters = await resolvedProvider.listCharacterProfiles();
+          const localIds = new Set(localCharacters.map((c) => c.id));
+          for (const character of loaded) {
+            if (localIds.has(character.id)) {
+              await resolvedProvider.saveCharacterProfile(character);
+            } else {
+              await resolvedProvider.createCharacterProfile(character);
+            }
+          }
+
+          setCharacters(loaded);
+          if (loaded.length > 0 && !activeCharacterId) {
+            const firstId = loaded[0].id;
+            setActiveCharacterId(firstId);
+            localStorage.setItem(ACTIVE_CHARACTER_KEY, firstId);
           }
         })
         .catch(() => {});
