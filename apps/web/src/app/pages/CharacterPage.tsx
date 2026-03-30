@@ -37,6 +37,9 @@ export function CharacterPage() {
     addPreparedSpell,
     removePreparedSpell,
     reassignPreparedSpell,
+    markPreparedForReplacement,
+    unmarkPreparedForReplacement,
+    isSpellMarkedForReplacement,
   } = useApp();
 
   const [error, setError] = useState<string | null>(null);
@@ -397,11 +400,17 @@ export function CharacterPage() {
                           return (
                             <div
                               key={row.key}
-                              className="group flex flex-col gap-2 py-1.5 md:flex-row md:items-baseline md:gap-3"
+                              className={`group flex flex-col gap-2 py-1.5 md:flex-row md:items-baseline md:gap-3 ${
+                                isSpellMarkedForReplacement(row.entry.spellId) ? 'opacity-60' : ''
+                              }`}
                             >
                               <button
                                 type="button"
-                                className="min-w-0 truncate text-left font-medium text-text transition-colors hover:text-gold-soft"
+                                className={`min-w-0 truncate text-left font-medium transition-colors hover:text-gold-soft ${
+                                  isSpellMarkedForReplacement(row.entry.spellId)
+                                    ? 'text-text-dim line-through'
+                                    : 'text-text'
+                                }`}
                                 onClick={() => setSelectedPreparedKey(row.key)}
                               >
                                 {row.spell?.name || row.entry.spellId}
@@ -460,17 +469,45 @@ export function CharacterPage() {
                                   </span>
                                 )}
 
-                                <button
-                                  type="button"
-                                  className="text-[11px] uppercase tracking-[0.18em] text-text-dim transition-[color,opacity] hover:text-blood md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
-                                  onClick={() => {
-                                    void removePreparedSpell(row.entry.spellId, row.entry.assignedList, row.entry.mode, row.occurrenceIndex).catch((nextError) => {
-                                      setError(nextError instanceof Error ? nextError.message : 'Unable to remove prepared spell.');
-                                    });
-                                  }}
-                                >
-                                  Remove
-                                </button>
+                                {row.mode !== 'always' ? (
+                                  isSpellMarkedForReplacement(row.entry.spellId) ? (
+                                    <button
+                                      type="button"
+                                      className="text-[11px] uppercase tracking-[0.18em] text-gold-soft font-semibold transition-[color,opacity] hover:text-gold md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
+                                      onClick={() => {
+                                        void unmarkPreparedForReplacement(row.entry.spellId).catch((nextError) => {
+                                          setError(nextError instanceof Error ? nextError.message : 'Unable to undo replacement mark.');
+                                        });
+                                      }}
+                                    >
+                                      Undo
+                                    </button>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      className="text-[11px] uppercase tracking-[0.18em] text-text-dim transition-[color,opacity] hover:text-gold-soft md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
+                                      onClick={() => {
+                                        void markPreparedForReplacement(row.entry.spellId, row.entry.assignedList).catch((nextError) => {
+                                          setError(nextError instanceof Error ? nextError.message : 'Unable to mark spell for replacement.');
+                                        });
+                                      }}
+                                    >
+                                      Replace
+                                    </button>
+                                  )
+                                ) : (
+                                  <button
+                                    type="button"
+                                    className="text-[11px] uppercase tracking-[0.18em] text-text-dim transition-[color,opacity] hover:text-blood md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
+                                    onClick={() => {
+                                      void removePreparedSpell(row.entry.spellId, row.entry.assignedList, row.entry.mode, row.occurrenceIndex).catch((nextError) => {
+                                        setError(nextError instanceof Error ? nextError.message : 'Unable to remove prepared spell.');
+                                      });
+                                    }}
+                                  >
+                                    Remove
+                                  </button>
+                                )}
                               </div>
                             </div>
                           );
