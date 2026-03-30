@@ -58,6 +58,7 @@ describe('computeApplyResult', () => {
     expect(output.summary).toEqual({
       adds: 1,
       replacements: 1,
+      removals: 0,
       queueOnlySkipped: 1,
     });
   });
@@ -153,6 +154,69 @@ describe('computeApplyResult', () => {
       spellsById: new Map(spells.map((spell) => [spell.id, spell])),
       queue: [{ spellId: 'counterspell', intent: 'add', assignedList: 'WIZARD' } as any],
     })).toThrow(/max spell level/i);
+  });
+
+  it('applies a remove entry as pure removal when no replacement is linked', () => {
+    const profile = makeProfile();
+    const spells = makeSpells();
+
+    const output = computeApplyResult({
+      profile,
+      spellsById: new Map(spells.map((spell) => [spell.id, spell])),
+      queue: [
+        { spellId: 'shield', intent: 'remove', assignedList: 'WIZARD' },
+      ],
+    });
+
+    expect(output.finalPreparedSpells).toEqual([
+      { spellId: 'mage-armor', assignedList: 'WIZARD', mode: 'normal' },
+    ]);
+    expect(output.summary.removals).toBe(1);
+  });
+
+  it('skips remove entry when spell is not currently prepared', () => {
+    const profile = makeProfile();
+    const spells = makeSpells();
+
+    const output = computeApplyResult({
+      profile,
+      spellsById: new Map(spells.map((spell) => [spell.id, spell])),
+      queue: [
+        { spellId: 'counterspell', intent: 'remove', assignedList: 'WIZARD' },
+      ],
+    });
+
+    // Prepared spells unchanged — counterspell was never prepared
+    expect(output.finalPreparedSpells).toEqual([
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'mage-armor', assignedList: 'WIZARD', mode: 'normal' },
+    ]);
+    expect(output.summary.removals).toBe(0);
+  });
+
+  it('applies remove alongside add and replace entries', () => {
+    const profile = makeProfile();
+    const spells = makeSpells();
+
+    const output = computeApplyResult({
+      profile,
+      spellsById: new Map(spells.map((spell) => [spell.id, spell])),
+      queue: [
+        { spellId: 'shield', intent: 'remove', assignedList: 'WIZARD' },
+        { spellId: 'absorb-elements', intent: 'add', assignedList: 'WIZARD' },
+      ],
+    });
+
+    expect(output.finalPreparedSpells).toEqual([
+      { spellId: 'mage-armor', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'absorb-elements', assignedList: 'WIZARD', mode: 'normal' },
+    ]);
+    expect(output.summary).toEqual({
+      adds: 1,
+      replacements: 0,
+      removals: 1,
+      queueOnlySkipped: 0,
+    });
   });
 
   it('does not count always prepared spells against preparation limits', () => {
