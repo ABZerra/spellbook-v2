@@ -11,7 +11,7 @@ const base =
   (process.env.GITHUB_ACTIONS ? githubPagesBase : '/');
 const apiTarget = process.env.SPELLBOOK_API_TARGET || 'http://localhost:3001';
 
-const isPages = !!process.env.GITHUB_ACTIONS;
+const isPages = process.env.SPELLBOOK_STATIC_FALLBACK === 'true';
 
 export default defineConfig({
   base,
