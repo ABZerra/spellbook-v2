@@ -34,7 +34,7 @@ jobs:
         run: cp data/spells.snapshot.json apps/web/dist/spells.snapshot.json
 
       - name: Copy user data for static fallback
-        run: cp -r data/users apps/web/dist/data/users
+        run: mkdir -p apps/web/dist/data && cp -r data/users apps/web/dist/data/users
 
       - name: Add SPA fallback
         run: cp apps/web/dist/index.html apps/web/dist/404.html
