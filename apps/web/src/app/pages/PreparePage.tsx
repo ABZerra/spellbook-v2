@@ -338,6 +338,37 @@ export function PreparePage() {
                       if (!queuedRow) return null;
 
                       const { entry, spell } = queuedRow;
+
+                      if (entry.intent === 'remove') {
+                        return (
+                          <article key={spell.id} className="py-4 text-sm">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0 flex-1">
+                                <p className="font-display text-2xl leading-tight text-text-dim line-through">
+                                  {spell.name}
+                                </p>
+                                <p className="mt-1 text-xs text-text-muted">
+                                  {entry.assignedList || 'Unassigned'} · Marked for replacement
+                                </p>
+                                <p className="mt-3 text-sm text-text-muted">
+                                  Find a replacement from the search above or from the Catalog page.
+                                </p>
+                                <p className="mt-2 text-xs text-text-dim">
+                                  No replacement needed? This spell will simply be unprepared when you apply.
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                className="text-[11px] uppercase tracking-[0.18em] text-gold-soft font-semibold transition-colors hover:text-gold flex-shrink-0 pt-3"
+                                onClick={() => void unmarkPreparedForReplacement(spell.id)}
+                              >
+                                Undo
+                              </button>
+                            </div>
+                          </article>
+                        );
+                      }
+
                       const validLists = getValidAssignmentLists(spell, activeCharacter);
                       const addableLists = getAddableAssignmentLists(spell, activeCharacter);
                       const queuedList = entry.assignedList || (addableLists.length === 1 ? addableLists[0] : null);
