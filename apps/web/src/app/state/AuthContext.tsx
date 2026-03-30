@@ -63,25 +63,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setLoginError(null);
     setPendingNewUser(null);
     const id = username.toLowerCase();
-    try {
-      const res = await fetchWithRetry(`/api/users/${encodeURIComponent(id)}/characters`);
-      if (!res.ok) {
-        if (res.status === 404) {
-          setPendingNewUser(username);
-        } else {
-          setLoginError('Login failed. Try again.');
-        }
-        return false;
-      }
-      localStorage.setItem(USER_ID_KEY, id);
-      setUserId(id);
-      return true;
-    } catch {
-      // API unreachable — try static user data (GitHub Pages only)
-      if (!__STATIC_FALLBACK__) {
-        setLoginError('Could not connect to server.');
-        return false;
-      }
+    // On GitHub Pages, skip the API entirely and use static user data
+    if (__STATIC_FALLBACK__) {
       try {
         const staticRes = await fetch(`${import.meta.env.BASE_URL}data/users/users.json`);
         if (staticRes.ok) {
@@ -96,6 +79,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
           return false;
         }
       } catch { /* static fallback unavailable */ }
+      setLoginError('Could not load user data.');
+      return false;
+    }
+
+    try {
+      const res = await fetchWithRetry(`/api/users/${encodeURIComponent(id)}/characters`);
+      if (!res.ok) {
+        if (res.status === 404) {
+          setPendingNewUser(username);
+        } else {
+          setLoginError('Login failed. Try again.');
+        }
+        return false;
+      }
+      localStorage.setItem(USER_ID_KEY, id);
+      setUserId(id);
+      return true;
+    } catch {
       setLoginError('Could not connect to server.');
       return false;
     }

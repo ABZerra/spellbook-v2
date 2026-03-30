@@ -29,6 +29,8 @@ jobs:
 
       - name: Install and build
         run: npm install --prefix apps/web && npm run build:web
+        env:
+          SPELLBOOK_STATIC_FALLBACK: 'true'
 
       - name: Copy spell snapshot
         run: cp data/spells.snapshot.json apps/web/dist/spells.snapshot.json
