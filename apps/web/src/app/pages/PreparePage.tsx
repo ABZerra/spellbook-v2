@@ -26,6 +26,8 @@ export function PreparePage() {
     restoreQueueFromPrepared,
     applyPlan,
     isSpellQueuedForNextPreparation,
+    markPreparedForReplacement,
+    unmarkPreparedForReplacement,
   } = useApp();
 
   const [search, setSearch] = useState('');
@@ -132,6 +134,10 @@ export function PreparePage() {
   const highlightedReplaceTargets = useMemo(() => new Set(queueEntries
     .filter((entry) => entry.intent === 'replace' && entry.replaceTarget)
     .map((entry) => String(entry.replaceTarget))), [queueEntries]);
+
+  const markedForReplacementIds = useMemo(() => new Set(queueEntries
+    .filter((entry) => entry.intent === 'remove')
+    .map((entry) => entry.spellId)), [queueEntries]);
 
   const selectedQueuedEntry = useMemo(
     () => queueEntries.find((entry) => entry.spellId === selectedSpellId) || null,
@@ -542,6 +548,13 @@ export function PreparePage() {
         profile={activeCharacter}
         spellsById={spellsById}
         highlightedSpellIds={highlightedReplaceTargets}
+        markedForReplacementIds={markedForReplacementIds}
+        onMarkForReplacement={(spellId, assignedList) => {
+          void markPreparedForReplacement(spellId, assignedList);
+        }}
+        onUnmarkForReplacement={(spellId) => {
+          void unmarkPreparedForReplacement(spellId);
+        }}
       />
 
       <SpellDetailDrawer
