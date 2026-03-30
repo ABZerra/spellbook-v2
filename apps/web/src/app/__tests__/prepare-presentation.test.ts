@@ -58,6 +58,16 @@ describe('prepare presentation', () => {
     expect(getPrepareQueueReplaceSummary('replace')).toBeNull();
     expect(getPrepareQueueReplaceSummary('add')).toBe('Prepare without replacement');
     expect(getPrepareQueueReplaceSummary('queue_only')).toBe('Saved for later');
+    expect(getPrepareQueueReplaceSummary('remove')).toBe('Marked for replacement');
+  });
+
+  it('formats remove intent as removal label', () => {
+    const result = formatPrepareReviewLabel({
+      intent: 'remove',
+      spellName: 'Shield',
+      assignedList: 'WIZARD',
+    });
+    expect(result).toBe('Remove Shield');
   });
 
   it('formats queued review labels from staged actions', () => {

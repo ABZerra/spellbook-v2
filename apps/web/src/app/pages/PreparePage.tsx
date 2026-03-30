@@ -188,7 +188,7 @@ export function PreparePage() {
     try {
       const output = await applyPlan();
       const skipped = output.summary.queueOnlySkipped;
-      const executed = output.summary.adds + output.summary.replacements;
+      const executed = output.summary.adds + output.summary.replacements + (output.summary.removals || 0);
       const ackStatus = output.ack.acknowledged
         ? output.ack.ok
           ? 'Extension acknowledged the payload.'
