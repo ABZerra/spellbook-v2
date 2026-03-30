@@ -16,6 +16,7 @@ describe('catalog presentation', () => {
         eligible: true,
         prepared: false,
         queued: true,
+        markedForReplacement: false,
         displayList: 'WIZARD',
       },
       addableLists: ['WIZARD'],
@@ -41,6 +42,7 @@ describe('catalog presentation', () => {
         eligible: false,
         prepared: false,
         queued: false,
+        markedForReplacement: false,
         displayList: '-',
       },
       addableLists: [],
@@ -66,6 +68,7 @@ describe('catalog presentation', () => {
         eligible: true,
         prepared: false,
         queued: false,
+        markedForReplacement: false,
         displayList: 'WIZARD',
       },
       addableLists: [],
@@ -84,12 +87,13 @@ describe('catalog presentation', () => {
         eligible: true,
         prepared: true,
         queued: false,
+        markedForReplacement: false,
         displayList: 'WIZARD',
       },
       addableLists: ['WIZARD'],
     });
 
-    expect(result.actionLabel).toBe('Prepared · Queue');
+    expect(result.actionLabel).toBe('Prepared · Replace');
     expect(result.disabled).toBe(false);
   });
 
@@ -100,12 +104,38 @@ describe('catalog presentation', () => {
         eligible: true,
         prepared: true,
         queued: true,
+        markedForReplacement: false,
         displayList: 'WIZARD',
       },
       addableLists: ['WIZARD'],
     });
 
     expect(result.actionLabel).toBe('Queued ✓');
+    expect(result.disabled).toBe(false);
+  });
+
+  it('shows prepared spell as replaceable with Replace action', () => {
+    const result = getCatalogRowPresentation({
+      row: {
+        spell: { id: 'shield', name: 'Shield', level: 1, save: '', castingTime: '1 Reaction', notes: '' } as any,
+        eligible: true, prepared: true, queued: false, markedForReplacement: false, displayList: 'WIZARD',
+      },
+      addableLists: ['WIZARD'],
+    });
+    expect(result.actionLabel).toBe('Prepared \u00b7 Replace');
+    expect(result.disabled).toBe(false);
+  });
+
+  it('shows marked-for-replacement spell with Replacing checkmark', () => {
+    const result = getCatalogRowPresentation({
+      row: {
+        spell: { id: 'shield', name: 'Shield', level: 1, save: '', castingTime: '1 Reaction', notes: '' } as any,
+        eligible: true, prepared: true, queued: false, markedForReplacement: true, displayList: 'WIZARD',
+      },
+      addableLists: ['WIZARD'],
+    });
+    expect(result.stateLabel).toBe('Replacing');
+    expect(result.actionLabel).toBe('Replacing \u2713');
     expect(result.disabled).toBe(false);
   });
 });

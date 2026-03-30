@@ -28,6 +28,7 @@ export interface CatalogRow {
   eligible: boolean;
   prepared: boolean;
   queued: boolean;
+  markedForReplacement: boolean;
   displayList: string;
 }
 
@@ -164,6 +165,11 @@ function compareRows(left: CatalogRow, right: CatalogRow, preferences: CatalogPr
 export function buildCatalogRows(input: BuildCatalogRowsInput): CatalogRow[] {
   const preparedSet = new Set((input.activeCharacter?.preparedSpells || []).map((entry) => entry.spellId));
   const queuedSet = new Set((input.activeCharacter?.nextPreparationQueue || []).map((entry) => entry.spellId));
+  const markedForReplacementSet = new Set(
+    (input.activeCharacter?.nextPreparationQueue || [])
+      .filter((entry) => entry.intent === 'remove')
+      .map((entry) => entry.spellId),
+  );
 
   const rows = input.spells
     .filter((spell) => matchesSearch(spell, input.search))
@@ -181,6 +187,7 @@ export function buildCatalogRows(input: BuildCatalogRowsInput): CatalogRow[] {
         eligible,
         prepared: preparedSet.has(spell.id),
         queued: queuedSet.has(spell.id),
+        markedForReplacement: markedForReplacementSet.has(spell.id),
         displayList,
       };
     });

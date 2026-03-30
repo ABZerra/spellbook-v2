@@ -25,6 +25,15 @@ export function getCatalogRowPresentation({
     };
   }
 
+  if (row.markedForReplacement) {
+    return {
+      stateLabel: 'Replacing',
+      actionLabel: 'Replacing \u2713',
+      disabled: false,
+      helperText: 'Marked for replacement. Click to undo.',
+    };
+  }
+
   if (!row.eligible) {
     return {
       stateLabel: 'Off-list',
@@ -46,9 +55,9 @@ export function getCatalogRowPresentation({
   if (row.prepared) {
     return {
       stateLabel: 'Prepared',
-      actionLabel: 'Prepared · Queue',
+      actionLabel: 'Prepared \u00b7 Replace',
       disabled: false,
-      helperText: 'Prepared now. You can still stage a change for the next rest.',
+      helperText: 'Prepared now. Click to mark for replacement.',
     };
   }
 
