@@ -59,6 +59,11 @@ interface AppContextValue {
   setQueuedSpellReplaceTarget: (spellId: string, replaceTarget: string | null) => Promise<void>;
   restoreQueueFromPrepared: () => Promise<void>;
 
+  markPreparedForReplacement: (spellId: string, assignedList: string) => Promise<void>;
+  unmarkPreparedForReplacement: (spellId: string) => Promise<void>;
+  fulfillRemoval: (removeSpellId: string, replacementSpellId: string) => Promise<void>;
+  isSpellMarkedForReplacement: (spellId: string) => boolean;
+
   applyPlan: () => Promise<ApplyPlanOutput>;
 }
 
@@ -227,9 +232,71 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     }));
   }, [mutateActiveCharacter, spellsById]);
 
+  const markPreparedForReplacement = useCallback(async (spellId: string, assignedList: string) => {
+    await mutateActiveCharacter((character) => {
+      const alreadyQueued = character.nextPreparationQueue.some(
+        (entry) => entry.spellId === spellId && entry.intent === 'remove',
+      );
+      if (alreadyQueued) return character;
+
+      return {
+        ...character,
+        nextPreparationQueue: [
+          ...character.nextPreparationQueue,
+          { spellId, intent: 'remove' as const, assignedList, createdAt: new Date().toISOString() },
+        ],
+      };
+    });
+  }, [mutateActiveCharacter]);
+
+  const unmarkPreparedForReplacement = useCallback(async (spellId: string) => {
+    await mutateActiveCharacter((character) => ({
+      ...character,
+      nextPreparationQueue: character.nextPreparationQueue.filter(
+        (entry) => !(entry.spellId === spellId && entry.intent === 'remove'),
+      ),
+    }));
+  }, [mutateActiveCharacter]);
+
+  const fulfillRemoval = useCallback(async (removeSpellId: string, replacementSpellId: string) => {
+    await mutateActiveCharacter((character) => {
+      const removeEntry = character.nextPreparationQueue.find(
+        (entry) => entry.spellId === removeSpellId && entry.intent === 'remove',
+      );
+      if (!removeEntry) {
+        throw new Error('No removal entry found for this spell.');
+      }
+
+      const withoutRemoval = character.nextPreparationQueue.filter(
+        (entry) => !(entry.spellId === removeSpellId && entry.intent === 'remove'),
+      );
+
+      return {
+        ...character,
+        nextPreparationQueue: [
+          ...withoutRemoval,
+          {
+            spellId: replacementSpellId,
+            intent: 'replace' as const,
+            assignedList: removeEntry.assignedList,
+            replaceTarget: removeSpellId,
+            createdAt: new Date().toISOString(),
+          },
+        ],
+      };
+    });
+  }, [mutateActiveCharacter]);
+
   const isSpellQueuedForNextPreparation = useCallback((spellId: string) => {
     if (!activeCharacter) return false;
     return activeCharacter.nextPreparationQueue.some((entry) => entry.spellId === spellId);
+  }, [activeCharacter]);
+
+  const isSpellMarkedForReplacement = useCallback((spellId: string) => {
+    if (!activeCharacter) return false;
+    return activeCharacter.nextPreparationQueue.some(
+      (entry) => entry.spellId === spellId && entry.intent === 'remove',
+    );
   }, [activeCharacter]);
 
   const addPreparedSpell = useCallback(async (
@@ -415,6 +482,10 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     setQueuedSpellAssignedList,
     setQueuedSpellReplaceTarget,
     restoreQueueFromPrepared,
+    markPreparedForReplacement,
+    unmarkPreparedForReplacement,
+    fulfillRemoval,
+    isSpellMarkedForReplacement,
     applyPlan,
   }), [
     loading,
@@ -439,6 +510,10 @@ export function AppProvider({ children, provider }: AppProviderProps) {
     setQueuedSpellAssignedList,
     setQueuedSpellReplaceTarget,
     restoreQueueFromPrepared,
+    markPreparedForReplacement,
+    unmarkPreparedForReplacement,
+    fulfillRemoval,
+    isSpellMarkedForReplacement,
     applyPlan,
   ]);
 
