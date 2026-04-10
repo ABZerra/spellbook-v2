@@ -29,11 +29,31 @@
         "spellId": "rarys-telepathic-bond",
         "assignedList": "CLERIC",
         "mode": "always"
+      },
+      {
+        "spellId": "warding-bond",
+        "assignedList": "CLERIC",
+        "mode": "always"
+      },
+      {
+        "spellId": "heroism",
+        "assignedList": "CLERIC",
+        "mode": "always"
+      },
+      {
+        "spellId": "otilukes-resilient-sphere",
+        "assignedList": "CLERIC",
+        "mode": "always"
+      },
+      {
+        "spellId": "greater-restoration",
+        "assignedList": "CLERIC",
+        "mode": "always"
       }
     ],
     "nextPreparationQueue": [],
     "savedIdeas": [],
-    "updatedAt": "2026-04-10T13:34:32.705Z",
+    "updatedAt": "2026-04-10T13:35:02.292Z",
     "classes": [
       {
         "name": "Druid",
