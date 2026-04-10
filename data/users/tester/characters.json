@@ -178,6 +178,21 @@
         "spellId": "spirit-guardians",
         "intent": "replace",
         "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "aura-of-purity",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "banishment",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "death-ward",
+        "intent": "replace",
+        "assignedList": "CLERIC"
       }
     ],
     "savedIdeas": [
@@ -292,9 +307,21 @@
       {
         "spellId": "spirit-guardians",
         "createdAt": "2026-04-10T13:39:51.814Z"
+      },
+      {
+        "spellId": "aura-of-purity",
+        "createdAt": "2026-04-10T13:45:17.427Z"
+      },
+      {
+        "spellId": "banishment",
+        "createdAt": "2026-04-10T13:45:21.394Z"
+      },
+      {
+        "spellId": "death-ward",
+        "createdAt": "2026-04-10T13:45:25.344Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:39:51.823Z",
+    "updatedAt": "2026-04-10T13:45:25.352Z",
     "classes": [
       {
         "name": "Druid",
