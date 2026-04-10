@@ -581,10 +581,10 @@ export function PreparePage() {
         highlightedSpellIds={highlightedReplaceTargets}
         markedForReplacementIds={markedForReplacementIds}
         onMarkForReplacement={(spellId, assignedList) => {
-          void markPreparedForReplacement(spellId, assignedList);
+          markPreparedForReplacement(spellId, assignedList).catch(() => {});
         }}
         onUnmarkForReplacement={(spellId) => {
-          void unmarkPreparedForReplacement(spellId);
+          unmarkPreparedForReplacement(spellId).catch(() => {});
         }}
       />
 

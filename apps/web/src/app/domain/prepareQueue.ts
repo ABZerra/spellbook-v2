@@ -76,6 +76,7 @@ export function computeApplyResult(input: ComputeApplyInput): ComputeApplyOutput
     ));
     if (removeIndex !== -1) {
       nextPrepared.splice(removeIndex, 1);
+      appliedSpellIds.push(entry.spellId);
       summary.removals += 1;
     }
   }
@@ -119,7 +120,7 @@ export function computeApplyResult(input: ComputeApplyInput): ComputeApplyOutput
         && preparedEntry.assignedList === assignedList
       ));
       if (replaceIndex === -1) {
-      throw new Error(`${spell.name}: must replace a spell from the same list.`);
+        throw new Error(`${spell.name}: must replace a spell from the same list.`);
       }
 
       assertSpellCanBeAddedToList(spell, input.profile, assignedList);
