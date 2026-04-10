@@ -207,6 +207,34 @@
       {
         "spellId": "mass-cure-wounds",
         "intent": "replace"
+      },
+      {
+        "spellId": "scrying",
+        "intent": "replace"
+      },
+      {
+        "spellId": "heal",
+        "intent": "replace"
+      },
+      {
+        "spellId": "true-seeing",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "word-of-recall",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "conjure-celestial",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "antimagic-field",
+        "intent": "replace",
+        "assignedList": "CLERIC"
       }
     ],
     "savedIdeas": [
@@ -345,9 +373,33 @@
       {
         "spellId": "mass-cure-wounds",
         "createdAt": "2026-04-10T13:46:04.077Z"
+      },
+      {
+        "spellId": "scrying",
+        "createdAt": "2026-04-10T13:46:11.294Z"
+      },
+      {
+        "spellId": "heal",
+        "createdAt": "2026-04-10T13:46:17.843Z"
+      },
+      {
+        "spellId": "true-seeing",
+        "createdAt": "2026-04-10T13:46:23.427Z"
+      },
+      {
+        "spellId": "word-of-recall",
+        "createdAt": "2026-04-10T13:46:27.876Z"
+      },
+      {
+        "spellId": "conjure-celestial",
+        "createdAt": "2026-04-10T13:46:33.343Z"
+      },
+      {
+        "spellId": "antimagic-field",
+        "createdAt": "2026-04-10T13:46:37.576Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:46:04.086Z",
+    "updatedAt": "2026-04-10T13:46:37.583Z",
     "classes": [
       {
         "name": "Druid",
