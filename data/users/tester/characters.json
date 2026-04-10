@@ -138,6 +138,19 @@
         "spellId": "aid",
         "intent": "replace",
         "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "blindness-deafness",
+        "intent": "replace"
+      },
+      {
+        "spellId": "hold-person",
+        "intent": "replace"
+      },
+      {
+        "spellId": "spiritual-weapon",
+        "intent": "replace",
+        "assignedList": "CLERIC"
       }
     ],
     "savedIdeas": [
@@ -216,9 +229,21 @@
       {
         "spellId": "aid",
         "createdAt": "2026-04-10T13:38:37.498Z"
+      },
+      {
+        "spellId": "blindness-deafness",
+        "createdAt": "2026-04-10T13:38:42.614Z"
+      },
+      {
+        "spellId": "hold-person",
+        "createdAt": "2026-04-10T13:38:50.864Z"
+      },
+      {
+        "spellId": "spiritual-weapon",
+        "createdAt": "2026-04-10T13:39:02.730Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:38:37.507Z",
+    "updatedAt": "2026-04-10T13:39:02.739Z",
     "classes": [
       {
         "name": "Druid",
