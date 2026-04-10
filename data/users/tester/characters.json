@@ -11,7 +11,7 @@
       {
         "list": "DRUID",
         "limit": 1,
-        "maxSpellLevel": 7
+        "maxSpellLevel": 8
       },
       {
         "list": "CLERIC",
@@ -75,7 +75,7 @@
       {
         "spellId": "resistance",
         "intent": "add",
-        "assignedList": "DRUID"
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "thaumaturgy",
@@ -433,7 +433,7 @@
         "createdAt": "2026-04-10T13:46:46.776Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:49:55.786Z",
+    "updatedAt": "2026-04-10T13:50:29.036Z",
     "classes": [
       {
         "name": "Druid",
