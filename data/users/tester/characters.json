@@ -193,6 +193,20 @@
         "spellId": "death-ward",
         "intent": "replace",
         "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "dispel-evil-and-good",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "legend-lore",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "mass-cure-wounds",
+        "intent": "replace"
       }
     ],
     "savedIdeas": [
@@ -319,9 +333,21 @@
       {
         "spellId": "death-ward",
         "createdAt": "2026-04-10T13:45:25.344Z"
+      },
+      {
+        "spellId": "dispel-evil-and-good",
+        "createdAt": "2026-04-10T13:45:46.110Z"
+      },
+      {
+        "spellId": "legend-lore",
+        "createdAt": "2026-04-10T13:45:58.143Z"
+      },
+      {
+        "spellId": "mass-cure-wounds",
+        "createdAt": "2026-04-10T13:46:04.077Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:45:25.352Z",
+    "updatedAt": "2026-04-10T13:46:04.086Z",
     "classes": [
       {
         "name": "Druid",
