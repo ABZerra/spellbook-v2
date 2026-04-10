@@ -151,6 +151,33 @@
         "spellId": "spiritual-weapon",
         "intent": "replace",
         "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "aura-of-vitality",
+        "intent": "replace"
+      },
+      {
+        "spellId": "beacon-of-hope",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "dispel-magic",
+        "intent": "replace"
+      },
+      {
+        "spellId": "revivify",
+        "intent": "replace"
+      },
+      {
+        "spellId": "speak-with-dead",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "spirit-guardians",
+        "intent": "replace",
+        "assignedList": "CLERIC"
       }
     ],
     "savedIdeas": [
@@ -241,9 +268,33 @@
       {
         "spellId": "spiritual-weapon",
         "createdAt": "2026-04-10T13:39:02.730Z"
+      },
+      {
+        "spellId": "aura-of-vitality",
+        "createdAt": "2026-04-10T13:39:16.213Z"
+      },
+      {
+        "spellId": "beacon-of-hope",
+        "createdAt": "2026-04-10T13:39:20.013Z"
+      },
+      {
+        "spellId": "dispel-magic",
+        "createdAt": "2026-04-10T13:39:27.031Z"
+      },
+      {
+        "spellId": "revivify",
+        "createdAt": "2026-04-10T13:39:34.364Z"
+      },
+      {
+        "spellId": "speak-with-dead",
+        "createdAt": "2026-04-10T13:39:42.363Z"
+      },
+      {
+        "spellId": "spirit-guardians",
+        "createdAt": "2026-04-10T13:39:51.814Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:39:02.739Z",
+    "updatedAt": "2026-04-10T13:39:51.823Z",
     "classes": [
       {
         "name": "Druid",
