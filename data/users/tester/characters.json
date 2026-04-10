@@ -74,16 +74,17 @@
       },
       {
         "spellId": "resistance",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "DRUID"
       },
       {
         "spellId": "thaumaturgy",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "thorn-whip",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "DRUID"
       },
       {
@@ -419,7 +420,7 @@
         "createdAt": "2026-04-10T13:46:46.776Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:47:29.035Z",
+    "updatedAt": "2026-04-10T13:48:09.763Z",
     "classes": [
       {
         "name": "Druid",
