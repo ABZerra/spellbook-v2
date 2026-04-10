@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { buildPreparationUsage, getAddableAssignmentLists, getValidAssignmentLists } from '../domain/character';
 import { computeApplyResult } from '../domain/prepareQueue';
 import { PreparedDrawer } from '../components/PreparedDrawer';
@@ -28,6 +28,7 @@ export function PreparePage() {
     isSpellQueuedForNextPreparation,
     markPreparedForReplacement,
     unmarkPreparedForReplacement,
+    fulfillRemoval,
   } = useApp();
 
   const [search, setSearch] = useState('');
@@ -37,6 +38,23 @@ export function PreparePage() {
   const [preparedDrawerOpen, setPreparedDrawerOpen] = useState(false);
   const [showValidationErrors, setShowValidationErrors] = useState(false);
   const [selectedSpellId, setSelectedSpellId] = useState<string | null>(null);
+  const [replacingSpellId, setReplacingSpellId] = useState<string | null>(null);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const replacingSpellName = replacingSpellId ? spellsById.get(replacingSpellId)?.name || null : null;
+
+  const startReplacing = useCallback((spellId: string) => {
+    setReplacingSpellId(spellId);
+    setSearch('');
+    setTimeout(() => {
+      searchInputRef.current?.focus();
+    }, 0);
+  }, []);
+
+  const cancelReplacing = useCallback(() => {
+    setReplacingSpellId(null);
+  }, []);
 
   const spellsById = useMemo(() => new Map(spells.map((spell) => [spell.id, spell])), [spells]);
 
@@ -202,6 +220,12 @@ export function PreparePage() {
     setShowValidationErrors(false);
   }, [queueEntries]);
 
+  useEffect(() => {
+    if (replacingSpellId && !queueEntries.some((entry) => entry.spellId === replacingSpellId && entry.intent === 'remove')) {
+      setReplacingSpellId(null);
+    }
+  }, [replacingSpellId, queueEntries]);
+
   if (!activeCharacter) {
     return (
       <div className="space-y-4">
@@ -287,19 +311,33 @@ export function PreparePage() {
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1.25fr)_360px]">
         <div className="space-y-4">
           <section className="rounded-[1.45rem] border border-border-dark bg-bg-1/92 p-4 md:p-5">
-            <h2 className="font-display text-2xl text-text">Stage Another Spell</h2>
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 className="font-display text-2xl text-text">
+                {replacingSpellName ? `Replace ${replacingSpellName}` : 'Stage Another Spell'}
+              </h2>
+              {replacingSpellId ? (
+                <button
+                  type="button"
+                  className="text-[11px] uppercase tracking-[0.18em] text-text-dim transition-colors hover:text-text"
+                  onClick={cancelReplacing}
+                >
+                  Cancel
+                </button>
+              ) : null}
+            </div>
 
             <div className="mt-4 flex gap-2">
               <input
-                className="min-w-0 flex-1 rounded-2xl border border-border-dark bg-bg px-4 py-3 text-text"
-                placeholder="Search spells to stage"
+                ref={searchInputRef}
+                className={`min-w-0 flex-1 rounded-2xl border bg-bg px-4 py-3 text-text ${replacingSpellId ? 'border-gold-soft' : 'border-border-dark'}`}
+                placeholder={replacingSpellName ? `Search for a replacement for ${replacingSpellName}` : 'Search spells to stage'}
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
               />
               <button
                 type="button"
                 className="rounded-2xl border border-border-dark bg-bg px-4 py-3 text-sm text-text-muted transition-colors hover:bg-bg-2 hover:text-text"
-                onClick={() => setSearch('')}
+                onClick={() => { setSearch(''); cancelReplacing(); }}
               >
                 Clear
               </button>
@@ -337,9 +375,19 @@ export function PreparePage() {
                           type="button"
                           className={`self-start rounded-full border px-4 py-2 text-sm transition-colors md:self-center ${blocked ? 'border-border-dark bg-bg opacity-55' : 'border-moon-border bg-moon-paper text-moon-ink hover:opacity-92'}`}
                           disabled={blocked}
-                          onClick={() => void onQueueToggle(spell.id)}
+                          onClick={() => {
+                            if (replacingSpellId) {
+                              fulfillRemoval(replacingSpellId, spell.id)
+                                .then(() => { setSearch(''); setReplacingSpellId(null); })
+                                .catch((nextError) => {
+                                  setError(nextError instanceof Error ? nextError.message : 'Unable to fulfill replacement.');
+                                });
+                            } else {
+                              void onQueueToggle(spell.id);
+                            }
+                          }}
                         >
-                          {blocked ? 'Blocked' : 'Stage Spell'}
+                          {blocked ? 'Blocked' : replacingSpellId ? 'Replace' : 'Stage Spell'}
                         </button>
                       </div>
                     );
@@ -374,26 +422,50 @@ export function PreparePage() {
                       const { entry, spell } = queuedRow;
 
                       if (entry.intent === 'remove') {
+                        const isActiveReplacing = replacingSpellId === spell.id;
+
                         return (
-                          <article key={spell.id} className="py-4 text-sm">
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="min-w-0 flex-1">
-                                <p className="font-display text-2xl leading-tight text-text-dim line-through">
-                                  {spell.name}
-                                </p>
-                                <p className="mt-1 text-xs text-text-muted">
-                                  {entry.assignedList || 'Unassigned'} · Marked for replacement
-                                </p>
-                                <p className="mt-3 text-sm text-text-muted">
-                                  Find a replacement from the search above or from the Catalog page.
-                                </p>
-                                <p className="mt-2 text-xs text-text-dim">
-                                  No replacement needed? This spell will simply be unprepared when you apply.
-                                </p>
-                              </div>
+                          <article key={spell.id} className="py-4 text-sm xl:grid xl:grid-cols-[minmax(0,1.7fr)_minmax(9.5rem,0.62fr)_minmax(14rem,0.95fr)_auto] xl:items-start xl:gap-3">
+                            <div className="min-w-0">
                               <button
                                 type="button"
-                                className="text-[11px] uppercase tracking-[0.18em] text-gold-soft font-semibold transition-colors hover:text-gold flex-shrink-0 pt-3"
+                                className="whitespace-normal text-left font-display text-2xl leading-tight text-text-dim line-through transition-colors hover:text-gold-soft"
+                                onClick={() => setSelectedSpellId(spell.id)}
+                              >
+                                {spell.name}
+                              </button>
+                            </div>
+
+                            <div className="mt-3 xl:mt-0 xl:pt-3">
+                              <div className="space-y-1 text-xs text-text-muted xl:text-sm">
+                                <p className="text-xs text-text-muted">List</p>
+                                <p>{entry.assignedList || 'Unassigned'}</p>
+                              </div>
+                            </div>
+
+                            <div className="mt-3 xl:mt-0 xl:pt-3">
+                              <div className="space-y-1.5 text-xs">
+                                <p className="text-text-muted">Replace with</p>
+                                <button
+                                  type="button"
+                                  className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${isActiveReplacing ? 'border-gold-soft bg-gold-soft/12 text-text font-semibold' : 'border-moon-border bg-moon-paper text-moon-ink hover:opacity-92'}`}
+                                  onClick={() => {
+                                    if (isActiveReplacing) {
+                                      cancelReplacing();
+                                    } else {
+                                      startReplacing(spell.id);
+                                    }
+                                  }}
+                                >
+                                  {isActiveReplacing ? 'Choosing…' : 'Choose Replacement'}
+                                </button>
+                              </div>
+                            </div>
+
+                            <div className="mt-3 self-start xl:mt-0 xl:justify-self-end xl:pt-[2.3rem]">
+                              <button
+                                type="button"
+                                className="text-[11px] uppercase tracking-[0.18em] text-text-dim transition-colors hover:text-gold-soft"
                                 onClick={() => void unmarkPreparedForReplacement(spell.id)}
                               >
                                 Undo

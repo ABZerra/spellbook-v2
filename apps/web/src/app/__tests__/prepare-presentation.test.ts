@@ -67,7 +67,7 @@ describe('prepare presentation', () => {
       spellName: 'Shield',
       assignedList: 'WIZARD',
     });
-    expect(result).toBe('Remove Shield');
+    expect(result).toBe('Replacing Shield');
   });
 
   it('formats queued review labels from staged actions', () => {
