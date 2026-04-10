@@ -73,6 +73,35 @@
       {
         "spellId": "resistance",
         "intent": "replace"
+      },
+      {
+        "spellId": "thaumaturgy",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "thorn-whip",
+        "intent": "replace",
+        "assignedList": "DRUID"
+      },
+      {
+        "spellId": "toll-the-dead",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "absorb-elements",
+        "intent": "replace",
+        "assignedList": "DRUID"
+      },
+      {
+        "spellId": "command",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "cure-wounds",
+        "intent": "replace"
       }
     ],
     "savedIdeas": [
@@ -95,9 +124,33 @@
       {
         "spellId": "resistance",
         "createdAt": "2026-04-10T13:37:07.899Z"
+      },
+      {
+        "spellId": "thaumaturgy",
+        "createdAt": "2026-04-10T13:37:12.299Z"
+      },
+      {
+        "spellId": "thorn-whip",
+        "createdAt": "2026-04-10T13:37:17.798Z"
+      },
+      {
+        "spellId": "toll-the-dead",
+        "createdAt": "2026-04-10T13:37:23.286Z"
+      },
+      {
+        "spellId": "absorb-elements",
+        "createdAt": "2026-04-10T13:37:28.015Z"
+      },
+      {
+        "spellId": "command",
+        "createdAt": "2026-04-10T13:37:32.615Z"
+      },
+      {
+        "spellId": "cure-wounds",
+        "createdAt": "2026-04-10T13:37:37.132Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:37:07.906Z",
+    "updatedAt": "2026-04-10T13:37:37.144Z",
     "classes": [
       {
         "name": "Druid",
