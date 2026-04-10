@@ -51,9 +51,28 @@
         "mode": "always"
       }
     ],
-    "nextPreparationQueue": [],
-    "savedIdeas": [],
-    "updatedAt": "2026-04-10T13:35:02.292Z",
+    "nextPreparationQueue": [
+      {
+        "spellId": "frostbite",
+        "intent": "replace",
+        "assignedList": "DRUID"
+      },
+      {
+        "spellId": "guidance",
+        "intent": "replace"
+      }
+    ],
+    "savedIdeas": [
+      {
+        "spellId": "frostbite",
+        "createdAt": "2026-04-10T13:36:19.766Z"
+      },
+      {
+        "spellId": "guidance",
+        "createdAt": "2026-04-10T13:36:24.216Z"
+      }
+    ],
+    "updatedAt": "2026-04-10T13:36:29.256Z",
     "classes": [
       {
         "name": "Druid",
