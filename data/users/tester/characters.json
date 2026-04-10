@@ -60,7 +60,7 @@
       {
         "spellId": "guidance",
         "intent": "add",
-        "assignedList": "DRUID"
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "light",
@@ -239,27 +239,27 @@
       },
       {
         "spellId": "word-of-recall",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "conjure-celestial",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "antimagic-field",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "holy-aura",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "mass-heal",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       }
     ],
@@ -433,7 +433,7 @@
         "createdAt": "2026-04-10T13:46:46.776Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:49:39.350Z",
+    "updatedAt": "2026-04-10T13:49:55.786Z",
     "classes": [
       {
         "name": "Druid",
