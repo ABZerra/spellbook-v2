@@ -106,7 +106,7 @@ export function formatPrepareReviewLabel(item: {
   }
 
   if (item.intent === 'remove') {
-    return `Remove ${item.spellName}`;
+    return `Replacing ${item.spellName}`;
   }
 
   if (item.intent === 'queue_only') {
