@@ -89,26 +89,27 @@
       },
       {
         "spellId": "toll-the-dead",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "absorb-elements",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "DRUID"
       },
       {
         "spellId": "command",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "cure-wounds",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "DRUID"
       },
       {
         "spellId": "detect-magic",
-        "intent": "replace"
+        "intent": "add"
       },
       {
         "spellId": "faerie-fire",
@@ -420,7 +421,7 @@
         "createdAt": "2026-04-10T13:46:46.776Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:48:09.763Z",
+    "updatedAt": "2026-04-10T13:48:27.154Z",
     "classes": [
       {
         "name": "Druid",
