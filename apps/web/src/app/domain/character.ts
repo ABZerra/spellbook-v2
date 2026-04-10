@@ -317,6 +317,7 @@ export function normalizeSpellIdList(values: string[]): string[] {
 function normalizeQueueIntent(value: unknown): QueueIntent {
   if (value === 'replace') return 'replace';
   if (value === 'queue_only') return 'queue_only';
+  if (value === 'remove') return 'remove';
   return 'add';
 }
 

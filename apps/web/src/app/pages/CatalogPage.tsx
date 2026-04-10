@@ -65,6 +65,9 @@ export function CatalogPage() {
     queueSpellForNextPreparation,
     unqueueSpellForNextPreparation,
     isSpellQueuedForNextPreparation,
+    markPreparedForReplacement,
+    unmarkPreparedForReplacement,
+    isSpellMarkedForReplacement,
   } = useApp();
 
   const [search, setSearch] = useState('');
@@ -154,8 +157,16 @@ export function CatalogPage() {
     try {
       if (isSpellQueuedForNextPreparation(spellId)) {
         await unqueueSpellForNextPreparation(spellId);
+      } else if (isSpellMarkedForReplacement(spellId)) {
+        await unmarkPreparedForReplacement(spellId);
       } else {
-        await queueSpellForNextPreparation(spellId);
+        // Check if this is a prepared spell — if so, mark for replacement
+        const preparedEntry = activeCharacter?.preparedSpells.find((entry) => entry.spellId === spellId);
+        if (preparedEntry) {
+          await markPreparedForReplacement(spellId, preparedEntry.assignedList);
+        } else {
+          await queueSpellForNextPreparation(spellId);
+        }
       }
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : 'Unable to update the next preparation queue.');
@@ -391,9 +402,11 @@ export function CatalogPage() {
                           ? 'cursor-not-allowed border-border-dark bg-bg text-text-dim opacity-55'
                           : presentation.stateLabel === 'Queued'
                             ? 'border-gold-soft bg-gold-soft/20 text-text hover:bg-gold-soft/30'
-                            : presentation.stateLabel === 'Prepared'
-                              ? 'border-accent-soft bg-accent-soft/25 text-text hover:bg-accent-soft/35'
-                              : 'border-moon-border bg-moon-paper text-moon-ink hover:opacity-92'
+                            : presentation.stateLabel === 'Replacing'
+                              ? 'border-gold-soft bg-gold-soft/20 text-text hover:bg-gold-soft/30'
+                              : presentation.stateLabel === 'Prepared'
+                                ? 'border-accent-soft bg-accent-soft/25 text-text hover:bg-accent-soft/35'
+                                : 'border-moon-border bg-moon-paper text-moon-ink hover:opacity-92'
                       }`}
                       disabled={presentation.disabled}
                       title={presentation.helperText}

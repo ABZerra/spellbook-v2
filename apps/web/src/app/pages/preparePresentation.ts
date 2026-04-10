@@ -56,6 +56,7 @@ export function getPrepareReplaceMessage(input: {
 }
 
 export function getPrepareQueueReplaceSummary(intent: QueueIntent): string | null {
+  if (intent === 'remove') return 'Marked for replacement';
   if (intent === 'replace') return null;
   if (intent === 'add') return 'Prepare without replacement';
   return 'Saved for later';
@@ -102,6 +103,10 @@ export function formatPrepareReviewLabel(item: {
     }
 
     return `Replace with ${item.spellName}`;
+  }
+
+  if (item.intent === 'remove') {
+    return `Remove ${item.spellName}`;
   }
 
   if (item.intent === 'queue_only') {

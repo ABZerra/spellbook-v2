@@ -20,6 +20,7 @@ interface ComputeApplyInput {
 interface ApplySummary {
   adds: number;
   replacements: number;
+  removals: number;
   queueOnlySkipped: number;
 }
 
@@ -62,10 +63,27 @@ export function computeApplyResult(input: ComputeApplyInput): ComputeApplyOutput
   const summary: ApplySummary = {
     adds: 0,
     replacements: 0,
+    removals: 0,
     queueOnlySkipped: 0,
   };
 
-  for (const entry of queue) {
+  // Process removals first
+  const removeEntries = queue.filter((entry) => entry.intent === 'remove');
+  for (const entry of removeEntries) {
+    const removeIndex = nextPrepared.findIndex((preparedEntry) => (
+      preparedEntry.spellId === entry.spellId
+      && preparedEntry.assignedList === (entry.assignedList || preparedEntry.assignedList)
+    ));
+    if (removeIndex !== -1) {
+      nextPrepared.splice(removeIndex, 1);
+      appliedSpellIds.push(entry.spellId);
+      summary.removals += 1;
+    }
+  }
+
+  const nonRemoveQueue = queue.filter((entry) => entry.intent !== 'remove');
+
+  for (const entry of nonRemoveQueue) {
     const spell = input.spellsById.get(entry.spellId);
     if (!spell) {
       throw new Error(`Unknown spell: ${entry.spellId}`);
@@ -102,7 +120,7 @@ export function computeApplyResult(input: ComputeApplyInput): ComputeApplyOutput
         && preparedEntry.assignedList === assignedList
       ));
       if (replaceIndex === -1) {
-      throw new Error(`${spell.name}: must replace a spell from the same list.`);
+        throw new Error(`${spell.name}: must replace a spell from the same list.`);
       }
 
       assertSpellCanBeAddedToList(spell, input.profile, assignedList);

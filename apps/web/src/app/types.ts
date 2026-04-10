@@ -42,7 +42,7 @@ export interface PreparedSpellEntry {
   mode: 'normal' | 'always';
 }
 
-export type QueueIntent = 'add' | 'replace' | 'queue_only';
+export type QueueIntent = 'add' | 'replace' | 'queue_only' | 'remove';
 
 export interface NextPreparationQueueEntry {
   spellId: string;
