@@ -15,6 +15,7 @@ describe('catalog presentation', () => {
         } as any,
         eligible: true,
         prepared: false,
+        alwaysPrepared: false,
         queued: true,
         markedForReplacement: false,
         displayList: 'WIZARD',
@@ -41,6 +42,7 @@ describe('catalog presentation', () => {
         } as any,
         eligible: false,
         prepared: false,
+        alwaysPrepared: false,
         queued: false,
         markedForReplacement: false,
         displayList: '-',
@@ -67,6 +69,7 @@ describe('catalog presentation', () => {
         } as any,
         eligible: true,
         prepared: false,
+        alwaysPrepared: false,
         queued: false,
         markedForReplacement: false,
         displayList: 'WIZARD',
@@ -86,6 +89,7 @@ describe('catalog presentation', () => {
         spell: { id: 'shield', name: 'Shield', level: 1, save: '', castingTime: '1 Reaction', notes: '' } as any,
         eligible: true,
         prepared: true,
+        alwaysPrepared: false,
         queued: false,
         markedForReplacement: false,
         displayList: 'WIZARD',
@@ -103,6 +107,7 @@ describe('catalog presentation', () => {
         spell: { id: 'shield', name: 'Shield', level: 1, save: '', castingTime: '1 Reaction', notes: '' } as any,
         eligible: true,
         prepared: true,
+        alwaysPrepared: false,
         queued: true,
         markedForReplacement: false,
         displayList: 'WIZARD',
@@ -118,7 +123,7 @@ describe('catalog presentation', () => {
     const result = getCatalogRowPresentation({
       row: {
         spell: { id: 'shield', name: 'Shield', level: 1, save: '', castingTime: '1 Reaction', notes: '' } as any,
-        eligible: true, prepared: true, queued: false, markedForReplacement: false, displayList: 'WIZARD',
+        eligible: true, prepared: true, alwaysPrepared: false, queued: false, markedForReplacement: false, displayList: 'WIZARD',
       },
       addableLists: ['WIZARD'],
     });
@@ -126,11 +131,24 @@ describe('catalog presentation', () => {
     expect(result.disabled).toBe(false);
   });
 
+  it('shows always-prepared spells as disabled with Always Prepared label', () => {
+    const result = getCatalogRowPresentation({
+      row: {
+        spell: { id: 'shield', name: 'Shield', level: 1, save: '', castingTime: '1 Reaction', notes: '' } as any,
+        eligible: true, prepared: true, alwaysPrepared: true, queued: false, markedForReplacement: false, displayList: 'WIZARD',
+      },
+      addableLists: ['WIZARD'],
+    });
+    expect(result.stateLabel).toBe('Always');
+    expect(result.actionLabel).toBe('Always Prepared');
+    expect(result.disabled).toBe(true);
+  });
+
   it('shows marked-for-replacement spell with Replacing checkmark', () => {
     const result = getCatalogRowPresentation({
       row: {
         spell: { id: 'shield', name: 'Shield', level: 1, save: '', castingTime: '1 Reaction', notes: '' } as any,
-        eligible: true, prepared: true, queued: false, markedForReplacement: true, displayList: 'WIZARD',
+        eligible: true, prepared: true, alwaysPrepared: false, queued: false, markedForReplacement: true, displayList: 'WIZARD',
       },
       addableLists: ['WIZARD'],
     });

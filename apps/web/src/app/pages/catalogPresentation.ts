@@ -52,6 +52,15 @@ export function getCatalogRowPresentation({
     };
   }
 
+  if (row.alwaysPrepared) {
+    return {
+      stateLabel: 'Always',
+      actionLabel: 'Always Prepared',
+      disabled: true,
+      helperText: 'This spell is always prepared and cannot be changed.',
+    };
+  }
+
   if (row.prepared) {
     return {
       stateLabel: 'Prepared',
