@@ -109,120 +109,132 @@
       },
       {
         "spellId": "detect-magic",
-        "intent": "add"
+        "intent": "add",
+        "assignedList": "DRUID"
       },
       {
         "spellId": "faerie-fire",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "DRUID"
       },
       {
         "spellId": "goodberry",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "DRUID"
       },
       {
         "spellId": "guiding-bolt",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "healing-word",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "DRUID"
       },
       {
         "spellId": "protection-from-evil-and-good",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "DRUID"
       },
       {
         "spellId": "sanctuary",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "aid",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "blindness-deafness",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "hold-person",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "spiritual-weapon",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "aura-of-vitality",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "beacon-of-hope",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "dispel-magic",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "revivify",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "speak-with-dead",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "spirit-guardians",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "aura-of-purity",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "banishment",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "death-ward",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "dispel-evil-and-good",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "legend-lore",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "mass-cure-wounds",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "scrying",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "heal",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "true-seeing",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
@@ -421,7 +433,7 @@
         "createdAt": "2026-04-10T13:46:46.776Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:48:27.154Z",
+    "updatedAt": "2026-04-10T13:49:39.350Z",
     "classes": [
       {
         "name": "Druid",
