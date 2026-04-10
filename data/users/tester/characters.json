@@ -54,21 +54,23 @@
     "nextPreparationQueue": [
       {
         "spellId": "frostbite",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "DRUID"
       },
       {
         "spellId": "guidance",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "DRUID"
       },
       {
         "spellId": "light",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "mending",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "resistance",
@@ -417,7 +419,7 @@
         "createdAt": "2026-04-10T13:46:46.776Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:46:50.648Z",
+    "updatedAt": "2026-04-10T13:47:29.035Z",
     "classes": [
       {
         "name": "Druid",
