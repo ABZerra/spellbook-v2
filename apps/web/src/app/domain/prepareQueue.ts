@@ -84,6 +84,11 @@ export function computeApplyResult(input: ComputeApplyInput): ComputeApplyOutput
   const nonRemoveQueue = queue.filter((entry) => entry.intent !== 'remove');
 
   for (const entry of nonRemoveQueue) {
+    if (entry.intent === 'queue_only') {
+      summary.queueOnlySkipped += 1;
+      continue;
+    }
+
     const spell = input.spellsById.get(entry.spellId);
     if (!spell) {
       throw new Error(`Unknown spell: ${entry.spellId}`);
@@ -96,11 +101,6 @@ export function computeApplyResult(input: ComputeApplyInput): ComputeApplyOutput
     const assignedList = resolveAssignedList(entry, spell, input.profile);
     if (!assignedList) {
       throw new Error(`${spell.name}: choose a valid spell list.`);
-    }
-
-    if (entry.intent === 'queue_only') {
-      summary.queueOnlySkipped += 1;
-      continue;
     }
 
     if (entry.intent === 'replace') {

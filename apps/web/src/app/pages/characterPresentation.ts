@@ -16,7 +16,7 @@ export function getCharacterCueStats(
 ): CharacterCueStat[] {
   const prepared = profile.preparedSpells.length;
   const alwaysPrepared = profile.preparedSpells.filter((entry) => entry.mode === 'always').length;
-  const queued = profile.nextPreparationQueue.length;
+  const queued = profile.nextPreparationQueue.filter((entry) => entry.intent !== 'queue_only').length;
 
   return [
     { label: 'Prepared', value: prepared },

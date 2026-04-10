@@ -98,15 +98,49 @@ export function PreparePage() {
 
   const limitsSummary = useMemo(() => {
     if (!activeCharacter) return [];
-    const projected = preview.result?.finalPreparedSpells || activeCharacter.preparedSpells;
-    const counts = buildPreparationUsage(projected, spellsById);
 
-    return activeCharacter.preparationLimits.map((entry) => ({
-      list: entry.list,
-      used: counts.get(entry.list) || 0,
-      limit: entry.limit,
-    }));
-  }, [activeCharacter, preview.result, spellsById]);
+    if (preview.result) {
+      const counts = buildPreparationUsage(preview.result.finalPreparedSpells, spellsById);
+      return activeCharacter.preparationLimits.map((entry) => ({
+        list: entry.list,
+        used: counts.get(entry.list) || 0,
+        limit: entry.limit,
+      }));
+    }
+
+    // When preview fails (e.g. limit exceeded), compute best-effort projected usage
+    // from current prepared spells + queued adds/replacements so counters stay meaningful.
+    const currentCounts = buildPreparationUsage(activeCharacter.preparedSpells, spellsById);
+    const removals = new Map<string, number>();
+    const additions = new Map<string, number>();
+
+    for (const entry of queueEntries) {
+      if (entry.intent === 'queue_only') continue;
+      const spell = spellsById.get(entry.spellId);
+      if (!spell || spell.level <= 0) continue;
+      const list = entry.assignedList;
+      if (!list) continue;
+
+      if (entry.intent === 'remove') {
+        removals.set(list, (removals.get(list) || 0) + 1);
+      } else if (entry.intent === 'replace') {
+        // net zero — no change to count
+      } else {
+        additions.set(list, (additions.get(list) || 0) + 1);
+      }
+    }
+
+    return activeCharacter.preparationLimits.map((entry) => {
+      const current = currentCounts.get(entry.list) || 0;
+      const added = additions.get(entry.list) || 0;
+      const removed = removals.get(entry.list) || 0;
+      return {
+        list: entry.list,
+        used: Math.max(0, current + added - removed),
+        limit: entry.limit,
+      };
+    });
+  }, [activeCharacter, preview.result, spellsById, queueEntries]);
 
   const reviewItems = useMemo(() => (
     queuedRows.map(({ entry, spell }) => {
@@ -320,7 +354,7 @@ export function PreparePage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-display text-2xl text-text">Preparation Queue</h2>
               <span className="text-[11px] uppercase tracking-[0.24em] text-text-dim">
-                {queuedRows.length} staged
+                {queuedRows.filter(({ entry }) => entry.intent !== 'queue_only').length} staged
               </span>
             </div>
 

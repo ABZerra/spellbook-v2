@@ -22,7 +22,7 @@ describe('character presentation', () => {
     })).toEqual([
       { label: 'Prepared', value: 3 },
       { label: 'Always', value: 1 },
-      { label: 'Queued', value: 2 },
+      { label: 'Queued', value: 1 },
     ]);
   });
 
