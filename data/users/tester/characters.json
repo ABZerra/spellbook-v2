@@ -109,56 +109,62 @@
       },
       {
         "spellId": "detect-magic",
-        "intent": "add"
+        "intent": "add",
+        "assignedList": "DRUID"
       },
       {
         "spellId": "faerie-fire",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "DRUID"
       },
       {
         "spellId": "goodberry",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "DRUID"
       },
       {
         "spellId": "guiding-bolt",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "healing-word",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "DRUID"
       },
       {
         "spellId": "protection-from-evil-and-good",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "DRUID"
       },
       {
         "spellId": "sanctuary",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "aid",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "blindness-deafness",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "hold-person",
-        "intent": "replace"
+        "intent": "add",
+        "assignedList": "CLERIC"
       },
       {
         "spellId": "spiritual-weapon",
-        "intent": "replace",
+        "intent": "add",
         "assignedList": "CLERIC"
       },
       {
         "spellId": "aura-of-vitality",
-        "intent": "replace"
+        "intent": "add"
       },
       {
         "spellId": "beacon-of-hope",
@@ -421,7 +427,7 @@
         "createdAt": "2026-04-10T13:46:46.776Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:48:27.154Z",
+    "updatedAt": "2026-04-10T13:49:09.284Z",
     "classes": [
       {
         "name": "Druid",
