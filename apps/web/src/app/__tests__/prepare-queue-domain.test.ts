@@ -219,6 +219,29 @@ describe('computeApplyResult', () => {
     });
   });
 
+  it('does not validate queue_only entries against spell lists or assigned lists', () => {
+    const profile = makeProfile();
+    const spells = makeSpells();
+
+    // bless is a Cleric spell — not on Aelric's Wizard list
+    const output = computeApplyResult({
+      profile,
+      spellsById: new Map(spells.map((spell) => [spell.id, spell])),
+      queue: [
+        { spellId: 'bless', intent: 'queue_only' },
+      ],
+    });
+
+    expect(output.finalPreparedSpells).toEqual([
+      { spellId: 'shield', assignedList: 'WIZARD', mode: 'normal' },
+      { spellId: 'mage-armor', assignedList: 'WIZARD', mode: 'normal' },
+    ]);
+    expect(output.remainingQueue).toEqual([
+      { spellId: 'bless', intent: 'queue_only' },
+    ]);
+    expect(output.summary.queueOnlySkipped).toBe(1);
+  });
+
   it('does not count always prepared spells against preparation limits', () => {
     const spells = makeSpells();
 

@@ -139,7 +139,7 @@ export function CatalogPage() {
     [activeCharacter, effectivePreferences, search, spells],
   );
 
-  const queuedCount = activeCharacter?.nextPreparationQueue.length || 0;
+  const queuedCount = activeCharacter?.nextPreparationQueue.filter((entry) => entry.intent !== 'queue_only').length || 0;
   const eligibleCount = rows.filter((row) => row.eligible).length;
 
   useEffect(() => {
