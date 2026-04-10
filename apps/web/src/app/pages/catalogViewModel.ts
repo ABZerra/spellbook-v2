@@ -27,6 +27,7 @@ export interface CatalogRow {
   spell: SpellRecord;
   eligible: boolean;
   prepared: boolean;
+  alwaysPrepared: boolean;
   queued: boolean;
   markedForReplacement: boolean;
   displayList: string;
@@ -164,6 +165,11 @@ function compareRows(left: CatalogRow, right: CatalogRow, preferences: CatalogPr
 
 export function buildCatalogRows(input: BuildCatalogRowsInput): CatalogRow[] {
   const preparedSet = new Set((input.activeCharacter?.preparedSpells || []).map((entry) => entry.spellId));
+  const alwaysPreparedSet = new Set(
+    (input.activeCharacter?.preparedSpells || [])
+      .filter((entry) => entry.mode === 'always')
+      .map((entry) => entry.spellId),
+  );
   const queuedSet = new Set((input.activeCharacter?.nextPreparationQueue || []).map((entry) => entry.spellId));
   const markedForReplacementSet = new Set(
     (input.activeCharacter?.nextPreparationQueue || [])
@@ -186,6 +192,7 @@ export function buildCatalogRows(input: BuildCatalogRowsInput): CatalogRow[] {
         spell,
         eligible,
         prepared: preparedSet.has(spell.id),
+        alwaysPrepared: alwaysPreparedSet.has(spell.id),
         queued: queuedSet.has(spell.id),
         markedForReplacement: markedForReplacementSet.has(spell.id),
         displayList,
