@@ -124,6 +124,20 @@
       {
         "spellId": "healing-word",
         "intent": "replace"
+      },
+      {
+        "spellId": "protection-from-evil-and-good",
+        "intent": "replace"
+      },
+      {
+        "spellId": "sanctuary",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "aid",
+        "intent": "replace",
+        "assignedList": "CLERIC"
       }
     ],
     "savedIdeas": [
@@ -190,9 +204,21 @@
       {
         "spellId": "healing-word",
         "createdAt": "2026-04-10T13:38:08.317Z"
+      },
+      {
+        "spellId": "protection-from-evil-and-good",
+        "createdAt": "2026-04-10T13:38:26.348Z"
+      },
+      {
+        "spellId": "sanctuary",
+        "createdAt": "2026-04-10T13:38:31.647Z"
+      },
+      {
+        "spellId": "aid",
+        "createdAt": "2026-04-10T13:38:37.498Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:38:08.328Z",
+    "updatedAt": "2026-04-10T13:38:37.507Z",
     "classes": [
       {
         "name": "Druid",
