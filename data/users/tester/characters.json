@@ -60,6 +60,19 @@
       {
         "spellId": "guidance",
         "intent": "replace"
+      },
+      {
+        "spellId": "light",
+        "intent": "replace",
+        "assignedList": "CLERIC"
+      },
+      {
+        "spellId": "mending",
+        "intent": "replace"
+      },
+      {
+        "spellId": "resistance",
+        "intent": "replace"
       }
     ],
     "savedIdeas": [
@@ -70,9 +83,21 @@
       {
         "spellId": "guidance",
         "createdAt": "2026-04-10T13:36:24.216Z"
+      },
+      {
+        "spellId": "light",
+        "createdAt": "2026-04-10T13:36:54.565Z"
+      },
+      {
+        "spellId": "mending",
+        "createdAt": "2026-04-10T13:36:59.832Z"
+      },
+      {
+        "spellId": "resistance",
+        "createdAt": "2026-04-10T13:37:07.899Z"
       }
     ],
-    "updatedAt": "2026-04-10T13:36:29.256Z",
+    "updatedAt": "2026-04-10T13:37:07.906Z",
     "classes": [
       {
         "name": "Druid",
